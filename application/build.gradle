@@ -1,0 +1,14 @@
+apply plugin: 'application'
+
+mainClassName = 'com.pauta.administracao.main.Boot'
+
+dependencies {
+    implementation project(":web")
+    implementation project(":usecase")
+    implementation project(":output-boundary")
+    implementation project(":input-boundary")
+    implementation project(":gateway")
+    implementation project(":domain")
+    implementation project(":data-base")
+    implementation project(":configuration")
+}
