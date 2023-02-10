@@ -1,0 +1,3 @@
+dependencies {
+    implementation "org.springdoc:springdoc-openapi-webflux-ui:1.6.9"
+}

@@ -1,0 +1,14 @@
+pauta:
+  url:
+    host: http://localhost:8080
+    path: /pauta
+
+springdoc:
+  api:
+    title: My API
+    description: This is my API description
+    version: 1.0.0
+  api-docs:
+    path: /api-docs
+  app:
+    proxy: ${pauta.url.host}/swagger-ui.html
