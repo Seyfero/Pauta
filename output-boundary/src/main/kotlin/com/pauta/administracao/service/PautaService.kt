@@ -1,22 +1,25 @@
 package com.pauta.administracao.service
 
+import com.pauta.administracao.domain.Pauta
 import com.pauta.administracao.dto.PautaOutputDto
-import com.pauta.administracao.dto.UsuarioOutputDto
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+
 
 interface PautaService {
 
-    fun create(pautaOutputDto: PautaOutputDto)
+    fun create(pauta: PautaOutputDto)
 
-    fun update(pautaOutputDto: PautaOutputDto): UsuarioOutputDto
+    fun update(pauta: PautaOutputDto): Mono<Pauta>
 
     fun deleteById(id: Long)
 
     fun deleteByName(nome: String)
 
-    fun findById(id: Long): PautaOutputDto
+    fun findById(id: Long): Mono<Pauta>
 
-    fun findByName(nome: String): PautaOutputDto
+    fun findByName(nome: String): Mono<Pauta>
 
-    fun findAll(): List<PautaOutputDto>
+    fun findAll(): Flux<Pauta>
 
 }

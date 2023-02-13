@@ -1,6 +1,6 @@
 package com.pauta.administracao.dto
 
 data class UsuarioOutputDto(
-    val cpf: String,
-    val name: String
+    val usuarioCpf: String,
+    val usuarioNome: String
 )

@@ -1,4 +1,8 @@
 dependencies {
+    //Outros mopdulos
+    implementation project(":domain")
+    implementation project(":output-boundary")
+
     // BANCO
     implementation "org.springframework.boot:spring-boot-starter-data-r2dbc:${property("springBootVersion")}"
     implementation "org.postgresql:postgresql:42.2.19"

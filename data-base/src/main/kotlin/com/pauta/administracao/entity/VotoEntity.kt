@@ -9,8 +9,8 @@ import java.time.LocalDate
 @Table("vt_voto")
 data class VotoEntity(
     @Id @Column("vt_voto_id") val id: Long? = null,
-    @Column("vt_usuario_id") val usuario: UsuarioEntity,
-    @Column("vt_pauta_id") val pauta: PautaEntity,
+    @Column("vt_usuario_id") val votoUsuario: UsuarioEntity,
+    @Column("vt_pauta_id") val votoPauta: PautaEntity,
 ) {
 //    @PersistenceCreator
 //    constructor(
