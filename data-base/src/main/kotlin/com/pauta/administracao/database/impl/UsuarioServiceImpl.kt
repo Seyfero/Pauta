@@ -3,9 +3,9 @@ package com.pauta.administracao.database.impl
 import com.pauta.administracao.database.converters.toDomain
 import com.pauta.administracao.database.converters.toEntity
 import com.pauta.administracao.domain.Usuario
-import com.pauta.administracao.dto.UsuarioOutputDto
+import com.pauta.administracao.outputboundary.dto.UsuarioOutputDto
 import com.pauta.administracao.database.repository.UsuarioRepository
-import com.pauta.administracao.service.UsuarioService
+import com.pauta.administracao.outputboundary.service.UsuarioService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux

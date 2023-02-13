@@ -1,4 +1,4 @@
-package com.pauta.administracao.dto
+package com.pauta.administracao.outputboundary.dto
 
 data class VotoOutputDto(
     val votoUsuario: UsuarioOutputDto,

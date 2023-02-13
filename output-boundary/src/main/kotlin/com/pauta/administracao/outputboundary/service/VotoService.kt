@@ -1,11 +1,11 @@
-package com.pauta.administracao.service
+package com.pauta.administracao.outputboundary.service
 
 import com.pauta.administracao.domain.Pauta
 import com.pauta.administracao.domain.Usuario
 import com.pauta.administracao.domain.Voto
-import com.pauta.administracao.dto.PautaOutputDto
-import com.pauta.administracao.dto.UsuarioOutputDto
-import com.pauta.administracao.dto.VotoOutputDto
+import com.pauta.administracao.outputboundary.dto.PautaOutputDto
+import com.pauta.administracao.outputboundary.dto.UsuarioOutputDto
+import com.pauta.administracao.outputboundary.dto.VotoOutputDto
 import reactor.core.publisher.Flux
 
 interface VotoService {

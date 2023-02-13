@@ -5,11 +5,11 @@ import com.pauta.administracao.database.converters.toEntity
 import com.pauta.administracao.domain.Pauta
 import com.pauta.administracao.domain.Usuario
 import com.pauta.administracao.domain.Voto
-import com.pauta.administracao.dto.PautaOutputDto
-import com.pauta.administracao.dto.UsuarioOutputDto
-import com.pauta.administracao.dto.VotoOutputDto
+import com.pauta.administracao.outputboundary.dto.PautaOutputDto
+import com.pauta.administracao.outputboundary.dto.UsuarioOutputDto
+import com.pauta.administracao.outputboundary.dto.VotoOutputDto
 import com.pauta.administracao.database.repository.VotoRepository
-import com.pauta.administracao.service.VotoService
+import com.pauta.administracao.outputboundary.service.VotoService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux

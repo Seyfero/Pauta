@@ -1,4 +1,4 @@
-package com.pauta.administracao.dto
+package com.pauta.administracao.outputboundary.dto
 
 import java.time.LocalDate
 

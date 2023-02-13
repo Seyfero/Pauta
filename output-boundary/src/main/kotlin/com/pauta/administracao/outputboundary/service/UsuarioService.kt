@@ -1,7 +1,7 @@
-package com.pauta.administracao.service
+package com.pauta.administracao.outputboundary.service
 
 import com.pauta.administracao.domain.Usuario
-import com.pauta.administracao.dto.UsuarioOutputDto
+import com.pauta.administracao.outputboundary.dto.UsuarioOutputDto
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
