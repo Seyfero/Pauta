@@ -6,13 +6,11 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDate
 
-@Table("vt_pauta")
-data class PautaEntity(
-    @Id @Column("vt_pauta_id") val id: Long? = null,
-    @Column("vt_pauta_nome") val pautaName: String,
-    @Column("vt_pauta_duracao") val pautaDuracao: Long,
-    @Column("vt_pauta_votos_total") val pautaVotosTotal: Long?,
-    @Column("vt_pauta_criacao") val pautaCriacao: LocalDate,
+@Table("vt_voto")
+data class VotoEntity(
+    @Id @Column("vt_voto_id") val id: Long? = null,
+    @Column("vt_usuario_id") val usuario: UsuarioEntity,
+    @Column("vt_pauta_id") val pauta: PautaEntity,
 ) {
 //    @PersistenceCreator
 //    constructor(

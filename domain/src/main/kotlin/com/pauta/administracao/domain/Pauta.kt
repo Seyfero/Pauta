@@ -4,8 +4,8 @@ import java.time.Duration
 import java.time.LocalDate
 
 data class Pauta(
-    val namePauta: String,
-    val createTime: LocalDate,
-    val duration: Long = 60,
+    val nomePauta: String,
+    val dataCriacao: LocalDate,
+    val duracao: Long = 60,
     val totalVotos: Long? = 0
 )
