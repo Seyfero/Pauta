@@ -1,7 +1,7 @@
-package com.pauta.administracao.converters
+package com.pauta.administracao.database.converters
 
 import com.pauta.administracao.domain.Voto
-import com.pauta.administracao.entity.VotoEntity
+import com.pauta.administracao.database.entity.VotoEntity
 
 fun Voto.toEntity() = VotoEntity(
     id = null,

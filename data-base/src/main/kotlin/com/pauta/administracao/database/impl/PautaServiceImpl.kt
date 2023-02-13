@@ -1,10 +1,10 @@
-package com.pauta.administracao.impl
+package com.pauta.administracao.database.impl
 
-import com.pauta.administracao.converters.toDomain
-import com.pauta.administracao.converters.toEntity
+import com.pauta.administracao.database.converters.toDomain
+import com.pauta.administracao.database.converters.toEntity
 import com.pauta.administracao.domain.Pauta
 import com.pauta.administracao.dto.PautaOutputDto
-import com.pauta.administracao.repository.PautaRepository
+import com.pauta.administracao.database.repository.PautaRepository
 import com.pauta.administracao.service.PautaService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -13,7 +13,9 @@ import reactor.core.publisher.Mono
 
 @Service
 class PautaServiceImpl(
+
     private val pautaRepository: PautaRepository
+
 ): PautaService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)

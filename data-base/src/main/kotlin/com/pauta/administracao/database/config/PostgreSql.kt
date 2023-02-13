@@ -1,4 +1,4 @@
-package com.pauta.administracao.config
+package com.pauta.administracao.database.config
 
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration
 import io.r2dbc.postgresql.PostgresqlConnectionFactory

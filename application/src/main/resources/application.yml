@@ -19,5 +19,5 @@ spring:
     host: localhost
     port: 5432
     data-base: database-name
-    username: user
-    password: password
+    username: postgres
+    password: postgres

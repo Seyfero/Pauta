@@ -1,6 +1,6 @@
-package com.pauta.administracao.repository
+package com.pauta.administracao.database.repository
 
-import com.pauta.administracao.entity.UsuarioEntity
+import com.pauta.administracao.database.entity.UsuarioEntity
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono

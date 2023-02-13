@@ -22,6 +22,9 @@ buildscript {
 	}
 }
 
+tasks.bootJar {
+	enabled = false
+}
 
 group = "com.pauta.administracao"
 version = "0.0.1-SNAPSHOT"

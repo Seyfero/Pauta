@@ -1,14 +1,14 @@
-package com.pauta.administracao.impl
+package com.pauta.administracao.database.impl
 
-import com.pauta.administracao.converters.toDomain
-import com.pauta.administracao.converters.toEntity
+import com.pauta.administracao.database.converters.toDomain
+import com.pauta.administracao.database.converters.toEntity
 import com.pauta.administracao.domain.Pauta
 import com.pauta.administracao.domain.Usuario
 import com.pauta.administracao.domain.Voto
 import com.pauta.administracao.dto.PautaOutputDto
 import com.pauta.administracao.dto.UsuarioOutputDto
 import com.pauta.administracao.dto.VotoOutputDto
-import com.pauta.administracao.repository.VotoRepository
+import com.pauta.administracao.database.repository.VotoRepository
 import com.pauta.administracao.service.VotoService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

@@ -1,4 +1,4 @@
-package com.pauta.administracao.main
+package com.pauta.administracao
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

@@ -1,4 +1,4 @@
-package com.pauta.administracao.entity
+package com.pauta.administracao.database.entity
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.PersistenceCreator

@@ -1,4 +1,4 @@
-package com.pauta.administracao.entity
+package com.pauta.administracao.database.entity
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.PersistenceCreator
@@ -6,11 +6,13 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDate
 
-@Table("vt_usuario")
-data class UsuarioEntity(
-    @Id @Column("vt_usuario_id") val id: Long? = null,
-    @Column("vt_usuario_nome") val usuarioNome: String,
-    @Column("vt_usuario_cpf") val usuarioCpf: String,
+@Table("vt_pauta")
+data class PautaEntity(
+    @Id @Column("vt_pauta_id") val id: Long? = null,
+    @Column("vt_pauta_nome") val pautaNome: String,
+    @Column("vt_pauta_criacao") val pautaDataCriacao: LocalDate,
+    @Column("vt_pauta_duracao") val pautaDuracao: Long,
+    @Column("vt_pauta_votos_total") val pautaVotosTotal: Long?,
 ) {
 //    @PersistenceCreator
 //    constructor(
