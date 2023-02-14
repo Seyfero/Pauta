@@ -57,7 +57,7 @@ class PautaServiceImpl(
     override fun deleteByName(nome: String) {
         try {
             logger.info("pautaRepository.deleteByName, status=try")
-            pautaRepository.deleteByNome(nome)
+            pautaRepository.deleteByPautaNome(nome)
             logger.info("pautaRepository.deleteByName, status=complete")
         } catch (ex: Exception) {
             logger.error("pautaRepository.deleteByName, status=error message:${ex.message}")
@@ -80,7 +80,7 @@ class PautaServiceImpl(
     override fun findByName(nome: String): Mono<Pauta> {
         try {
             logger.info("pautaRepository.findByName, status=try")
-            val res = pautaRepository.findByNome(nome)
+            val res = pautaRepository.findByPautaNome(nome)
             logger.info("pautaRepository.findByName, status=complete")
             return res.map { it.toDomain() }
         } catch (ex: Exception) {

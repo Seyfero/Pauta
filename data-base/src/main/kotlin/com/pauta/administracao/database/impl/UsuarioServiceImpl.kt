@@ -57,7 +57,7 @@ class UsuarioServiceImpl(
     override fun deleteByCpf(cpf: String) {
         try {
             logger.info("usuarioRepository.deleteByCpf, status=try")
-            usuarioRepository.deleteByCpf(cpf)
+            usuarioRepository.deleteByUsuarioCpf(cpf)
             logger.info("usuarioRepository.deleteByCpf, status=complete")
         } catch (ex: Exception) {
             logger.error("usuarioRepository.deleteByCpf, status=error message:${ex.message}")
@@ -80,7 +80,7 @@ class UsuarioServiceImpl(
     override fun findByName(nome: String): Mono<Usuario> {
         try {
             logger.info("usuarioRepository.findByName, status=try")
-            val res = usuarioRepository.findByNome(nome)
+            val res = usuarioRepository.findByUsuarioNome(nome)
             logger.info("usuarioRepository.findByName, status=complete")
             return res.map { it.toDomain() }
         } catch (ex: Exception) {
@@ -92,7 +92,7 @@ class UsuarioServiceImpl(
     override fun findByCpf(cpf: String): Mono<Usuario> {
         try {
             logger.info("usuarioRepository.findByCpf, status=try")
-            val res = usuarioRepository.findByCpf(cpf)
+            val res = usuarioRepository.findByUsuarioCpf(cpf)
             logger.info("usuarioRepository.findByCpf, status=complete")
             return res.map { it.toDomain() }
         } catch (ex: Exception) {

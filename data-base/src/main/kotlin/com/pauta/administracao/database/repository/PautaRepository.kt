@@ -8,8 +8,8 @@ import reactor.core.publisher.Mono
 @Repository
 interface PautaRepository: ReactiveCrudRepository<PautaEntity, Long?> {
 
-    fun findByNome(nome: String): Mono<PautaEntity>
+    fun findByPautaNome(nome: String): Mono<PautaEntity>
 
-    fun deleteByNome(nome: String)
+    fun deleteByPautaNome(nome: String)
 
 }
