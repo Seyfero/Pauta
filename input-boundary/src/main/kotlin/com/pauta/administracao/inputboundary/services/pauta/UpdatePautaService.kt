@@ -1,9 +1,10 @@
 package com.pauta.administracao.inputboundary.services.pauta
 
 import com.pauta.administracao.inputboundary.dto.pauta.InputPautaDto
+import reactor.core.publisher.Mono
 
-interface AtualizaPautaService {
+interface UpdatePautaService {
 
-    fun execute(inputPautaDto: InputPautaDto)
+    fun execute(inputPautaDto: InputPautaDto): Mono<InputPautaDto>
 
 }
