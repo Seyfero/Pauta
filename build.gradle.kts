@@ -56,9 +56,6 @@ subprojects {
 	}
 
 	dependencies {
-		// BANCO
-//		implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-
 		// KOTLIN
 		implementation("org.springframework.boot:spring-boot-starter-webflux:${property("springBootVersion")}")
 		implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:${property("reactorExtensions")}")
