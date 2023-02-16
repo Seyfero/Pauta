@@ -6,10 +6,9 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono
 
 @Repository
-interface PautaRepository: ReactiveCrudRepository<PautaEntity, Long?> {
+interface PautaRepository : ReactiveCrudRepository<PautaEntity, Long?> {
 
     fun findByPautaNome(nome: String): Mono<PautaEntity>
 
     fun deleteByPautaNome(nome: String)
-
 }

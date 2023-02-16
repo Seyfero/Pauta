@@ -29,12 +29,12 @@ class PostgreSql(
     fun connectionFactory(): ConnectionFactory {
         return PostgresqlConnectionFactory(
             PostgresqlConnectionConfiguration.builder()
-            .host(host)
-            .port(port.toInt())
-            .database(dataBase)
-            .username(username)
-            .password(password)
-            .build())
+                .host(host)
+                .port(port.toInt())
+                .database(dataBase)
+                .username(username)
+                .password(password)
+                .build()
+        )
     }
-
 }

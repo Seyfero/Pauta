@@ -1,10 +1,11 @@
 package com.pauta.administracao.outputboundary.dto
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class PautaOutputDto(
+    val id: Long?,
     val pautaNome: String,
-    val pautaDataCriacao: LocalDate,
+    val pautaDataCriacao: LocalDateTime,
     val pautaDuracao: Long = 60,
     val pautaVotosTotal: Long? = 0
 )

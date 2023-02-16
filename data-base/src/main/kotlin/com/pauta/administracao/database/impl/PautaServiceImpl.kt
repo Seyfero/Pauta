@@ -1,10 +1,11 @@
 package com.pauta.administracao.database.impl
 
-import com.pauta.administracao.database.converters.toDomain
-import com.pauta.administracao.database.converters.toEntity
-import com.pauta.administracao.domain.Pauta
-import com.pauta.administracao.outputboundary.dto.PautaOutputDto
+import com.pauta.administracao.database.converters.pauta.toDomain
+import com.pauta.administracao.database.converters.pauta.toEntity
 import com.pauta.administracao.database.repository.PautaRepository
+import com.pauta.administracao.domain.PautaDomain
+import com.pauta.administracao.outputboundary.converters.pauta.toDomain
+import com.pauta.administracao.outputboundary.dto.PautaOutputDto
 import com.pauta.administracao.outputboundary.service.PautaService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -16,7 +17,7 @@ class PautaServiceImpl(
 
     private val pautaRepository: PautaRepository
 
-): PautaService {
+) : PautaService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -31,7 +32,7 @@ class PautaServiceImpl(
         }
     }
 
-    override fun update(pauta: PautaOutputDto): Mono<Pauta> {
+    override fun update(pauta: PautaOutputDto): Mono<PautaDomain> {
         try {
             logger.info("pautaRepository.update, status=try")
             pautaRepository.save(pauta.toDomain().toEntity())
@@ -65,7 +66,7 @@ class PautaServiceImpl(
         }
     }
 
-    override fun findById(id: Long): Mono<Pauta> {
+    override fun findById(id: Long): Mono<PautaDomain> {
         try {
             logger.info("pautaRepository.findById, status=try")
             val res = pautaRepository.findById(id)
@@ -77,7 +78,7 @@ class PautaServiceImpl(
         }
     }
 
-    override fun findByName(nome: String): Mono<Pauta> {
+    override fun findByName(nome: String): Mono<PautaDomain> {
         try {
             logger.info("pautaRepository.findByName, status=try")
             val res = pautaRepository.findByPautaNome(nome)
@@ -89,7 +90,7 @@ class PautaServiceImpl(
         }
     }
 
-    override fun findAll(): Flux<Pauta> {
+    override fun findAll(): Flux<PautaDomain> {
         try {
             logger.info("pautaRepository.findAll, status=try")
             val res = pautaRepository.findAll()

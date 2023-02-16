@@ -28,9 +28,8 @@ class OpenApiConfig(
                     .version(version)
             )
             .also {
-                    openApi ->
+                openApi ->
                 openApi.servers = Collections.singletonList(Server().url(proxy))
             }
-
     }
 }

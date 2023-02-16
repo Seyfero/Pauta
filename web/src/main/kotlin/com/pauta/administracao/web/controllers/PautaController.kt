@@ -1,11 +1,11 @@
 package com.pauta.administracao.web.controllers
 
-import com.pauta.administracao.inputboundary.dto.pauta.InputPautaDto
-import com.pauta.administracao.inputboundary.dto.pauta.InputPautasAtivasDto
-import com.pauta.administracao.inputboundary.dto.pauta.InputTodasPautasDto
-import com.pauta.administracao.inputboundary.services.pauta.CreatePautaService
-import com.pauta.administracao.inputboundary.services.pauta.ListPautasAtivasService
-import com.pauta.administracao.inputboundary.services.pauta.ListTodasPautasService
+import com.pauta.administracao.input.dto.pauta.InputPautaDto
+import com.pauta.administracao.input.dto.pauta.InputPautasAtivasDto
+import com.pauta.administracao.input.dto.pauta.InputTodasPautasDto
+import com.pauta.administracao.input.services.pauta.CreatePautaService
+import com.pauta.administracao.input.services.pauta.ListPautasAtivasService
+import com.pauta.administracao.input.services.pauta.ListTodasPautasService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping

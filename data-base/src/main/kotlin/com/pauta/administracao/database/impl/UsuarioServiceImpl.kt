@@ -1,10 +1,12 @@
 package com.pauta.administracao.database.impl
 
-import com.pauta.administracao.database.converters.toDomain
-import com.pauta.administracao.database.converters.toEntity
-import com.pauta.administracao.domain.Usuario
-import com.pauta.administracao.outputboundary.dto.UsuarioOutputDto
+import com.pauta.administracao.database.converters.usuario.toDomain
+import com.pauta.administracao.database.converters.usuario.toEntity
 import com.pauta.administracao.database.repository.UsuarioRepository
+import com.pauta.administracao.domain.UsuarioDomain
+import com.pauta.administracao.outputboundary.converters.pauta.toDomain
+import com.pauta.administracao.outputboundary.converters.usuario.toDomain
+import com.pauta.administracao.outputboundary.dto.UsuarioOutputDto
 import com.pauta.administracao.outputboundary.service.UsuarioService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -16,7 +18,7 @@ class UsuarioServiceImpl(
 
     private val usuarioRepository: UsuarioRepository
 
-): UsuarioService {
+) : UsuarioService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -31,7 +33,7 @@ class UsuarioServiceImpl(
         }
     }
 
-    override fun update(usuario: UsuarioOutputDto): Mono<Usuario> {
+    override fun update(usuario: UsuarioOutputDto): Mono<UsuarioDomain> {
         try {
             logger.info("usuarioRepository.update, status=try")
             val res = usuarioRepository.save(usuario.toDomain().toEntity())
@@ -65,7 +67,7 @@ class UsuarioServiceImpl(
         }
     }
 
-    override fun findById(id: Long): Mono<Usuario> {
+    override fun findById(id: Long): Mono<UsuarioDomain> {
         try {
             logger.info("usuarioRepository.findById, status=try")
             val res = usuarioRepository.findById(id)
@@ -77,7 +79,7 @@ class UsuarioServiceImpl(
         }
     }
 
-    override fun findByName(nome: String): Mono<Usuario> {
+    override fun findByName(nome: String): Mono<UsuarioDomain> {
         try {
             logger.info("usuarioRepository.findByName, status=try")
             val res = usuarioRepository.findByUsuarioNome(nome)
@@ -89,7 +91,7 @@ class UsuarioServiceImpl(
         }
     }
 
-    override fun findByCpf(cpf: String): Mono<Usuario> {
+    override fun findByCpf(cpf: String): Mono<UsuarioDomain> {
         try {
             logger.info("usuarioRepository.findByCpf, status=try")
             val res = usuarioRepository.findByUsuarioCpf(cpf)
@@ -101,7 +103,7 @@ class UsuarioServiceImpl(
         }
     }
 
-    override fun findAll(): Flux<Usuario> {
+    override fun findAll(): Flux<UsuarioDomain> {
         try {
             logger.info("usuarioRepository.    override fun findAll(): List<Usuario> status=try")
             val res = usuarioRepository.findAll()
@@ -112,5 +114,4 @@ class UsuarioServiceImpl(
             throw ex
         }
     }
-
 }
