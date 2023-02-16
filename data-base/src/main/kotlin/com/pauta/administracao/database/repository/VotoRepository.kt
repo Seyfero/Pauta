@@ -11,5 +11,5 @@ interface VotoRepository : ReactiveCrudRepository<VotoEntity, Long?> {
 
     fun findByVotoPauta(idVotoPauta: Long): Flux<VotoEntity>
 
-    fun findByVotoPautaAndVotoUsuario(idVotoPauta: Long, idVotoUsuario: Long): Mono<VotoEntity>
+    fun findByVotoPautaAndVotoUsuario(idVotoPauta: Long?, idVotoUsuario: Long?): Mono<VotoEntity>
 }

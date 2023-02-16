@@ -58,7 +58,7 @@ class VotoServiceImpl(
         }
     }
 
-    override fun findByVotoPautaAndVotoUsuario(idVotoPauta: Long, idVotoUsuario: Long): Mono<VotoDomain> {
+    override fun findByVotoPautaAndVotoUsuario(idVotoPauta: Long?, idVotoUsuario: Long?): Mono<VotoDomain> {
         try {
             logger.info("votoRepository.findByVotoPautaAndVotoUsuario, status=try")
             val res = votoRepository.findByVotoPautaAndVotoUsuario(idVotoPauta, idVotoUsuario)
