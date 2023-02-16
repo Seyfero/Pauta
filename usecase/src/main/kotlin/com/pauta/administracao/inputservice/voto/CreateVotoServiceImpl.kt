@@ -19,7 +19,7 @@ class CreateVotoServiceImpl(
     private val votoService: VotoService,
     private val pautaService: PautaService
 
-): CreateVotoService {
+) : CreateVotoService {
     override fun execute(inputVotoDto: InputVotoDto): Mono<Boolean> {
         return verifyIfCanPersistVoto(inputVotoDto)
             .flatMap { canPersist ->
@@ -48,9 +48,11 @@ class CreateVotoServiceImpl(
     }
 
     private fun isValidPautaByTime(inputVotoDto: InputVotoDto): Mono<Boolean> {
-        return Mono.just(inputVotoDto.inputVotoPauta.let {
-            it.pautaDataCriacao.plusSeconds(it.pautaDuracao).isBefore(LocalDateTime.now())
-        })
+        return Mono.just(
+            inputVotoDto.inputVotoPauta.let {
+                it.pautaDataCriacao.plusSeconds(it.pautaDuracao).isBefore(LocalDateTime.now())
+            }
+        )
     }
 
     private fun verifyUserCanVoteThisPauta(inputVotoDto: InputVotoDto): Mono<Boolean> {
@@ -65,5 +67,4 @@ class CreateVotoServiceImpl(
         return pautaService.findByName(inputVotoDto.inputVotoPauta.pautaNome)
             .hasElement()
     }
-
 }

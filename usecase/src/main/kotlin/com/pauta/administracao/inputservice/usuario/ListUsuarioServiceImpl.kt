@@ -23,5 +23,4 @@ class ListUsuarioServiceImpl(
                 Flux.error(IllegalStateException("Erro ao executar o método execute", throwable))
             }
     }
-
 }

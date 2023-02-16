@@ -27,5 +27,4 @@ class UpdateUsuarioServiceImpl(
                 IllegalStateException("Erro ao executar o método execute", throwable)
             }
     }
-
 }
