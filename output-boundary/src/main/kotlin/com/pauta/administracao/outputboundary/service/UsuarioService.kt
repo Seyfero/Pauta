@@ -11,7 +11,7 @@ interface UsuarioService {
 
     fun update(usuario: UsuarioOutputDto): Mono<UsuarioDomain>
 
-    fun deleteByid(id: Long)
+    fun deleteById(id: Long)
 
     fun deleteByCpf(cpf: String)
 

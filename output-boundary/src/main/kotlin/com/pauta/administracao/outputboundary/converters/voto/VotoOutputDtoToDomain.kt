@@ -7,6 +7,7 @@ import com.pauta.administracao.outputboundary.dto.VotoOutputDto
 
 fun VotoOutputDto.toDomain() = VotoDomain(
     id,
+    votoEscolha,
     votoUsuario.toDomain(),
     votoPauta.toDomain()
 )

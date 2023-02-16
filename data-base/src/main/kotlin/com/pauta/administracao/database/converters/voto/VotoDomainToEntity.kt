@@ -7,6 +7,7 @@ import com.pauta.administracao.domain.VotoDomain
 
 fun VotoDomain.toEntity() = VotoEntity(
     id = null,
+    votoEscolha,
     votoUsuarioDomain.toEntity(),
     votoPautaDomain.toEntity()
 )

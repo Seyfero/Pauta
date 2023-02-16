@@ -45,7 +45,7 @@ class UsuarioServiceImpl(
         }
     }
 
-    override fun deleteByid(id: Long) {
+    override fun deleteById(id: Long) {
         try {
             logger.info("usuarioRepository.deleteByid, status=try")
             usuarioRepository.deleteById(id)
