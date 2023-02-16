@@ -4,10 +4,12 @@ import com.pauta.administracao.input.converters.pauta.toInputAtivos
 import com.pauta.administracao.input.dto.pauta.InputPautasAtivasDto
 import com.pauta.administracao.input.services.pauta.ListPautasAtivasService
 import com.pauta.administracao.outputboundary.service.PautaService
+import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import java.time.LocalDateTime
 
-class ListPautasAtivasImpl(
+@Service
+class ListPautasAtivasServiceImpl(
 
     private val pautaService: PautaService
 

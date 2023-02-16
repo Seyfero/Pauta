@@ -2,9 +2,11 @@ package com.pauta.administracao.input
 
 import com.pauta.administracao.input.services.pauta.DeletePautaService
 import com.pauta.administracao.outputboundary.service.PautaService
+import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 
-class DeletePautaImpl(
+@Service
+class DeletePautaServiceImpl(
 
     private val pautaService: PautaService
 

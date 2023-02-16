@@ -5,9 +5,11 @@ import com.pauta.administracao.input.dto.pauta.InputPautaDto
 import com.pauta.administracao.input.services.pauta.CreatePautaService
 import com.pauta.administracao.outputboundary.converters.pauta.toOutput
 import com.pauta.administracao.outputboundary.service.PautaService
+import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 
-class CreatePautaImpl(
+@Service
+class CreatePautaServiceImpl(
 
     private val pautaService: PautaService
 

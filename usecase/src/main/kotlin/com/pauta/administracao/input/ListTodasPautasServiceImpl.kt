@@ -4,9 +4,11 @@ import com.pauta.administracao.input.converters.pauta.toInputTotal
 import com.pauta.administracao.input.dto.pauta.InputTodasPautasDto
 import com.pauta.administracao.input.services.pauta.ListTodasPautasService
 import com.pauta.administracao.outputboundary.service.PautaService
+import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 
-class ListTodasPautasImpl(
+@Service
+class ListTodasPautasServiceImpl(
 
     private val pautaService: PautaService
 
