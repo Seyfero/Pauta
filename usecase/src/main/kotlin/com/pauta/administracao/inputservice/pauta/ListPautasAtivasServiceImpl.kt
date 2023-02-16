@@ -16,23 +16,14 @@ class ListPautasAtivasServiceImpl(
 ) : ListPautasAtivasService {
 
     override fun execute(): Flux<InputPautasAtivasDto> {
-        return try {
-            pautaService.findAll()
-                .flatMap {
-                    if (isValidPautaByDuration(it.toInputAtivos())) {
-                        Flux.fromIterable(listOf(it.toInputAtivos()))
-                    }
-                    Flux.empty()
-                }
-        } catch (ex: Exception) {
-            Flux.error(Exception("algo"))
-        }
+        return pautaService.findAll()
+            .filter { isValidPautaByDuration(it.toInputAtivos()) }
+            .map { it.toInputAtivos() }
+            .onErrorMap { IllegalStateException("Erro ao executar o método execute", it) }
     }
 
     private fun isValidPautaByDuration(inputPautasAtivasDto: InputPautasAtivasDto): Boolean {
-        if (inputPautasAtivasDto.let { it.pautaDataCriacao.plusSeconds(it.pautaDuracao) }.isBefore(LocalDateTime.now())) {
-            return true
-        }
-        return false
+        return inputPautasAtivasDto.pautaDataCriacao.plusSeconds(inputPautasAtivasDto.pautaDuracao)
+            .isBefore(LocalDateTime.now())
     }
 }

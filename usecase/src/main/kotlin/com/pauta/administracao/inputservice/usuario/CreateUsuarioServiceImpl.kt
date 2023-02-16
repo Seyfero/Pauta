@@ -15,20 +15,22 @@ class CreateUsuarioServiceImpl(
     private val usuarioService: UsuarioService
 
 ) : CreateUsuarioService {
+
     override fun execute(inputUsuarioDto: InputUsuarioDto): Mono<Boolean> {
-        return try {
-            verifyIfExistsUsuario(inputUsuarioDto).map {
-                usuarioService.create(inputUsuarioDto.toDomain().toOutputDto())
-                return@map true
-            }.switchIfEmpty(Mono.error(Exception("Algo")))
-        } catch (ex: Exception) {
-            Mono.error(ex)
-        }
+        return verifyIfExistsUsuario(inputUsuarioDto)
+            .flatMap { usuarioExists ->
+                if (usuarioExists) {
+                    Mono.error(IllegalStateException("O usuário já existe"))
+                } else {
+                    usuarioService.create(inputUsuarioDto.toDomain().toOutputDto())
+                    Mono.just(true)
+                }
+            }
+            .onErrorMap { IllegalStateException("Erro ao executar o método execute", it) }
     }
 
     private fun verifyIfExistsUsuario(inputUsuarioDto: InputUsuarioDto): Mono<Boolean> {
         return usuarioService.findByCpf(inputUsuarioDto.usuarioCpf)
             .hasElement()
-            .switchIfEmpty(Mono.empty())
     }
 }

@@ -15,13 +15,8 @@ class ListTodasPautasServiceImpl(
 ) : ListTodasPautasService {
 
     override fun execute(): Flux<InputTodasPautasDto> {
-        return try {
-            pautaService.findAll()
-                .flatMap {
-                    Flux.fromIterable(listOf(it.toInputTotal()))
-                }
-        } catch (ex: Exception) {
-            Flux.error(Exception("algo"))
-        }
+        return pautaService.findAll()
+            .map { it.toInputTotal() }
+            .onErrorMap { IllegalStateException("Erro ao executar o método execute", it) }
     }
 }

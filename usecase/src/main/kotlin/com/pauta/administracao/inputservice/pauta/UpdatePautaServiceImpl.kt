@@ -17,15 +17,12 @@ class UpdatePautaServiceImpl(
 ) : UpdatePautaService {
 
     override fun execute(inputPautaDto: InputPautaDto): Mono<InputPautaDto> {
-        return try {
-            pautaService.findByName(inputPautaDto.pautaNome)
-                .flatMap {
-                    pautaService.update(inputPautaDto.toDomain().toOutputDto().copy(id = it.id)).map { pauta ->
-                        pauta.toInputDto()
-                    }
-                }
-        } catch (ex: Exception) {
-            Mono.error(ex)
-        }
+        return pautaService.findByName(inputPautaDto.pautaNome)
+            .switchIfEmpty(Mono.error(NoSuchElementException("A pauta não foi encontrada")))
+            .flatMap { existingPauta ->
+                pautaService.update(inputPautaDto.toDomain().toOutputDto().copy(id = existingPauta.id))
+                    .map { updatedPauta -> updatedPauta.toInputDto() }
+            }
+            .onErrorMap { IllegalStateException("Erro ao executar o método execute", it) }
     }
 }

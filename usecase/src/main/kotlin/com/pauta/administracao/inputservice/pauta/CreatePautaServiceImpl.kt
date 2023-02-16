@@ -16,19 +16,19 @@ class CreatePautaServiceImpl(
 ) : CreatePautaService {
 
     override fun execute(inputPautaDto: InputPautaDto): Mono<Boolean> {
-        return try {
-            verifyIfExistsPauta(inputPautaDto).map {
-                pautaService.create(inputPautaDto.toDomain().toOutputDto())
-                return@map true
-            }.switchIfEmpty(Mono.error(Exception("Algo")))
-        } catch (ex: Exception) {
-            Mono.error(ex)
-        }
+        return verifyIfExistsPauta(inputPautaDto)
+            .flatMap { exists ->
+                if (exists) {
+                    Mono.error(IllegalArgumentException("A pauta já existe"))
+                } else {
+                    pautaService.create(inputPautaDto.toDomain().toOutputDto())
+                    Mono.just(true)
+                }
+            }
     }
 
     private fun verifyIfExistsPauta(inputPautaDto: InputPautaDto): Mono<Boolean> {
         return pautaService.findByName(inputPautaDto.pautaNome)
             .hasElement()
-            .switchIfEmpty(Mono.empty())
     }
 }

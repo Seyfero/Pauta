@@ -13,36 +13,36 @@ class DeletePautaServiceImpl(
 ) : DeletePautaService {
 
     override fun execute(inputId: Long): Mono<Boolean> {
-        return try {
-            verifyIfExistsPautaById(inputId).map {
-                pautaService.deleteById(inputId)
-                return@map true
-            }.switchIfEmpty(Mono.error(Exception("Algo")))
-        } catch (ex: Exception) {
-            Mono.error(ex)
-        }
+        return verifyIfExistsPautaById(inputId)
+            .flatMap { exists ->
+                if (exists) {
+                    pautaService.deleteById(inputId)
+                    Mono.just(true)
+                } else {
+                    Mono.error(NoSuchElementException("A pauta não foi encontrada"))
+                }
+            }
     }
 
     override fun execute(inputNome: String): Mono<Boolean> {
-        return try {
-            verifyIfExistsPautaByNome(inputNome).map {
-                pautaService.deleteByName(inputNome)
-                return@map true
-            }.switchIfEmpty(Mono.error(Exception("Algo")))
-        } catch (ex: Exception) {
-            Mono.error(ex)
-        }
+        return verifyIfExistsPautaByNome(inputNome)
+            .flatMap { exists ->
+                if (exists) {
+                    pautaService.deleteByName(inputNome)
+                    Mono.just(true)
+                } else {
+                    Mono.error(NoSuchElementException("A pauta não foi encontrada"))
+                }
+            }
     }
 
-    private fun verifyIfExistsPautaById(inputId: Long): Mono<Boolean> {
-        return pautaService.findById(inputId)
+    private fun verifyIfExistsPautaById(id: Long): Mono<Boolean> {
+        return pautaService.findById(id)
             .hasElement()
-            .switchIfEmpty(Mono.empty())
     }
 
-    private fun verifyIfExistsPautaByNome(inputNome: String): Mono<Boolean> {
-        return pautaService.findByName(inputNome)
+    private fun verifyIfExistsPautaByNome(nome: String): Mono<Boolean> {
+        return pautaService.findByName(nome)
             .hasElement()
-            .switchIfEmpty(Mono.empty())
     }
 }

@@ -15,16 +15,17 @@ class UpdateUsuarioServiceImpl(
     private val usuarioService: UsuarioService
 
 ) : UpdateUsuarioService {
+
     override fun execute(inputUsuarioDto: InputUsuarioDto): Mono<InputUsuarioDto> {
-        return try {
-            usuarioService.findByCpf(inputUsuarioDto.usuarioCpf)
-                .flatMap {
-                    usuarioService.update(inputUsuarioDto.toDomain().toOutputDto().copy(id = it.id)).map { usuario ->
-                        usuario.toIpuntDto()
-                    }
-                }
-        } catch (ex: Exception) {
-            Mono.error(ex)
-        }
+        return usuarioService.findByCpf(inputUsuarioDto.usuarioCpf)
+            .flatMap { usuario ->
+                usuarioService.update(inputUsuarioDto.toDomain().toOutputDto().copy(id = usuario.id))
+                    .map { it.toIpuntDto() }
+            }
+            .switchIfEmpty(Mono.error(NoSuchElementException("Usuário não encontrado")))
+            .onErrorMap { throwable: Throwable ->
+                IllegalStateException("Erro ao executar o método execute", throwable)
+            }
     }
+
 }

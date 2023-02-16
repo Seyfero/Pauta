@@ -13,14 +13,15 @@ class ListUsuarioServiceImpl(
     private val usuarioService: UsuarioService
 
 ) : ListUsuariosService {
+
     override fun execute(): Flux<InputUsuarioDto> {
-        return try {
-            usuarioService.findAll()
-                .flatMap {
-                    Flux.fromIterable(listOf(it.toIpuntDto()))
-                }
-        } catch (ex: Exception) {
-            Flux.error(Exception("algo"))
-        }
+        return usuarioService.findAll()
+            .flatMap {
+                Flux.fromIterable(listOf(it.toIpuntDto()))
+            }
+            .onErrorResume { throwable: Throwable ->
+                Flux.error(IllegalStateException("Erro ao executar o método execute", throwable))
+            }
     }
+
 }

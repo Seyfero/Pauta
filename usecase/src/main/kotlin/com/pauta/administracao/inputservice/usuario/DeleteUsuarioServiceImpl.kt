@@ -11,37 +11,40 @@ class DeleteUsuarioServiceImpl(
     private val usuarioService: UsuarioService
 
 ) : DeleteUsuarioService {
+
     override fun execute(inputUsuarioId: Long): Mono<Boolean> {
-        return try {
-            verifyIfExistsUsuarioById(inputUsuarioId).map {
-                usuarioService.deleteById(inputUsuarioId)
-                return@map true
-            }.switchIfEmpty(Mono.error(Exception("Algo")))
-        } catch (ex: Exception) {
-            Mono.error(ex)
-        }
+        return verifyIfExistsUsuarioById(inputUsuarioId)
+            .flatMap { exists ->
+                if (exists) {
+                    usuarioService.deleteById(inputUsuarioId)
+                    Mono.just(true)
+                } else {
+                    Mono.error(NoSuchElementException("Usuário não encontrado"))
+                }
+            }
+            .onErrorMap { IllegalStateException("Erro ao executar o método execute", it) }
     }
 
     override fun execute(inputUsuarioCpf: String): Mono<Boolean> {
-        return try {
-            verifyIfExistsUsuarioByCpf(inputUsuarioCpf).map {
-                usuarioService.deleteByCpf(inputUsuarioCpf)
-                return@map true
-            }.switchIfEmpty(Mono.error(Exception("Algo")))
-        } catch (ex: Exception) {
-            Mono.error(ex)
-        }
+        return verifyIfExistsUsuarioByCpf(inputUsuarioCpf)
+            .flatMap { exists ->
+                if (exists) {
+                    usuarioService.deleteByCpf(inputUsuarioCpf)
+                    Mono.just(true)
+                } else {
+                    Mono.error(NoSuchElementException("Usuário não encontrado"))
+                }
+            }
+            .onErrorMap { IllegalStateException("Erro ao executar o método execute", it) }
     }
 
     private fun verifyIfExistsUsuarioByCpf(cpf: String): Mono<Boolean> {
         return usuarioService.findByCpf(cpf)
             .hasElement()
-            .switchIfEmpty(Mono.empty())
     }
 
     private fun verifyIfExistsUsuarioById(id: Long): Mono<Boolean> {
         return usuarioService.findById(id)
             .hasElement()
-            .switchIfEmpty(Mono.empty())
     }
 }
