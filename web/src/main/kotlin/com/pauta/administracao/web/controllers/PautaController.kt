@@ -39,6 +39,7 @@ class PautaController(
         description = "EndPoint de alteração da pauta"
     )
     @PutMapping()
+    @ResponseBody
     fun updatePauta(@RequestBody inputPautaDto: InputPautaDto): Mono<InputPautaDto> {
         return updatePautaService.execute(inputPautaDto)
     }
@@ -48,6 +49,7 @@ class PautaController(
         description = "EndPoint de listagem das pautas"
     )
     @GetMapping
+    @ResponseBody
     fun getPautasAtivas(): Flux<InputPautasAtivasDto> {
         return listPautasAtivas.execute()
     }
@@ -57,6 +59,7 @@ class PautaController(
         description = "EndPoint de listagem das pautas"
     )
     @GetMapping(value = ["/all"])
+    @ResponseBody
     fun getTodasPautas(): Flux<InputTodasPautasDto> {
         return listTodasPautasService.execute()
     }

@@ -29,7 +29,6 @@ GRANT ALL ON TABLE controle_pautas.vt_pauta TO postgres;
 
 CREATE TABLE IF NOT EXISTS controle_pautas.vt_usuario (
 	vt_usuario_id int8 NOT NULL,
-	vt_usuario_nome varchar(100) NOT NULL,
 	vt_usuario_cpf varchar(11) NOT NULL,
 	CONSTRAINT vt_usuario_vt_usuario_id_key UNIQUE (vt_usuario_id)
 );
@@ -49,6 +48,7 @@ GRANT ALL ON TABLE controle_pautas.vt_usuario TO postgres;
 
 CREATE TABLE IF NOT EXISTS controle_pautas.vt_voto (
 	vt_voto_id int8 NOT NULL,
+	vt_voto_escolha varchar(3) NOT NULL,
 	vt_usuario_id int8 NOT NULL,
 	vt_pauta_id int8 NOT NULL,
 	CONSTRAINT vt_voto_vt_voto_id_key UNIQUE (vt_voto_id),
