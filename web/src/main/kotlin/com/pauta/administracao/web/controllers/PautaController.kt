@@ -3,16 +3,11 @@ package com.pauta.administracao.web.controllers
 import com.pauta.administracao.inputservice.dto.pauta.InputPautaDto
 import com.pauta.administracao.inputservice.dto.pauta.InputPautasAtivasDto
 import com.pauta.administracao.inputservice.dto.pauta.InputTodasPautasDto
-import com.pauta.administracao.inputservice.services.pauta.CreatePautaService
-import com.pauta.administracao.inputservice.services.pauta.ListPautasAtivasService
-import com.pauta.administracao.inputservice.services.pauta.ListTodasPautasService
+import com.pauta.administracao.inputservice.services.pauta.*
+import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -25,34 +20,62 @@ import reactor.core.publisher.Mono
 class PautaController(
     val listPautasAtivas: ListPautasAtivasService,
     val createPautaService: CreatePautaService,
-    val listTodasPautasService: ListTodasPautasService
+    val listTodasPautasService: ListTodasPautasService,
+    val updatePautaService: UpdatePautaService,
+    val deletePautaService: DeletePautaService
 ) {
 
+    @Operation(
+        summary = "EndPoint de criação da pauta",
+        description = "EndPoint de criação da pauta"
+    )
     @PostMapping()
     fun createPauta(@RequestBody inputPautaDto: InputPautaDto): Mono<Boolean> {
-        try {
-            createPautaService.execute(inputPautaDto)
-            return Mono.just(true)
-        } catch (ex: Exception) {
-            throw ex
-        }
+            return createPautaService.execute(inputPautaDto)
     }
 
+    @Operation(
+        summary = "EndPoint de alteração da pauta",
+        description = "EndPoint de alteração da pauta"
+    )
+    @PutMapping()
+    fun updatePauta(@RequestBody inputPautaDto: InputPautaDto): Mono<InputPautaDto> {
+        return updatePautaService.execute(inputPautaDto)
+    }
+
+    @Operation(
+        summary = "EndPoint de listagem das pautas",
+        description = "EndPoint de listagem das pautas"
+    )
     @GetMapping
     fun getPautasAtivas(): Flux<InputPautasAtivasDto> {
-        try {
-            return listPautasAtivas.execute()
-        } catch (ex: Exception) {
-            throw ex
-        }
+        return listPautasAtivas.execute()
     }
 
+    @Operation(
+        summary = "EndPoint de listagem das pautas",
+        description = "EndPoint de listagem das pautas"
+    )
     @GetMapping(value = ["/all"])
     fun getTodasPautas(): Flux<InputTodasPautasDto> {
-        try {
-            return listTodasPautasService.execute()
-        } catch (ex: Exception) {
-            throw ex
-        }
+        return listTodasPautasService.execute()
+    }
+
+    @Operation(
+        summary = "EndPoint de deleção da pauta por Id",
+        description = "EndPoint de deleção da pauta por Id"
+    )
+    @DeleteMapping(value = ["/id"])
+    fun deletePautaById(@RequestParam id: Long): Mono<Boolean> {
+        return deletePautaService.execute(id)
+    }
+
+    @Operation(
+        summary = "EndPoint de deleção da pauta por Nome",
+        description = "EndPoint de deleção da pauta por Nome"
+    )
+    @DeleteMapping(value = ["/nome"])
+    fun deletePautaByNome(@RequestParam nome: String): Mono<Boolean> {
+        return deletePautaService.execute(nome)
     }
 }
