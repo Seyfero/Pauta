@@ -21,15 +21,21 @@ class VotoServiceImpl(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun create(voto: VotoOutputDto) {
-        try {
-            logger.info("votoRepository.create, status=try")
-            votoRepository.save(voto.toDomain().toEntity())
-            logger.info("votoRepository.create, status=complete")
-        } catch (ex: Exception) {
-            logger.error("votoRepository.create, status=error message:${ex.message}")
-            throw ex
-        }
+    override fun create(voto: VotoOutputDto): Mono<Boolean> {
+        logger.info("votoRepository.create, status=try")
+        return votoRepository.save(voto.toDomain().toEntity())
+            .flatMap {
+                Mono.just(true)
+            }
+            .doOnSuccess {
+                logger.info("votoRepository.create, status=complete")
+            }
+            .onErrorResume {
+                logger.error("votoRepository.create, status=error message:${it.message}")
+                Mono.error(UnsupportedOperationException("Error to create vote!"))
+            }
+
+
     }
 
     override fun delete(id: Long): Mono<Boolean> {
@@ -41,56 +47,72 @@ class VotoServiceImpl(
             }
             .onErrorResume {
                 logger.error("votoRepository.delete, status=error message:${it.message}")
-                Mono.error(IllegalAccessException("Erro ao executar a operação"))
+                Mono.error(IllegalAccessException("Error to delete vote!"))
             }
     }
 
     override fun findAll(): Flux<VotoDomain> {
-        try {
-            logger.info("votoRepository.findAll, status=try")
-            val res = votoRepository.findAll()
-            logger.info("votoRepository.findAll, status=complete")
-            return res.map { it.toDomain() }
-        } catch (ex: Exception) {
-            logger.error("votoRepository.findAll, status=error message:${ex.message}")
-            throw ex
-        }
+        logger.info("votoRepository.findAll, status=try")
+        return votoRepository.findAll()
+            .map {
+                it.toDomain()
+            }
+            .doOnTerminate {
+                logger.info("votoRepository.findAll, status=complete")
+            }
+            .onErrorResume {
+                logger.error("votoRepository.findAll, status=error message:${it.message}")
+                Mono.error(IllegalAccessException("Error to find all votes!"))
+            }
+
     }
 
     override fun findByVotoPauta(idVotoPauta: Long?): Flux<VotoDomain> {
-        try {
-            logger.info("votoRepository.findByVotoPauta, status=try")
-            val res = votoRepository.findByVotoPauta(idVotoPauta)
-            logger.info("votoRepository.findByVotoPauta, status=complete")
-            return res.map { it.toDomain() }
-        } catch (ex: Exception) {
-            logger.error("votoRepository.findByVotoPauta, status=error message:${ex.message}")
-            throw ex
-        }
+        logger.info("votoRepository.findByVotoPauta, status=try")
+        return votoRepository.findByVotoPauta(idVotoPauta)
+            .map {
+                it.toDomain()
+            }
+            .doOnTerminate {
+                logger.info("votoRepository.findByVotoPauta, status=complete")
+            }
+            .onErrorResume {
+                logger.error("votoRepository.findByVotoPauta, status=error message:${it.message}")
+                Mono.error(IllegalAccessException("Error to find vote by pauta!"))
+            }
+
+
+
     }
 
     override fun findByVotoPautaNome(idVotoPauta: Long?): Flux<VotoDomain> {
-        try {
-            logger.info("votoRepository.findByVotoPauta, status=try")
-            val res = votoRepository.findByVotoUsuario(idVotoPauta)
-            logger.info("votoRepository.findByVotoPauta, status=complete")
-            return res.map { it.toDomain() }
-        } catch (ex: Exception) {
-            logger.error("votoRepository.findByVotoPauta, status=error message:${ex.message}")
-            throw ex
-        }
+        logger.info("votoRepository.findByVotoPauta, status=try")
+        return votoRepository.findByVotoUsuario(idVotoPauta)
+            .map {
+                it.toDomain()
+            }
+            .doOnTerminate {
+                logger.info("votoRepository.findByVotoPauta, status=complete")
+            }
+            .onErrorResume {
+                logger.error("votoRepository.findByVotoPautaNome, status=error message:${it.message}")
+                Mono.error(IllegalAccessException("Error to find vote by name's pauta!"))
+            }
     }
 
     override fun findByVotoPautaAndVotoUsuario(idVotoPauta: Long?, idVotoUsuario: Long?): Mono<VotoDomain> {
-        try {
-            logger.info("votoRepository.findByVotoPautaAndVotoUsuario, status=try")
-            val res = votoRepository.findByVotoPautaAndVotoUsuario(idVotoPauta, idVotoUsuario)
-            logger.info("votoRepository.findByVotoPautaAndVotoUsuario, status=complete")
-            return res.map { it.toDomain() }
-        } catch (ex: Exception) {
-            logger.error("votoRepository.findByVotoPautaAndVotoUsuario, status=error message:${ex.message}")
-            throw ex
-        }
+        logger.info("votoRepository.findByVotoPautaAndVotoUsuario, status=try")
+        return votoRepository.findByVotoPautaAndVotoUsuario(idVotoPauta, idVotoUsuario)
+            .map {
+                it.toDomain()
+            }
+            .doOnSuccess {
+                logger.info("votoRepository.findByVotoPautaAndVotoUsuario, status=complete")
+            }
+            .onErrorResume {
+                logger.error("votoRepository.findByVotoPautaAndVotoUsuario, status=error message:${it.message}")
+                Mono.error(IllegalAccessException("Error to find vote by pauta and user!"))
+            }
     }
 
     override fun getCountVotosByPautaId(idVotoPauta: Long?, votoEscolha: String): Mono<Long> {
@@ -101,7 +123,7 @@ class VotoServiceImpl(
             }
             .onErrorResume {
                 logger.error("votoRepository.findByVotoPautaAndVotoUsuario, status=error message:${it.message}")
-                Mono.error(IllegalAccessException("Erro ao executar a operação"))
+                Mono.error(IllegalAccessException("Error to execute find by user and pauta!"))
             }
     }
 }
