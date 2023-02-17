@@ -15,7 +15,7 @@ class DeleteVotoServiceImpl(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun deleteVotoById(idVoto: Long): Mono<Boolean> {
+    override fun execute(idVoto: Long): Mono<Boolean> {
         return verifyIfVotoById(idVoto)
             .flatMap {
                 logger.info("Voto Deletado com sucesso!")
