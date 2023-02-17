@@ -21,84 +21,110 @@ class PautaServiceImpl(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun create(pauta: PautaOutputDto) {
-        try {
-            logger.info("pautaRepository.save, status=try")
-            pautaRepository.save(pauta.toDomain().toEntity())
-            logger.info("pautaRepository.save, status=complete")
-        } catch (ex: Exception) {
-            logger.error("pautaRepository.save, status=error message:${ex.message}")
-            throw ex
-        }
+    override fun create(pauta: PautaOutputDto): Mono<Boolean> {
+        logger.info("pautaRepository.save, status=try")
+        return pautaRepository.save(pauta.toDomain().toEntity())
+            .flatMap { Mono.just(true) }
+            .doOnSuccess {
+                logger.info("pautaRepository.save, status=complete")
+            }
+            .onErrorResume {
+                logger.error("pautaRepository.save, status=error message:${it.message}")
+                Mono.error(UnsupportedOperationException("Error to create pauta!"))
+            }
     }
 
     override fun update(pauta: PautaOutputDto): Mono<PautaDomain> {
-        try {
-            logger.info("pautaRepository.update, status=try")
-            pautaRepository.save(pauta.toDomain().toEntity())
-            logger.info("pautaRepository.update, status=complete")
-            return Mono.just(pauta.toDomain())
-        } catch (ex: Exception) {
-            logger.error("pautaRepository.update, status=error message:${ex.message}")
-            throw ex
-        }
+        logger.info("pautaRepository.update, status=try")
+        return pautaRepository.save(pauta.toDomain().toEntity())
+            .map {
+                it.toDomain()
+            }
+            .doOnSuccess {
+                logger.info("pautaRepository.update, status=complete")
+            }
+            .onErrorResume {
+                logger.error("pautaRepository.update, status=error message:${it.message}")
+                Mono.error(UnsupportedOperationException("Error to update update!"))
+            }
     }
 
-    override fun deleteById(id: Long) {
-        try {
-            logger.info("pautaRepository.deleteById, status=try")
-            pautaRepository.deleteById(id)
-            logger.info("pautaRepository.deleteById, status=complete")
-        } catch (ex: Exception) {
-            logger.error("pautaRepository.deleteById, status=error message:${ex.message}")
-            throw ex
-        }
+    override fun deleteById(id: Long): Mono<Boolean> {
+        logger.info("pautaRepository.deleteById, status=try")
+        return pautaRepository.deleteById(id)
+            .flatMap {
+                Mono.just(true)
+            }
+            .doOnSuccess {
+                logger.info("pautaRepository.deleteById, status=complete")
+            }
+            .onErrorResume {
+                logger.error("pautaRepository.update, status=error message:${it.message}")
+                Mono.error(UnsupportedOperationException("Error to delete!"))
+            }
+
     }
 
-    override fun deleteByName(nome: String) {
-        try {
-            logger.info("pautaRepository.deleteByName, status=try")
-            pautaRepository.deleteByPautaNome(nome)
-            logger.info("pautaRepository.deleteByName, status=complete")
-        } catch (ex: Exception) {
-            logger.error("pautaRepository.deleteByName, status=error message:${ex.message}")
-            throw ex
-        }
+    override fun deleteByName(nome: String): Mono<Boolean> {
+        logger.info("pautaRepository.deleteByName, status=try")
+        return pautaRepository.deleteByPautaNome(nome)
+            .flatMap {
+                Mono.just(true)
+            }
+            .doOnSuccess {
+                logger.info("pautaRepository.deleteByName, status=complete")
+            }
+            .onErrorResume {
+                logger.error("pautaRepository.deleteByName, status=error message:${it.message}")
+                Mono.error(UnsupportedOperationException("Error to delete!"))
+            }
+
     }
 
     override fun findById(id: Long): Mono<PautaDomain> {
-        try {
-            logger.info("pautaRepository.findById, status=try")
-            val res = pautaRepository.findById(id)
-            logger.info("pautaRepository.findById, status=complete")
-            return res.map { it.toDomain() }
-        } catch (ex: Exception) {
-            logger.error("pautaRepository.findById, status=error message:${ex.message}")
-            throw ex
-        }
+        logger.info("pautaRepository.findById, status=try")
+        return pautaRepository.findById(id)
+            .map {
+                it.toDomain()
+            }
+            .doOnSuccess {
+                logger.info("pautaRepository.findById, status=complete")
+            }
+            .onErrorResume {
+                logger.error("pautaRepository.findById, status=error message:${it.message}")
+                Mono.error(UnsupportedOperationException("Error to search!"))
+            }
     }
 
     override fun findByName(nome: String): Mono<PautaDomain> {
-        try {
-            logger.info("pautaRepository.findByName, status=try")
-            val res = pautaRepository.findByPautaNome(nome)
-            logger.info("pautaRepository.findByName, status=complete")
-            return res.map { it.toDomain() }
-        } catch (ex: Exception) {
-            logger.error("pautaRepository.findByName, status=error message:${ex.message}")
-            throw ex
-        }
+        logger.info("pautaRepository.findByName, status=try")
+        return pautaRepository.findByPautaNome(nome)
+            .map {
+                it.toDomain()
+            }
+            .doOnSuccess {
+                logger.info("pautaRepository.findByName, status=complete")
+            }
+            .onErrorResume {
+                logger.error("pautaRepository.findByName, status=error message:${it.message}")
+                Mono.error(UnsupportedOperationException("Error to search!"))
+            }
+
+
     }
 
     override fun findAll(): Flux<PautaDomain> {
-        try {
-            logger.info("pautaRepository.findAll, status=try")
-            val res = pautaRepository.findAll()
-            logger.info("pautaRepository.findAll, status=complete")
-            return res.map { it.toDomain() }
-        } catch (ex: Exception) {
-            logger.error("pautaRepository.findAll, status=error message:${ex.message}")
-            throw ex
-        }
+        logger.info("pautaRepository.findAll, status=try")
+        return pautaRepository.findAll()
+            .map {
+                it.toDomain()
+            }
+            .doOnTerminate {
+                logger.info("pautaRepository.findAll, status=complete")
+            }
+            .onErrorResume {
+                logger.error("pautaRepository.findAll, status=error message:${it.message}")
+                Mono.error(UnsupportedOperationException("Error to search!"))
+            }
     }
 }

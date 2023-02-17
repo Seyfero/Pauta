@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono
 @Repository
 interface UsuarioRepository : ReactiveCrudRepository<UsuarioEntity, Long?> {
 
-    fun deleteByUsuarioCpf(cpf: String)
+    fun deleteByUsuarioCpf(cpf: String): Mono<Boolean>
 
     fun findByUsuarioCpf(cpf: String): Mono<UsuarioEntity>
 }

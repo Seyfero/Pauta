@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono
 
 interface VotoService {
 
-    fun create(voto: VotoOutputDto)
+    fun create(voto: VotoOutputDto): Mono<Boolean>
 
     fun delete(id: Long): Mono<Boolean>
 

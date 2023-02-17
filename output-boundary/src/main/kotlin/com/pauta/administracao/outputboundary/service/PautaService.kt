@@ -7,13 +7,13 @@ import reactor.core.publisher.Mono
 
 interface PautaService {
 
-    fun create(pauta: PautaOutputDto)
+    fun create(pauta: PautaOutputDto): Mono<Boolean>
 
     fun update(pauta: PautaOutputDto): Mono<PautaDomain>
 
-    fun deleteById(id: Long)
+    fun deleteById(id: Long): Mono<Boolean>
 
-    fun deleteByName(nome: String)
+    fun deleteByName(nome: String): Mono<Boolean>
 
     fun findById(id: Long): Mono<PautaDomain>
 

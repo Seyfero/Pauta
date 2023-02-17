@@ -7,13 +7,13 @@ import reactor.core.publisher.Mono
 
 interface UsuarioService {
 
-    fun create(usuario: UsuarioOutputDto)
+    fun create(usuario: UsuarioOutputDto): Mono<Boolean>
 
     fun update(usuario: UsuarioOutputDto): Mono<UsuarioDomain>
 
-    fun deleteById(id: Long)
+    fun deleteById(id: Long): Mono<Boolean>
 
-    fun deleteByCpf(cpf: String)
+    fun deleteByCpf(cpf: String): Mono<Boolean>
 
     fun findById(id: Long): Mono<UsuarioDomain>
 

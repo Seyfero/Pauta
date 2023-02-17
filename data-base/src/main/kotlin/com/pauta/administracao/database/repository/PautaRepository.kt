@@ -10,5 +10,5 @@ interface PautaRepository : ReactiveCrudRepository<PautaEntity, Long?> {
 
     fun findByPautaNome(nome: String): Mono<PautaEntity>
 
-    fun deleteByPautaNome(nome: String)
+    fun deleteByPautaNome(nome: String): Mono<Boolean>
 }
