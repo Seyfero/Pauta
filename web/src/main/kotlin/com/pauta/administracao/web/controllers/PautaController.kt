@@ -3,11 +3,23 @@ package com.pauta.administracao.web.controllers
 import com.pauta.administracao.inputservice.dto.pauta.InputPautaDto
 import com.pauta.administracao.inputservice.dto.pauta.InputPautasAtivasDto
 import com.pauta.administracao.inputservice.dto.pauta.InputTodasPautasDto
-import com.pauta.administracao.inputservice.services.pauta.*
+import com.pauta.administracao.inputservice.services.pauta.CreatePautaService
+import com.pauta.administracao.inputservice.services.pauta.DeletePautaService
+import com.pauta.administracao.inputservice.services.pauta.ListPautasAtivasService
+import com.pauta.administracao.inputservice.services.pauta.ListTodasPautasService
+import com.pauta.administracao.inputservice.services.pauta.UpdatePautaService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -31,7 +43,7 @@ class PautaController(
     )
     @PostMapping()
     fun createPauta(@RequestBody inputPautaDto: InputPautaDto): Mono<Boolean> {
-            return createPautaService.execute(inputPautaDto)
+        return createPautaService.execute(inputPautaDto)
     }
 
     @Operation(

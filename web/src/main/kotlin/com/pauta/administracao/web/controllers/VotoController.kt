@@ -1,11 +1,21 @@
 package com.pauta.administracao.web.controllers
 
 import com.pauta.administracao.inputservice.dto.voto.InputVotoDto
-import com.pauta.administracao.inputservice.services.voto.*
+import com.pauta.administracao.inputservice.services.voto.CreateVotoService
+import com.pauta.administracao.inputservice.services.voto.DeleteVotoService
+import com.pauta.administracao.inputservice.services.voto.ListVotoByEscolhaService
+import com.pauta.administracao.inputservice.services.voto.ListVotoByPautaService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -61,5 +71,4 @@ class VotoController(
     fun deleteVotoById(@RequestParam id: Long): Mono<Boolean> {
         return deleteVotoService.execute(id)
     }
-    
 }

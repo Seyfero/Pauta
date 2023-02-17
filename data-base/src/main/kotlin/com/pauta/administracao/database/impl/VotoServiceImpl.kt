@@ -34,8 +34,6 @@ class VotoServiceImpl(
                 logger.error("votoRepository.create, status=error message:${it.message}")
                 Mono.error(UnsupportedOperationException("Error to create vote!"))
             }
-
-
     }
 
     override fun delete(id: Long): Mono<Boolean> {
@@ -64,7 +62,6 @@ class VotoServiceImpl(
                 logger.error("votoRepository.findAll, status=error message:${it.message}")
                 Mono.error(IllegalAccessException("Error to find all votes!"))
             }
-
     }
 
     override fun findByVotoPauta(idVotoPauta: Long?): Flux<VotoDomain> {
@@ -80,9 +77,6 @@ class VotoServiceImpl(
                 logger.error("votoRepository.findByVotoPauta, status=error message:${it.message}")
                 Mono.error(IllegalAccessException("Error to find vote by pauta!"))
             }
-
-
-
     }
 
     override fun findByVotoPautaNome(idVotoPauta: Long?): Flux<VotoDomain> {

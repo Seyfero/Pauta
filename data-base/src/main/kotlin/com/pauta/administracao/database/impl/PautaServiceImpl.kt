@@ -62,7 +62,6 @@ class PautaServiceImpl(
                 logger.error("pautaRepository.update, status=error message:${it.message}")
                 Mono.error(UnsupportedOperationException("Error to delete!"))
             }
-
     }
 
     override fun deleteByName(nome: String): Mono<Boolean> {
@@ -78,7 +77,6 @@ class PautaServiceImpl(
                 logger.error("pautaRepository.deleteByName, status=error message:${it.message}")
                 Mono.error(UnsupportedOperationException("Error to delete!"))
             }
-
     }
 
     override fun findById(id: Long): Mono<PautaDomain> {
@@ -109,8 +107,6 @@ class PautaServiceImpl(
                 logger.error("pautaRepository.findByName, status=error message:${it.message}")
                 Mono.error(UnsupportedOperationException("Error to search!"))
             }
-
-
     }
 
     override fun findAll(): Flux<PautaDomain> {

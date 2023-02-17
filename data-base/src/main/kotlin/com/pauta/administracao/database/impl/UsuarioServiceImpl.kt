@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.onErrorResume
 
 @Service
 class UsuarioServiceImpl(
@@ -22,84 +23,108 @@ class UsuarioServiceImpl(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun create(usuario: UsuarioOutputDto) {
-        try {
-            logger.info("usuarioRepository.create, status=try")
-            usuarioRepository.save(usuario.toDomain().toEntity())
-            logger.info("usuarioRepository.create, status=complete")
-        } catch (ex: Exception) {
-            logger.error("usuarioRepository.create, status=error message:${ex.message}")
-            throw ex
-        }
+    override fun create(usuario: UsuarioOutputDto): Mono<Boolean> {
+        logger.info("usuarioRepository.create, status=try")
+        return usuarioRepository.save(usuario.toDomain().toEntity())
+            .flatMap {
+                Mono.just(true)
+            }
+            .doOnSuccess {
+                logger.info("usuarioRepository.create, status=complete")
+            }
+            .onErrorResume {
+                logger.error("usuarioRepository.create, status=error message:${it.message}")
+                Mono.error(UnsupportedOperationException("Error to create user!"))
+            }
     }
 
     override fun update(usuario: UsuarioOutputDto): Mono<UsuarioDomain> {
-        try {
-            logger.info("usuarioRepository.update, status=try")
-            val res = usuarioRepository.save(usuario.toDomain().toEntity())
-            logger.info("usuarioRepository.update, status=complete")
-            return res.map { it.toDomain() }
-        } catch (ex: Exception) {
-            logger.error("usuarioRepository.update, status=error message:${ex.message}")
-            throw ex
-        }
+        logger.info("usuarioRepository.update, status=try")
+        return usuarioRepository.save(usuario.toDomain().toEntity())
+            .map {
+                it.toDomain()
+            }
+            .doOnSuccess {
+                logger.info("usuarioRepository.update, status=complete")
+            }
+            .onErrorResume {
+                logger.error("usuarioRepository.update, status=error message:${it.message}")
+                Mono.error(UnsupportedOperationException("Error to update user!"))
+            }
     }
 
-    override fun deleteById(id: Long) {
-        try {
-            logger.info("usuarioRepository.deleteByid, status=try")
-            usuarioRepository.deleteById(id)
-            logger.info("usuarioRepository.deleteByid, status=complete")
-        } catch (ex: Exception) {
-            logger.error("usuarioRepository.deleteByid, status=error message:${ex.message}")
-            throw ex
-        }
+    override fun deleteById(id: Long): Mono<Boolean> {
+        logger.info("usuarioRepository.deleteByid, status=try")
+        return usuarioRepository.deleteById(id)
+            .flatMap {
+                Mono.just(true)
+            }
+            .doOnSuccess {
+                logger.info("usuarioRepository.deleteByid, status=complete")
+            }
+            .onErrorResume {
+                logger.error("usuarioRepository.deleteByid, status=error message:${it.message}")
+                Mono.error(UnsupportedOperationException("Error to delete vote by Id!"))
+            }
     }
 
-    override fun deleteByCpf(cpf: String) {
-        try {
-            logger.info("usuarioRepository.deleteByCpf, status=try")
-            usuarioRepository.deleteByUsuarioCpf(cpf)
-            logger.info("usuarioRepository.deleteByCpf, status=complete")
-        } catch (ex: Exception) {
-            logger.error("usuarioRepository.deleteByCpf, status=error message:${ex.message}")
-            throw ex
-        }
+    override fun deleteByCpf(cpf: String): Mono<Boolean> {
+        logger.info("usuarioRepository.deleteByCpf, status=try")
+        return usuarioRepository.deleteByUsuarioCpf(cpf)
+            .flatMap {
+                Mono.just(true)
+            }
+            .doOnSuccess {
+                logger.info("usuarioRepository.deleteByCpf, status=complete")
+            }
+            .onErrorResume {
+                logger.error("usuarioRepository.deleteByCpf, status=error message:${it.message}")
+                Mono.error(UnsupportedOperationException("Error to delete user by Cpf !"))
+            }
     }
 
     override fun findById(id: Long): Mono<UsuarioDomain> {
-        try {
-            logger.info("usuarioRepository.findById, status=try")
-            val res = usuarioRepository.findById(id)
-            logger.info("usuarioRepository.findById, status=complete")
-            return res.map { it.toDomain() }
-        } catch (ex: Exception) {
-            logger.error("usuarioRepository.findById, status=error message:${ex.message}")
-            throw ex
-        }
+        logger.info("usuarioRepository.findById, status=try")
+        return usuarioRepository.findById(id)
+            .map {
+                it.toDomain()
+            }
+            .doOnSuccess {
+                logger.info("usuarioRepository.findById, status=complete")
+            }
+            .onErrorResume {
+                logger.error("usuarioRepository.findById, status=error message:${it.message}")
+                Mono.error(UnsupportedOperationException("Error to find user by Id!"))
+            }
     }
 
     override fun findByCpf(cpf: String): Mono<UsuarioDomain> {
-        try {
-            logger.info("usuarioRepository.findByCpf, status=try")
-            val res = usuarioRepository.findByUsuarioCpf(cpf)
-            logger.info("usuarioRepository.findByCpf, status=complete")
-            return res.map { it.toDomain() }
-        } catch (ex: Exception) {
-            logger.error("usuarioRepository.findByCpf, status=error message:${ex.message}")
-            throw ex
-        }
+        logger.info("usuarioRepository.findByCpf, status=try")
+        return usuarioRepository.findByUsuarioCpf(cpf)
+            .map {
+                it.toDomain()
+            }
+            .doOnSuccess {
+                logger.info("usuarioRepository.findByCpf, status=complete")
+            }
+            .onErrorResume {
+                logger.error("usuarioRepository.findByCpf, status=error message:${it.message}")
+                Mono.error(UnsupportedOperationException("Error to find user by Cpf!"))
+            }
     }
 
     override fun findAll(): Flux<UsuarioDomain> {
-        try {
-            logger.info("usuarioRepository.    override fun findAll(): List<Usuario> status=try")
-            val res = usuarioRepository.findAll()
-            logger.info("usuarioRepository.    override fun findAll(): List<Usuario> status=complete")
-            return res.map { it.toDomain() }
-        } catch (ex: Exception) {
-            logger.error("usuarioRepository.s    override fun findAll(): List<Usuario> status=error message:${ex.message}")
-            throw ex
-        }
+        logger.info("usuarioRepository.    override fun findAll(): List<Usuario> status=try")
+        return usuarioRepository.findAll()
+            .map {
+                it.toDomain()
+            }
+            .doOnTerminate {
+                logger.info("usuarioRepository.    override fun findAll(): List<Usuario> status=complete")
+            }
+            .onErrorResume {
+                logger.error("usuarioRepository.s    override fun findAll(): List<Usuario> status=error message:${it.message}")
+                Mono.error(UnsupportedOperationException("Error to find all users!"))
+            }
     }
 }
