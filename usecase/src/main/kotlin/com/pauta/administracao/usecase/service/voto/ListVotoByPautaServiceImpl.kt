@@ -7,9 +7,11 @@ import com.pauta.administracao.inputservice.dto.voto.InputVotoDto
 import com.pauta.administracao.inputservice.services.voto.ListVotoByPautaService
 import com.pauta.administracao.outputboundary.service.PautaService
 import com.pauta.administracao.outputboundary.service.VotoService
+import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
+@Service
 class ListVotoByPautaServiceImpl(
 
     private val votoService: VotoService,

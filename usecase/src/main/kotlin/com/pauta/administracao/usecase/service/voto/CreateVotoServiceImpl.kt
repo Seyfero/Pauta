@@ -6,11 +6,13 @@ import com.pauta.administracao.inputservice.services.voto.CreateVotoService
 import com.pauta.administracao.outputboundary.converters.voto.toOutputDto
 import com.pauta.administracao.outputboundary.service.PautaService
 import com.pauta.administracao.outputboundary.service.VotoService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.util.function.component1
 import reactor.kotlin.core.util.function.component2
 import reactor.kotlin.core.util.function.component3
+import reactor.kotlin.core.util.function.component4
 import java.time.LocalDateTime
 
 @Service
@@ -20,6 +22,9 @@ class CreateVotoServiceImpl(
     private val pautaService: PautaService
 
 ) : CreateVotoService {
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     override fun execute(inputVotoDto: InputVotoDto): Mono<Boolean> {
         return verifyIfCanPersistVoto(inputVotoDto)
             .flatMap { canPersist ->
@@ -39,11 +44,12 @@ class CreateVotoServiceImpl(
         return Mono.zip(
             isValidPautaByTime(inputVotoDto),
             verifyUserCanVoteThisPauta(inputVotoDto),
-            verifyIfExistsPauta(inputVotoDto)
+            verifyIfExistsPauta(inputVotoDto),
+            validateVotoValute(inputVotoDto)
         )
             .map { tupla ->
-                val (fun1, fun2, fun3) = tupla
-                fun1 && fun2 && fun3
+                val (fun1, fun2, fun3, fun4) = tupla
+                fun1 && fun2 && fun3 && fun4
             }
     }
 
@@ -66,5 +72,17 @@ class CreateVotoServiceImpl(
     private fun verifyIfExistsPauta(inputVotoDto: InputVotoDto): Mono<Boolean> {
         return pautaService.findByName(inputVotoDto.inputVotoPauta.pautaNome)
             .hasElement()
+    }
+
+    private fun validateVotoValute(inputVotoDto: InputVotoDto): Mono<Boolean> {
+        val regex = Regex("^(sim|n[aã]o)$")
+        return if (regex.matches(inputVotoDto.votoEscolha)) {
+            Mono.just(true)
+        } else {
+            Mono.error(IllegalArgumentException("valor do voto inválido"))
+        }
+            .doOnError {
+                logger.error("Erro ao validar voto message = ${it.message}")
+            }
     }
 }

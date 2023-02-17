@@ -1,3 +1,7 @@
 package com.pauta.administracao.inputservice.services.voto
 
-interface DeleteVotoService
+import reactor.core.publisher.Mono
+
+interface DeleteVotoService {
+    fun deleteVotoById(idVoto: Long): Mono<Boolean>
+}
