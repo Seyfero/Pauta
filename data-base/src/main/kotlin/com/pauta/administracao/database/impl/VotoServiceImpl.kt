@@ -58,6 +58,18 @@ class VotoServiceImpl(
         }
     }
 
+    override fun findByVotoPautaNome(idVotoPauta: Long): Flux<VotoDomain> {
+        try {
+            logger.info("votoRepository.findByVotoPauta, status=try")
+            val res = votoRepository.findByVotoUsuario(idVotoPauta)
+            logger.info("votoRepository.findByVotoPauta, status=complete")
+            return res.map { it.toDomain() }
+        } catch (ex: Exception) {
+            logger.error("votoRepository.findByVotoPauta, status=error message:${ex.message}")
+            throw ex
+        }
+    }
+
     override fun findByVotoPautaAndVotoUsuario(idVotoPauta: Long?, idVotoUsuario: Long?): Mono<VotoDomain> {
         try {
             logger.info("votoRepository.findByVotoPautaAndVotoUsuario, status=try")
