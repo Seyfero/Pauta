@@ -5,6 +5,5 @@ import com.pauta.administracao.inputservice.dto.usuario.InputUsuarioDto
 
 fun UsuarioDomain.toIpuntDto() = InputUsuarioDto(
     id,
-    usuarioCpf,
-    usuarioNome
+    usuarioCpf
 )

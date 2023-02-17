@@ -5,6 +5,5 @@ import com.pauta.administracao.domain.UsuarioDomain
 
 fun UsuarioEntity.toDomain() = UsuarioDomain(
     id,
-    usuarioNome,
     usuarioCpf
 )

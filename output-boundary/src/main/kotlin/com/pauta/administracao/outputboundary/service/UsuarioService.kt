@@ -17,8 +17,6 @@ interface UsuarioService {
 
     fun findById(id: Long): Mono<UsuarioDomain>
 
-    fun findByName(nome: String): Mono<UsuarioDomain>
-
     fun findByCpf(cpf: String): Mono<UsuarioDomain>
 
     fun findAll(): Flux<UsuarioDomain>

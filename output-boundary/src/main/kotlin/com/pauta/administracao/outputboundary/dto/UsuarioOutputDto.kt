@@ -2,6 +2,5 @@ package com.pauta.administracao.outputboundary.dto
 
 data class UsuarioOutputDto(
     val id: Long?,
-    val usuarioCpf: String,
-    val usuarioNome: String
+    val usuarioCpf: String
 )

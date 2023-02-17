@@ -79,18 +79,6 @@ class UsuarioServiceImpl(
         }
     }
 
-    override fun findByName(nome: String): Mono<UsuarioDomain> {
-        try {
-            logger.info("usuarioRepository.findByName, status=try")
-            val res = usuarioRepository.findByUsuarioNome(nome)
-            logger.info("usuarioRepository.findByName, status=complete")
-            return res.map { it.toDomain() }
-        } catch (ex: Exception) {
-            logger.error("usuarioRepository.findByName, status=error message:${ex.message}")
-            throw ex
-        }
-    }
-
     override fun findByCpf(cpf: String): Mono<UsuarioDomain> {
         try {
             logger.info("usuarioRepository.findByCpf, status=try")

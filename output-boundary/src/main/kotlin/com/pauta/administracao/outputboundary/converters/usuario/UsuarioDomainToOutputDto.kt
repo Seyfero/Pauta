@@ -5,6 +5,5 @@ import com.pauta.administracao.outputboundary.dto.UsuarioOutputDto
 
 fun UsuarioDomain.toOutputDto() = UsuarioOutputDto(
     id,
-    usuarioNome,
     usuarioCpf
 )
