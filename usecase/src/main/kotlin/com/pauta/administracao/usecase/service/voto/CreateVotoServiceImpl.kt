@@ -1,4 +1,4 @@
-package com.pauta.administracao.inputservice.voto
+package com.pauta.administracao.usecase.service.voto
 
 import com.pauta.administracao.inputservice.converters.voto.toDomain
 import com.pauta.administracao.inputservice.dto.voto.InputVotoDto

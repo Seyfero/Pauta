@@ -1,4 +1,4 @@
-package com.pauta.administracao.inputservice.usuario
+package com.pauta.administracao.usecase.service.usuario
 
 import com.pauta.administracao.inputservice.services.usuario.DeleteUsuarioService
 import com.pauta.administracao.outputboundary.service.UsuarioService

@@ -1,4 +1,4 @@
-package com.pauta.administracao.inputservice.usuario
+package com.pauta.administracao.usecase.service.usuario
 
 import com.pauta.administracao.inputservice.converters.usuario.toDomain
 import com.pauta.administracao.inputservice.converters.usuario.toIpuntDto

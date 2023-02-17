@@ -1,4 +1,4 @@
-package com.pauta.administracao.inputservice.pauta
+package com.pauta.administracao.usecase.service.pauta
 
 import com.pauta.administracao.inputservice.services.pauta.DeletePautaService
 import com.pauta.administracao.outputboundary.service.PautaService
