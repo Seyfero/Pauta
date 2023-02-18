@@ -1,5 +1,6 @@
 package com.pauta.administracao.usecase.service.voto
 
+import com.pauta.administracao.domain.exception.ExpiredPautaException
 import com.pauta.administracao.inputservice.converters.voto.toDomain
 import com.pauta.administracao.inputservice.dto.voto.InputVotoDto
 import com.pauta.administracao.inputservice.services.voto.CreateVotoService
@@ -30,13 +31,15 @@ class CreateVotoServiceImpl(
             .flatMap { canPersist ->
                 if (canPersist) {
                     votoService.create(inputVotoDto.toDomain().toOutputDto())
+                    logger.info("Vote created with success!")
                     Mono.just(true)
                 } else {
-                    Mono.error(IllegalStateException("Não é possível persistir o voto."))
+                    Mono.error(IllegalStateException("Error to persist vote!"))
                 }
             }
             .onErrorResume { throwable: Throwable ->
-                Mono.error(IllegalStateException("Erro ao executar o método execute", throwable))
+                logger.error("Error to validate vote!")
+                Mono.error(IllegalStateException("Error to validate vote!", throwable))
             }
     }
 
@@ -54,11 +57,18 @@ class CreateVotoServiceImpl(
     }
 
     private fun isValidPautaByTime(inputVotoDto: InputVotoDto): Mono<Boolean> {
-        return Mono.just(
-            inputVotoDto.inputVotoPauta.let {
-                it.pautaDataCriacao.plusSeconds(it.pautaDuracao).isBefore(LocalDateTime.now())
+        return inputVotoDto.inputVotoPauta.let {
+            if(it.pautaDataCriacao.plusSeconds(it.pautaDuracao).isBefore(LocalDateTime.now())) {
+                logger.info("This order is valid!")
+                Mono.just(true)
+            } else {
+                Mono.error(ExpiredPautaException("Order expired!"))
             }
-        )
+                .doOnError {
+                    logger.error("This order expired!")
+                }
+        }
+
     }
 
     private fun verifyUserCanVoteThisPauta(inputVotoDto: InputVotoDto): Mono<Boolean> {
@@ -79,10 +89,10 @@ class CreateVotoServiceImpl(
         return if (regex.matches(inputVotoDto.votoEscolha)) {
             Mono.just(true)
         } else {
-            Mono.error(IllegalArgumentException("valor do voto inválido"))
+            Mono.error(IllegalArgumentException("The value of vote is invalid!"))
         }
             .doOnError {
-                logger.error("Erro ao validar voto message = ${it.message}")
+                logger.error("Error to validate vote message = ${it.message}")
             }
     }
 }

@@ -2,6 +2,7 @@ package com.pauta.administracao.usecase.service.pauta
 
 import com.pauta.administracao.inputservice.services.pauta.DeletePautaService
 import com.pauta.administracao.outputboundary.service.PautaService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 
@@ -12,14 +13,18 @@ class DeletePautaServiceImpl(
 
 ) : DeletePautaService {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     override fun execute(inputId: Long): Mono<Boolean> {
         return verifyIfExistsPautaById(inputId)
             .flatMap { exists ->
                 if (exists) {
                     pautaService.deleteById(inputId)
+                    logger.info("Order deleted with success!")
                     Mono.just(true)
                 } else {
-                    Mono.error(NoSuchElementException("A pauta não foi encontrada"))
+                    logger.error("Order exists!")
+                    Mono.error(NoSuchElementException("This order was found!"))
                 }
             }
     }
@@ -29,9 +34,11 @@ class DeletePautaServiceImpl(
             .flatMap { exists ->
                 if (exists) {
                     pautaService.deleteByName(inputNome)
+                    logger.info("Order deleted with success!")
                     Mono.just(true)
                 } else {
-                    Mono.error(NoSuchElementException("A pauta não foi encontrada"))
+                    logger.error("Order exists!")
+                    Mono.error(NoSuchElementException("Order not found!"))
                 }
             }
     }

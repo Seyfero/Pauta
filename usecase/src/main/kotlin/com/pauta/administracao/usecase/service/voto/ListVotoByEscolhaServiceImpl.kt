@@ -18,11 +18,11 @@ class ListVotoByEscolhaServiceImpl(
     override fun execute(idVoto: Long, votoEscolha: String): Mono<Long> {
         return votoService.getCountVotosByPautaId(idVoto, votoEscolha)
             .doOnSuccess {
-                logger.info("Busca completa de votos")
+                logger.info("Success to get count of votes!")
             }
             .onErrorResume {
-                logger.error("Error ao deletar o voto message = ${it.message}")
-                Mono.error(IllegalAccessException("Erro ao executa a operação de Delete"))
+                logger.error("Error to count votes message = ${it.message}")
+                Mono.error(IllegalAccessException("Error to count votes!"))
             }
     }
 }

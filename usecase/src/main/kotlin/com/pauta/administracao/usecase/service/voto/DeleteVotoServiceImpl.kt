@@ -18,12 +18,12 @@ class DeleteVotoServiceImpl(
     override fun execute(idVoto: Long): Mono<Boolean> {
         return verifyIfVotoById(idVoto)
             .flatMap {
-                logger.info("Voto Deletado com sucesso!")
+                logger.info("Vote deleted with success!")
                 votoService.delete(idVoto)
             }
             .onErrorResume {
-                logger.error("Error ao deletar o voto message = ${it.message}")
-                Mono.error(IllegalAccessException("Erro ao executa a operação de Delete"))
+                logger.error("Error to delete vote message = ${it.message}")
+                Mono.error(IllegalAccessException("Error te delete vote!"))
             }
     }
 

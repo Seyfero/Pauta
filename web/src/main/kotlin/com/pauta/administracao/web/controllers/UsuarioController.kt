@@ -7,6 +7,7 @@ import com.pauta.administracao.inputservice.services.usuario.ListUsuariosService
 import com.pauta.administracao.inputservice.services.usuario.UpdateUsuarioService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -33,12 +34,15 @@ class UsuarioController(
     private val updateUsuarioService: UpdateUsuarioService
 ) {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     @Operation(
         summary = "EndPoint de criação da usuario",
         description = "EndPoint de criação da usuario"
     )
     @PostMapping()
     fun createUsuario(@RequestBody inputUsuarioDto: InputUsuarioDto): Mono<Boolean> {
+        logger.info("Data took input=$inputUsuarioDto")
         return createUsuarioService.execute(inputUsuarioDto)
     }
 
@@ -49,6 +53,7 @@ class UsuarioController(
     @PutMapping()
     @ResponseBody
     fun updateUsuario(@RequestBody inputUsuarioDto: InputUsuarioDto): Mono<InputUsuarioDto> {
+        logger.info("Data took input=$inputUsuarioDto")
         return updateUsuarioService.execute(inputUsuarioDto)
     }
 

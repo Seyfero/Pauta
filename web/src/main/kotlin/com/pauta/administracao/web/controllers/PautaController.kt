@@ -10,6 +10,7 @@ import com.pauta.administracao.inputservice.services.pauta.ListTodasPautasServic
 import com.pauta.administracao.inputservice.services.pauta.UpdatePautaService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -37,12 +38,15 @@ class PautaController(
     val deletePautaService: DeletePautaService
 ) {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     @Operation(
         summary = "EndPoint de criação da pauta",
         description = "EndPoint de criação da pauta"
     )
     @PostMapping()
     fun createPauta(@RequestBody inputPautaDto: InputPautaDto): Mono<Boolean> {
+        logger.info("Data took input=$inputPautaDto")
         return createPautaService.execute(inputPautaDto)
     }
 
@@ -53,6 +57,7 @@ class PautaController(
     @PutMapping()
     @ResponseBody
     fun updatePauta(@RequestBody inputPautaDto: InputPautaDto): Mono<InputPautaDto> {
+        logger.info("Data took input=$inputPautaDto")
         return updatePautaService.execute(inputPautaDto)
     }
 

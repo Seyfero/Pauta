@@ -2,6 +2,7 @@ package com.pauta.administracao.usecase.service.usuario
 
 import com.pauta.administracao.inputservice.services.usuario.DeleteUsuarioService
 import com.pauta.administracao.outputboundary.service.UsuarioService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 
@@ -12,17 +13,20 @@ class DeleteUsuarioServiceImpl(
 
 ) : DeleteUsuarioService {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     override fun execute(inputUsuarioId: Long): Mono<Boolean> {
         return verifyIfExistsUsuarioById(inputUsuarioId)
             .flatMap { exists ->
                 if (exists) {
                     usuarioService.deleteById(inputUsuarioId)
+                    logger.info("User deleted with success!")
                     Mono.just(true)
                 } else {
-                    Mono.error(NoSuchElementException("Usuário não encontrado"))
+                    Mono.error(NoSuchElementException("User not voted!"))
                 }
             }
-            .onErrorMap { IllegalStateException("Erro ao executar o método execute", it) }
+            .onErrorMap { IllegalStateException("Error to verify if user voted!", it) }
     }
 
     override fun execute(inputUsuarioCpf: String): Mono<Boolean> {
@@ -30,12 +34,16 @@ class DeleteUsuarioServiceImpl(
             .flatMap { exists ->
                 if (exists) {
                     usuarioService.deleteByCpf(inputUsuarioCpf)
+                    logger.info("User deleted with success!")
                     Mono.just(true)
                 } else {
-                    Mono.error(NoSuchElementException("Usuário não encontrado"))
+                    Mono.error(NoSuchElementException("User not voted!"))
                 }
             }
-            .onErrorMap { IllegalStateException("Erro ao executar o método execute", it) }
+            .onErrorMap {
+                logger.error("Error to verify if user voted!")
+                IllegalStateException("Error to verify if user voted!", it)
+            }
     }
 
     private fun verifyIfExistsUsuarioByCpf(cpf: String): Mono<Boolean> {

@@ -30,7 +30,7 @@ class PautaServiceImpl(
             }
             .onErrorResume {
                 logger.error("pautaRepository.save, status=error message:${it.message}")
-                Mono.error(UnsupportedOperationException("Error to create pauta!"))
+                Mono.error(UnsupportedOperationException("Error to create order!"))
             }
     }
 

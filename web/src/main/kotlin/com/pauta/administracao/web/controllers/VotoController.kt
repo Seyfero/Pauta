@@ -7,6 +7,7 @@ import com.pauta.administracao.inputservice.services.voto.ListVotoByEscolhaServi
 import com.pauta.administracao.inputservice.services.voto.ListVotoByPautaService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -34,12 +35,15 @@ class VotoController(
 
 ) {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     @Operation(
         summary = "EndPoint de criação da voto",
         description = "EndPoint de criação da voto"
     )
     @PostMapping()
     fun createVoto(@RequestBody inputVotoDto: InputVotoDto): Mono<Boolean> {
+        logger.info("Data took input=$inputVotoDto")
         return createVotoService.execute(inputVotoDto)
     }
 

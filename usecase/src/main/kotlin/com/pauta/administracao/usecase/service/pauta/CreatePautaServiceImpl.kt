@@ -5,6 +5,7 @@ import com.pauta.administracao.inputservice.dto.pauta.InputPautaDto
 import com.pauta.administracao.inputservice.services.pauta.CreatePautaService
 import com.pauta.administracao.outputboundary.converters.pauta.toOutputDto
 import com.pauta.administracao.outputboundary.service.PautaService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 
@@ -15,13 +16,17 @@ class CreatePautaServiceImpl(
 
 ) : CreatePautaService {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     override fun execute(inputPautaDto: InputPautaDto): Mono<Boolean> {
         return verifyIfExistsPauta(inputPautaDto)
             .flatMap { exists ->
                 if (exists) {
-                    Mono.error(IllegalArgumentException("A pauta já existe"))
+                    logger.error("This order exists!")
+                    Mono.error(IllegalArgumentException("This order exists!"))
                 } else {
                     pautaService.create(inputPautaDto.toDomain().toOutputDto())
+                    logger.info("Order created!")
                     Mono.just(true)
                 }
             }

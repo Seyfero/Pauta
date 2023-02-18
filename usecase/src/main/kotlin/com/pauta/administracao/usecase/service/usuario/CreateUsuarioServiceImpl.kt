@@ -6,6 +6,7 @@ import com.pauta.administracao.inputservice.dto.usuario.InputUsuarioDto
 import com.pauta.administracao.inputservice.services.usuario.CreateUsuarioService
 import com.pauta.administracao.outputboundary.converters.usuario.toOutputDto
 import com.pauta.administracao.outputboundary.service.UsuarioService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 
@@ -16,17 +17,21 @@ class CreateUsuarioServiceImpl(
 
 ) : CreateUsuarioService {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     override fun execute(inputUsuarioDto: InputUsuarioDto): Mono<Boolean> {
         return verifyIfExistsUsuario(inputUsuarioDto)
             .flatMap { usuarioExists ->
                 if (usuarioExists) {
-                    Mono.error(IllegalStateException("O usuário já existe"))
+                    logger.error("This user voted before on this order!")
+                    Mono.error(IllegalStateException("This user voted before on this order!"))
                 } else {
                     usuarioService.create(inputUsuarioDto.toDomain().toOutputDto())
+                    logger.info("Used created!")
                     Mono.just(true)
                 }
             }
-            .onErrorMap { IllegalStateException("Erro ao executar o método execute", it) }
+            .onErrorMap { IllegalStateException("Error to found user", it) }
     }
 
     private fun verifyIfExistsUsuario(inputUsuarioDto: InputUsuarioDto): Mono<Boolean> {

@@ -6,6 +6,7 @@ import com.pauta.administracao.inputservice.dto.usuario.InputUsuarioDto
 import com.pauta.administracao.inputservice.services.usuario.UpdateUsuarioService
 import com.pauta.administracao.outputboundary.converters.usuario.toOutputDto
 import com.pauta.administracao.outputboundary.service.UsuarioService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 
@@ -16,15 +17,21 @@ class UpdateUsuarioServiceImpl(
 
 ) : UpdateUsuarioService {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     override fun execute(inputUsuarioDto: InputUsuarioDto): Mono<InputUsuarioDto> {
         return usuarioService.findByCpf(inputUsuarioDto.usuarioCpf)
             .flatMap { usuario ->
                 usuarioService.update(inputUsuarioDto.toDomain().toOutputDto().copy(id = usuario.id))
                     .map { it.toIpuntDto() }
+                    .doOnSuccess {
+                        logger.info("User founded with success!")
+                    }
             }
-            .switchIfEmpty(Mono.error(NoSuchElementException("Usuário não encontrado")))
+            .switchIfEmpty(Mono.error(NoSuchElementException("User not found!")))
             .onErrorMap { throwable: Throwable ->
-                IllegalStateException("Erro ao executar o método execute", throwable)
+                logger.error("Error to update user!")
+                IllegalStateException("Error to find user by cpf!", throwable)
             }
     }
 }

@@ -7,6 +7,7 @@ import com.pauta.administracao.inputservice.dto.voto.InputVotoDto
 import com.pauta.administracao.inputservice.services.voto.ListVotoByPautaService
 import com.pauta.administracao.outputboundary.service.PautaService
 import com.pauta.administracao.outputboundary.service.VotoService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -18,6 +19,9 @@ class ListVotoByPautaServiceImpl(
     private val pautaService: PautaService
 
 ) : ListVotoByPautaService {
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     override fun execute(inputPautaNome: String): Flux<InputVotoDto> {
         return verifyIfExistsPauta(inputPautaNome)
             .flatMapMany { inputVotoDto ->
@@ -25,6 +29,9 @@ class ListVotoByPautaServiceImpl(
                     votoService.findByVotoPautaNome(id)
                         .map {
                             it.toInputDto()
+                        }
+                        .doOnComplete {
+                            logger.info("List of votes founded with success!")
                         }
                 }
             }.switchIfEmpty(Flux.empty())
@@ -35,9 +42,13 @@ class ListVotoByPautaServiceImpl(
             .map {
                 it.toInputDto()
             }
+            .doOnSuccess {
+                logger.info("Get order by name!")
+            }
             .switchIfEmpty(
                 Mono.defer {
-                    Mono.error(java.util.NoSuchElementException("Pauta não encontrada"))
+                    logger.error("Order not found!")
+                    Mono.error(NoSuchElementException("Order not found!"))
                 }
             )
     }
