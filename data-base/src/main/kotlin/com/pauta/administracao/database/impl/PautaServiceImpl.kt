@@ -6,7 +6,7 @@ import com.pauta.administracao.database.repository.PautaRepository
 import com.pauta.administracao.domain.PautaDomain
 import com.pauta.administracao.outputboundary.converters.pauta.toDomain
 import com.pauta.administracao.outputboundary.dto.PautaOutputDto
-import com.pauta.administracao.outputboundary.service.PautaService
+import com.pauta.administracao.outputboundary.service.repository.PautaService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux

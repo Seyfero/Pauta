@@ -1,16 +1,19 @@
 package com.pauta.administracao.web.controllers
 
+import com.pauta.administracao.inputservice.dto.usuario.ExternalVerificationCpfUser
 import com.pauta.administracao.inputservice.dto.usuario.InputUsuarioDto
 import com.pauta.administracao.inputservice.services.usuario.CreateUsuarioService
 import com.pauta.administracao.inputservice.services.usuario.DeleteUsuarioService
 import com.pauta.administracao.inputservice.services.usuario.ListUsuariosService
 import com.pauta.administracao.inputservice.services.usuario.UpdateUsuarioService
+import com.pauta.administracao.inputservice.services.usuario.ValidUserCpfToVoteService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -31,7 +34,8 @@ class UsuarioController(
     private val createUsuarioService: CreateUsuarioService,
     private val deleteUsuarioService: DeleteUsuarioService,
     private val listUsuariosService: ListUsuariosService,
-    private val updateUsuarioService: UpdateUsuarioService
+    private val updateUsuarioService: UpdateUsuarioService,
+    private val validUserCpfToVoteService: ValidUserCpfToVoteService
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -65,6 +69,14 @@ class UsuarioController(
     @ResponseBody
     fun getTodasUsuarios(): Flux<InputUsuarioDto> {
         return listUsuariosService.execute()
+    }
+
+    @GetMapping(value = ["valid-cpf/{cpf}"])
+    @ResponseBody
+    fun getValidatePossibleVote(
+        @PathVariable(name = "cpf", required = true) cpf: String
+    ): Mono<ExternalVerificationCpfUser> {
+        return validUserCpfToVoteService.execute(cpf)
     }
 
     @Operation(

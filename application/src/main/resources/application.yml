@@ -21,3 +21,6 @@ spring:
     data-base: database-name
     username: postgres
     password: postgres
+
+gateway:
+  url: http://localhost:8080/v1/usuario/valid-cpf/

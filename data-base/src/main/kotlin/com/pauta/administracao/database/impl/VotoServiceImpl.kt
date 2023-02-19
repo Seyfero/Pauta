@@ -6,7 +6,7 @@ import com.pauta.administracao.database.repository.VotoRepository
 import com.pauta.administracao.domain.VotoDomain
 import com.pauta.administracao.outputboundary.converters.voto.toDomain
 import com.pauta.administracao.outputboundary.dto.VotoOutputDto
-import com.pauta.administracao.outputboundary.service.VotoService
+import com.pauta.administracao.outputboundary.service.repository.VotoService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux

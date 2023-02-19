@@ -1,7 +1,7 @@
 package com.pauta.administracao.usecase.service.voto
 
 import com.pauta.administracao.inputservice.services.voto.ListVotoByEscolhaService
-import com.pauta.administracao.outputboundary.service.VotoService
+import com.pauta.administracao.outputboundary.service.repository.VotoService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono

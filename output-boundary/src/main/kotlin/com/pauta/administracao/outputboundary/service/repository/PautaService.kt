@@ -1,4 +1,4 @@
-package com.pauta.administracao.outputboundary.service
+package com.pauta.administracao.outputboundary.service.repository
 
 import com.pauta.administracao.domain.PautaDomain
 import com.pauta.administracao.outputboundary.dto.PautaOutputDto

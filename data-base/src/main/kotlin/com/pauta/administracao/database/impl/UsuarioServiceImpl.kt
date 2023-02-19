@@ -4,15 +4,13 @@ import com.pauta.administracao.database.converters.usuario.toDomain
 import com.pauta.administracao.database.converters.usuario.toEntity
 import com.pauta.administracao.database.repository.UsuarioRepository
 import com.pauta.administracao.domain.UsuarioDomain
-import com.pauta.administracao.outputboundary.converters.pauta.toDomain
 import com.pauta.administracao.outputboundary.converters.usuario.toDomain
 import com.pauta.administracao.outputboundary.dto.UsuarioOutputDto
-import com.pauta.administracao.outputboundary.service.UsuarioService
+import com.pauta.administracao.outputboundary.service.repository.UsuarioService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.onErrorResume
 
 @Service
 class UsuarioServiceImpl(

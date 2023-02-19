@@ -1,6 +1,7 @@
 package com.pauta.administracao.web.controllers
 
-import com.pauta.administracao.inputservice.dto.voto.InputVotoDto
+import com.pauta.administracao.inputservice.dto.voto.InputVotoExternalDto
+import com.pauta.administracao.inputservice.dto.voto.InputVotoInternalDto
 import com.pauta.administracao.inputservice.services.voto.CreateVotoService
 import com.pauta.administracao.inputservice.services.voto.DeleteVotoService
 import com.pauta.administracao.inputservice.services.voto.ListVotoByEscolhaService
@@ -42,9 +43,9 @@ class VotoController(
         description = "EndPoint de criação da voto"
     )
     @PostMapping()
-    fun createVoto(@RequestBody inputVotoDto: InputVotoDto): Mono<Boolean> {
-        logger.info("Data took input=$inputVotoDto")
-        return createVotoService.execute(inputVotoDto)
+    fun createVoto(@RequestBody inputVotoExternalDto: InputVotoExternalDto): Mono<Boolean> {
+        logger.info("Data took input=$inputVotoExternalDto")
+        return createVotoService.execute(inputVotoExternalDto)
     }
 
     @Operation(
@@ -63,7 +64,7 @@ class VotoController(
     )
     @GetMapping(value = ["/all"])
     @ResponseBody
-    fun getTodasVotos(@RequestParam nomePauta: String): Flux<InputVotoDto> {
+    fun getTodasVotos(@RequestParam nomePauta: String): Flux<InputVotoInternalDto> {
         return listVotoByPautaService.execute(nomePauta)
     }
 

@@ -1,7 +1,7 @@
 package com.pauta.administracao.usecase.service.pauta
 
 import com.pauta.administracao.inputservice.services.pauta.DeletePautaService
-import com.pauta.administracao.outputboundary.service.PautaService
+import com.pauta.administracao.outputboundary.service.repository.PautaService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono

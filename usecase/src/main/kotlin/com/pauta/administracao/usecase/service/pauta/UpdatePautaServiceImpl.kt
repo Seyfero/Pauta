@@ -5,7 +5,7 @@ import com.pauta.administracao.inputservice.converters.pauta.toInputDto
 import com.pauta.administracao.inputservice.dto.pauta.InputPautaDto
 import com.pauta.administracao.inputservice.services.pauta.UpdatePautaService
 import com.pauta.administracao.outputboundary.converters.pauta.toOutputDto
-import com.pauta.administracao.outputboundary.service.PautaService
+import com.pauta.administracao.outputboundary.service.repository.PautaService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
