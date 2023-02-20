@@ -9,5 +9,7 @@ include(
     "gateway",
     "domain",
     "data-base",
-    "configuration"
+    "configuration",
+    "kafka-producer",
+    "kafka-consumer"
 )

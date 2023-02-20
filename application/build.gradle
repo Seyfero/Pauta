@@ -11,4 +11,6 @@ dependencies {
     implementation project(":domain")
     implementation project(":data-base")
     implementation project(":configuration")
+    implementation project(":kafka-consumer")
+    implementation project(":kafka-producer")
 }
