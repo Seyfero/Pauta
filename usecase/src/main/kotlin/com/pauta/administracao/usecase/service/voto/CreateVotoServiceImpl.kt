@@ -61,6 +61,20 @@ class CreateVotoServiceImpl(
             }
     }
 
+    private fun validUserCpf(cpf: String): Mono<Boolean> {
+        return validateUserVoteByCpfService.validateExternalCallUserCpf(cpf)
+            .flatMap {
+                if (it.contains("ABLE_TO_VOTE")) {
+                    Mono.just(true)
+                }
+                Mono.just(false)
+            }
+            .onErrorResume { throwable: Throwable ->
+                logger.error("Error to validate cpf on vote!")
+                Mono.error(IllegalStateException("Error to validate cpf on vote!", throwable))
+            }
+    }
+
     private fun persistUserIfNotExists(cpfUsuario: String): Mono<InputUsuarioDto> {
         return usuarioService.findByCpf(cpfUsuario)
             .flatMap {
@@ -77,20 +91,6 @@ class CreateVotoServiceImpl(
             .onErrorResume { throwable: Throwable ->
                 logger.error("Error to search user message = ${throwable.message}!!")
                 Mono.error(IllegalStateException("Error to search user!", throwable))
-            }
-    }
-
-    private fun validUserCpf(cpf: String): Mono<Boolean> {
-        return validateUserVoteByCpfService.validateExternalCallUserCpf(cpf)
-            .flatMap {
-                if (it.contains("ABLE_TO_VOTE")) {
-                    Mono.just(true)
-                }
-                Mono.just(false)
-            }
-            .onErrorResume { throwable: Throwable ->
-                logger.error("Error to validate cpf on vote!")
-                Mono.error(IllegalStateException("Error to validate cpf on vote!", throwable))
             }
     }
 
