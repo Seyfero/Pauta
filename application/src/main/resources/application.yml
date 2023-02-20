@@ -27,7 +27,7 @@ kafka:
   producer:
     key-serializer: org.apache.kafka.common.serialization.StringSerializer
     value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    acks: 2
+    acks: 1
     retries: 3
   topic:
     name: order

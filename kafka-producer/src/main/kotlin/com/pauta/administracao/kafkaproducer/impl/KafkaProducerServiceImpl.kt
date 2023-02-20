@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toMono
 
 @Service
 class KafkaProducerServiceImpl(
@@ -18,7 +19,8 @@ class KafkaProducerServiceImpl(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun sendMessage(message: String): Mono<Boolean> {
-        return Mono.just(kafkaTemplate.send(topicName, message))
+        return kafkaTemplate.send(topicName, message)
+            .toMono()
             .flatMap {
                 logger.info("Message sent with success")
                 Mono.just(true)
