@@ -20,7 +20,9 @@ spring:
     data-base: database-name
     username: postgres
     password: postgres
-
+  kafka:
+    admin:
+      enabled: true
 
 kafka:
   bootstrap-servers: localhost:9092
@@ -31,6 +33,8 @@ kafka:
     retries: 3
   topic:
     name: order
+    partition: 1
+    replicationFactor: 1
 
 gateway:
   url: http://localhost:8080/v1/usuario/valid-cpf/
