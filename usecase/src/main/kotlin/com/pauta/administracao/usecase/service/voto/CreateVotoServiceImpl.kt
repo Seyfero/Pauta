@@ -3,9 +3,16 @@ package com.pauta.administracao.usecase.service.voto
 import com.pauta.administracao.domain.exception.ExpiredPautaException
 import com.pauta.administracao.domain.exception.IllegalPautaException
 import com.pauta.administracao.inputservice.converters.pauta.toInputDto
+import com.pauta.administracao.inputservice.converters.usuario.toDomain
+import com.pauta.administracao.inputservice.converters.usuario.toIpuntDto
+import com.pauta.administracao.inputservice.converters.voto.toDomain
 import com.pauta.administracao.inputservice.dto.pauta.InputPautaDto
+import com.pauta.administracao.inputservice.dto.usuario.InputUsuarioDto
 import com.pauta.administracao.inputservice.dto.voto.InputVotoExternalDto
+import com.pauta.administracao.inputservice.dto.voto.InputVotoInternalDto
 import com.pauta.administracao.inputservice.services.voto.CreateVotoService
+import com.pauta.administracao.outputboundary.converters.usuario.toOutputDto
+import com.pauta.administracao.outputboundary.converters.voto.toOutputDto
 import com.pauta.administracao.outputboundary.service.gateway.ValidateUserVoteByCpfService
 import com.pauta.administracao.outputboundary.service.repository.PautaService
 import com.pauta.administracao.outputboundary.service.repository.UsuarioService
@@ -34,20 +41,42 @@ class CreateVotoServiceImpl(
     override fun execute(inputVotoExternalDto: InputVotoExternalDto): Mono<Boolean> {
         return validUserCpf(inputVotoExternalDto.cpfUsuario)
             .flatMap {
-                logger.info("Cpf's user could be validate!")
                 if (it) {
-                    verifyIfCanPersistVoto(inputVotoExternalDto)
-                    logger.info("Vote could be validate!")
-                    Mono.just(true)
+                    persistUserIfNotExists(inputVotoExternalDto.cpfUsuario)
                 } else {
-                    Mono.error(UnsupportedOperationException("Vote couldn't be created!"))
+                    Mono.error(UnsupportedOperationException("Error to validate cpf on vote!"))
                 }
             }
-            .switchIfEmpty {
-                Mono.error(UnsupportedOperationException("Cpf couldn't be validate!"))
+            .flatMap {
+                logger.info("Cpf's user could be validate!")
+                verifyIfCanPersistVoto(it, inputVotoExternalDto)
             }
-            .doOnError {
-                logger.error("Error in operation on create vote!")
+            .flatMap {
+                logger.info("Vote could be validate!")
+                votoService.create(it.toDomain().toOutputDto())
+            }
+            .onErrorResume { throwable: Throwable ->
+                logger.error("Error to persist vote message = ${throwable.message}!!")
+                Mono.error(IllegalStateException("Error to persist vote!", throwable))
+            }
+    }
+
+    private fun persistUserIfNotExists(cpfUsuario: String): Mono<InputUsuarioDto> {
+        return usuarioService.findByCpf(cpfUsuario)
+            .flatMap {
+                logger.info("User could be founded!")
+                Mono.just(it.toIpuntDto())
+            }
+            .switchIfEmpty {
+                logger.info("Vote's user couldn't be founded!")
+                usuarioService.create(InputUsuarioDto(null, cpfUsuario).toDomain().toOutputDto())
+                    .map {
+                        it.toIpuntDto()
+                    }
+            }
+            .onErrorResume { throwable: Throwable ->
+                logger.error("Error to search user message = ${throwable.message}!!")
+                Mono.error(IllegalStateException("Error to search user!", throwable))
             }
     }
 
@@ -60,8 +89,50 @@ class CreateVotoServiceImpl(
                 Mono.just(false)
             }
             .onErrorResume { throwable: Throwable ->
-                logger.error("Error to validate vote!")
-                Mono.error(IllegalStateException("Error to validate vote!", throwable))
+                logger.error("Error to validate cpf on vote!")
+                Mono.error(IllegalStateException("Error to validate cpf on vote!", throwable))
+            }
+    }
+
+    private fun verifyIfCanPersistVoto(user: InputUsuarioDto, inputVotoExternalDto: InputVotoExternalDto): Mono<InputVotoInternalDto> {
+        return verifyIfExistsPauta(inputVotoExternalDto.pautaNome)
+            .flatMap { inputPauta ->
+                logger.info("Order could be founded!")
+                verifyPreConditionsToCreateVote(user, inputVotoExternalDto, inputPauta)
+                    .flatMap {
+                        if (it) {
+                            Mono.just(InputVotoInternalDto(null, inputVotoExternalDto.votoEscolha, inputPauta, user))
+                        } else {
+                            Mono.error(NoSuchElementException("Error to validate user!"))
+                        }
+                    }
+            }
+            .switchIfEmpty(Mono.error(NoSuchElementException("")))
+            .onErrorResume {
+                logger.error("")
+                Mono.error(IllegalStateException("Error to validate user!", it))
+            }
+    }
+
+    private fun verifyPreConditionsToCreateVote(
+        user: InputUsuarioDto,
+        inputVotoExternalDto: InputVotoExternalDto,
+        inputPautaDto: InputPautaDto
+    ): Mono<Boolean> {
+        return Mono.zip(
+            isValidPautaByTime(inputPautaDto),
+            validateVoteValue(inputVotoExternalDto),
+            verifyIfExistsVoteWithCpfUser(user, inputPautaDto.id)
+        )
+            .map { tupla ->
+                val (fun1, fun2, fun3) = tupla
+                fun1 && fun2 && !fun3
+            }
+            .switchIfEmpty(
+                Mono.error(NoSuchElementException("Order couldn't be founded!"))
+            )
+            .doOnError {
+                logger.error("Order couldn't be founded!")
             }
     }
 
@@ -74,28 +145,6 @@ class CreateVotoServiceImpl(
             .switchIfEmpty(Mono.error(IllegalPautaException("This order doesn't exists in database!")))
             .doOnError {
                 logger.error("Error to find order!")
-            }
-    }
-
-    private fun verifyIfCanPersistVoto(inputVotoExternalDto: InputVotoExternalDto): Mono<Boolean> {
-        return verifyIfExistsPauta(inputVotoExternalDto.pautaNome)
-            .flatMap {
-                logger.info("Order could be founded!")
-                Mono.zip(
-                    isValidPautaByTime(it),
-                    validateVoteValue(inputVotoExternalDto),
-                    verifyUserCanVoteThisPauta(inputVotoExternalDto.cpfUsuario, it.id)
-                )
-                    .map { tupla ->
-                        val (fun1, fun2, fun3) = tupla
-                        fun1 && fun2 && fun3
-                    }
-            }
-            .switchIfEmpty(
-                Mono.error(NoSuchElementException("Order couldn't be founded!"))
-            )
-            .doOnError {
-                logger.error("Order couldn't be founded!")
             }
     }
 
@@ -126,19 +175,15 @@ class CreateVotoServiceImpl(
             }
     }
 
-    private fun verifyUserCanVoteThisPauta(cpfUsuario: String, idPauta: Long?): Mono<Boolean> {
-        return usuarioService.findByCpf(cpfUsuario)
-            .flatMap {
-                logger.info("User could be founded!")
-                votoService.findByVotoPautaAndVotoUsuario(
-                    idPauta,
-                    it.id
-                )
-                    .hasElement()
-            }
-            .switchIfEmpty {
-                logger.info("User couldn't be founded!")
-                Mono.just(false)
+    private fun verifyIfExistsVoteWithCpfUser(user: InputUsuarioDto, idPauta: Long?): Mono<Boolean> {
+        return votoService.findByVotoPautaAndVotoUsuario(
+            idPauta,
+            user.id
+        )
+            .hasElement()
+            .onErrorResume { throwable: Throwable ->
+                logger.error("Error to create user message = ${throwable.message}!!")
+                Mono.error(IllegalStateException("Error to validate user!", throwable))
             }
     }
 }

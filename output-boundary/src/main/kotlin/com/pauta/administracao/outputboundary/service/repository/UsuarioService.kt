@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono
 
 interface UsuarioService {
 
-    fun create(usuario: UsuarioOutputDto): Mono<Boolean>
+    fun create(usuario: UsuarioOutputDto): Mono<UsuarioDomain>
 
     fun update(usuario: UsuarioOutputDto): Mono<UsuarioDomain>
 

@@ -21,11 +21,11 @@ class UsuarioServiceImpl(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun create(usuario: UsuarioOutputDto): Mono<Boolean> {
+    override fun create(usuario: UsuarioOutputDto): Mono<UsuarioDomain> {
         logger.info("usuarioRepository.create, status=try")
         return usuarioRepository.save(usuario.toDomain().toEntity())
             .flatMap {
-                Mono.just(true)
+                Mono.just(it.toDomain())
             }
             .doOnSuccess {
                 logger.info("usuarioRepository.create, status=complete")
