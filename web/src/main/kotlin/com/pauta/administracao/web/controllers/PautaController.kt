@@ -8,7 +8,6 @@ import com.pauta.administracao.inputservice.services.pauta.DeletePautaService
 import com.pauta.administracao.inputservice.services.pauta.ListPautasAtivasService
 import com.pauta.administracao.inputservice.services.pauta.ListTodasPautasService
 import com.pauta.administracao.inputservice.services.pauta.UpdatePautaService
-import com.pauta.administracao.kafkaproducer.service.KafkaProducerService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.slf4j.LoggerFactory
@@ -36,8 +35,7 @@ class PautaController(
     val createPautaService: CreatePautaService,
     val listTodasPautasService: ListTodasPautasService,
     val updatePautaService: UpdatePautaService,
-    val deletePautaService: DeletePautaService,
-    val kafkaProducerService: KafkaProducerService
+    val deletePautaService: DeletePautaService
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -50,12 +48,6 @@ class PautaController(
     fun createPauta(@RequestBody inputPautaDto: InputPautaDto): Mono<Boolean> {
         logger.info("Data took input=$inputPautaDto")
         return createPautaService.execute(inputPautaDto)
-    }
-
-    @PostMapping(value = ["/kafka"])
-    fun createKafka(@RequestBody message: String): Mono<Boolean> {
-        logger.info("Data took input=$message")
-        return kafkaProducerService.sendMessage(message)
     }
 
     @Operation(
