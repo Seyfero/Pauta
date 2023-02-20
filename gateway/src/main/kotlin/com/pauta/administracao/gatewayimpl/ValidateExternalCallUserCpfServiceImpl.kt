@@ -1,6 +1,6 @@
 package com.pauta.administracao.gatewayimpl
 
-import com.pauta.administracao.outputboundary.service.gateway.ValidateUserVoteByCpfService
+import com.pauta.administracao.outputboundary.service.gateway.ValidateExternalCallUserCpfService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
@@ -10,11 +10,11 @@ import org.springframework.web.util.UriComponentsBuilder
 import reactor.core.publisher.Mono
 
 @Service
-class ValidUserCpfToVoteServiceImpl(
+class ValidateExternalCallUserCpfServiceImpl(
 
     @Value("\${gateway.url}") private val url: String,
 
-) : ValidateUserVoteByCpfService {
+) : ValidateExternalCallUserCpfService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 

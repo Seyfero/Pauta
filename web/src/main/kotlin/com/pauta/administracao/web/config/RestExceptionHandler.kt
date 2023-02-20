@@ -1,5 +1,6 @@
 package com.pauta.administracao.web.config
 
+import com.pauta.administracao.domain.exception.ExpiredPautaException
 import com.pauta.administracao.domain.exception.IllegalPautaException
 import com.pauta.administracao.domain.exception.IllegalUsuarioException
 import org.springframework.http.HttpStatus
@@ -78,7 +79,7 @@ class RestExceptionHandler {
 
     @ExceptionHandler(
         value = [
-            IllegalUsuarioException::class
+            ExpiredPautaException::class
         ]
     )
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)

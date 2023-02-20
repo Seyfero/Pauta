@@ -13,7 +13,7 @@ import com.pauta.administracao.inputservice.dto.voto.InputVotoInternalDto
 import com.pauta.administracao.inputservice.services.voto.CreateVotoService
 import com.pauta.administracao.outputboundary.converters.usuario.toOutputDto
 import com.pauta.administracao.outputboundary.converters.voto.toOutputDto
-import com.pauta.administracao.outputboundary.service.gateway.ValidateUserVoteByCpfService
+import com.pauta.administracao.outputboundary.service.gateway.ValidateExternalCallUserCpfService
 import com.pauta.administracao.outputboundary.service.repository.PautaService
 import com.pauta.administracao.outputboundary.service.repository.UsuarioService
 import com.pauta.administracao.outputboundary.service.repository.VotoService
@@ -31,7 +31,7 @@ class CreateVotoServiceImpl(
 
     private val votoService: VotoService,
     private val pautaService: PautaService,
-    private val validateUserVoteByCpfService: ValidateUserVoteByCpfService,
+    private val validateExternalCallUserCpfService: ValidateExternalCallUserCpfService,
     private val usuarioService: UsuarioService
 
 ) : CreateVotoService {
@@ -62,7 +62,7 @@ class CreateVotoServiceImpl(
     }
 
     private fun validUserCpf(cpf: String): Mono<Boolean> {
-        return validateUserVoteByCpfService.validateExternalCallUserCpf(cpf)
+        return validateExternalCallUserCpfService.validateExternalCallUserCpf(cpf)
             .flatMap {
                 if (it.contains("ABLE_TO_VOTE")) {
                     Mono.just(true)
