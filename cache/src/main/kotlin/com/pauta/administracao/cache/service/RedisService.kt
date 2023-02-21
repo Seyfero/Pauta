@@ -1,13 +1,15 @@
 package com.pauta.administracao.cache.service
 
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 interface RedisService<T> {
 
-    fun put(key: String, value: T): Mono<Boolean>
+    fun put(value: T): Mono<Boolean>
 
     fun get(key: String): Mono<T?>
 
-    fun remove(key: String): Mono<Boolean>
+    fun getAll(key: String): Flux<T?>
 
+    fun remove(key: String): Mono<Boolean>
 }

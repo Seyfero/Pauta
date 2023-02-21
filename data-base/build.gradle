@@ -1,6 +1,7 @@
 dependencies {
     //Outros mopdulos
     implementation project(":domain")
+    implementation project(":cache")
     implementation project(":output-boundary")
 
     // BANCO

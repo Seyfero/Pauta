@@ -12,11 +12,11 @@ import reactor.core.publisher.Mono
 @Service
 class RedisPautaServiceImpl(
     private val reactiveRedisOperations: ReactiveRedisOperations<String, Any>
-): RedisServiceImpl<PautaDomain>(reactiveRedisOperations) {
+) : RedisServiceImpl<PautaDomain>(reactiveRedisOperations) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun put(key: String, value: PautaDomain): Mono<Boolean> {
+    override fun put(value: PautaDomain): Mono<Boolean> {
         val serializedValue = serialize(value)
         val hashKey = "pauta:id:${value.id}:pauta"
         val nameIndexKey = "pauta:nome:${value.pautaNome}:pauta"
@@ -44,6 +44,16 @@ class RedisPautaServiceImpl(
                 deserialize(it)
             }
             .singleOrEmpty()
+    }
+
+    override fun getAll(key: String): Flux<PautaDomain?> {
+        return reactiveRedisOperations.opsForSet().members(key)
+            .flatMap { redisKey ->
+                reactiveRedisOperations.opsForValue().get(redisKey)
+            }
+            .map {
+                deserialize(it)
+            }
     }
 
     override fun remove(key: String): Mono<Boolean> {
@@ -85,5 +95,4 @@ class RedisPautaServiceImpl(
             throw RuntimeException("Failed to deserialize value!")
         }
     }
-
 }

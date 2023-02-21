@@ -52,10 +52,11 @@ class KafkaConfig {
     }
 
     @Bean
-    fun createTopicIfNotExists(adminClient: AdminClient,
-                               @Value("\${kafka.topic.name}") topicName: String,
-                               @Value("\${kafka.topic.partition}") numPartitions: Int,
-                               @Value("\${kafka.topic.replicationFactor}") replicationFactor: Short,
+    fun createTopicIfNotExists(
+        adminClient: AdminClient,
+        @Value("\${kafka.topic.name}") topicName: String,
+        @Value("\${kafka.topic.partition}") numPartitions: Int,
+        @Value("\${kafka.topic.replicationFactor}") replicationFactor: Short,
     ): NewTopic {
         val existingTopics = adminClient.listTopics().names().get()
         return if (!existingTopics.contains(topicName)) {
