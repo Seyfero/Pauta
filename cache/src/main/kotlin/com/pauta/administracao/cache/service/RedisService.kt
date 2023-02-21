@@ -6,7 +6,7 @@ interface RedisService<T> {
 
     fun put(key: String, value: T): Mono<Boolean>
 
-    fun get(key: String): Mono<T>
+    fun get(key: String): Mono<T?>
 
     fun remove(key: String): Mono<Boolean>
 
