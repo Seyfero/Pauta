@@ -27,6 +27,11 @@ spring:
     host: localhost
     port: 6379
     password: order1234
+    lettuce:
+      pool:
+        max-idle: 8
+        min-idle: 0
+        max-active: 8
 
 kafka:
   bootstrap-servers: localhost:9092

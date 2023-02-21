@@ -11,5 +11,6 @@ include(
     "data-base",
     "configuration",
     "kafka-producer",
-    "kafka-consumer"
+    "kafka-consumer",
+    "cache"
 )

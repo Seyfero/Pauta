@@ -13,4 +13,5 @@ dependencies {
     implementation project(":configuration")
     implementation project(":kafka-consumer")
     implementation project(":kafka-producer")
+    implementation project(":cache")
 }

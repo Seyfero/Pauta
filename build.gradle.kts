@@ -67,6 +67,9 @@ subprojects {
 
         implementation("org.springframework.kafka:spring-kafka:2.8.0")
 
+        implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive:${property("springBootVersion")}")
+        implementation("io.lettuce:lettuce-core:6.1.6.RELEASE")
+
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test:${property("springBootVersion")}")
