@@ -23,9 +23,12 @@ class RedisPautaServiceImpl(
         return reactiveRedisOperations.opsForValue().set(hashKey, serializedValue)
             .flatMap { success ->
                 if (success) {
+                    logger.info("Value of order created with success in redis!")
                     reactiveRedisOperations.opsForSet().add(nameIndexKey, hashKey)
+                    logger.info("Compose keys created with success!")
                     Mono.just(true)
                 } else {
+                    logger.error("Not success to create data in redis!")
                     Mono.just(false)
                 }
             }
@@ -53,7 +56,10 @@ class RedisPautaServiceImpl(
                 reactiveRedisOperations.opsForValue().delete(redisKey)
             }
             .then(Mono.just(true))
-            .onErrorResume { Mono.just(false) }
+            .onErrorResume {
+                logger.error("Not success to delete data in redis!")
+                Mono.just(false)
+            }
     }
 
     override fun serialize(value: PautaDomain?): String {
