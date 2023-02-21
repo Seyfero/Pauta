@@ -23,6 +23,10 @@ spring:
   kafka:
     admin:
       enabled: true
+  redis:
+    host: localhost
+    port: 6379
+    password: order1234
 
 kafka:
   bootstrap-servers: localhost:9092

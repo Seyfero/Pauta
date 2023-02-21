@@ -11,7 +11,6 @@ import org.springframework.core.serializer.Serializer
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
-import reactor.core.publisher.Mono
 
 @Configuration
 class KafkaConfig {
