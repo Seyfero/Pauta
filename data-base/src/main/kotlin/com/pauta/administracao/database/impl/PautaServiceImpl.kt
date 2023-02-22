@@ -23,10 +23,10 @@ class PautaServiceImpl(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun create(pauta: PautaOutputDto): Mono<Boolean> {
+    override fun create(pauta: PautaOutputDto): Mono<PautaDomain> {
         logger.info("pautaRepository.save, status=try")
         return pautaRepository.save(pauta.toDomain().toEntity())
-            .flatMap { Mono.just(true) }
+            .map { it.toDomain() }
             .doOnSuccess {
                 logger.info("pautaRepository.save, status=complete")
             }
@@ -35,8 +35,10 @@ class PautaServiceImpl(
                 Mono.error(UnsupportedOperationException("Error to create order!"))
             }
             .also {
-                redisService.put(pauta.toDomain()).subscribe()
-                logger.info("Order added on redis with success!")
+                it.map {
+                    redisService.put(pauta.toDomain()).subscribe()
+                    logger.info("Order added on redis with success!")
+                }
             }
             .doOnError {
                 logger.error("Order not created on redis with success!")
@@ -57,8 +59,10 @@ class PautaServiceImpl(
                 Mono.error(UnsupportedOperationException("Error to update update!"))
             }
             .also {
-                redisService.put(pauta.toDomain()).subscribe()
-                logger.info("Order updated on redis with success!")
+                it.map {
+                    redisService.put(pauta.toDomain())
+                    logger.info("Order updated on redis with success!")
+                }.subscribe()
             }
             .doOnError {
                 logger.error("Order not updated on redis with success!")

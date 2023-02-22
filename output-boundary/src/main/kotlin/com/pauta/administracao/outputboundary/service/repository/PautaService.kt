@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono
 
 interface PautaService {
 
-    fun create(pauta: PautaOutputDto): Mono<Boolean>
+    fun create(pauta: PautaOutputDto): Mono<PautaDomain>
 
     fun update(pauta: PautaOutputDto): Mono<PautaDomain>
 

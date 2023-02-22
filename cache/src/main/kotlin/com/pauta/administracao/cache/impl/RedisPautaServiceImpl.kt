@@ -52,12 +52,19 @@ class RedisPautaServiceImpl(
     }
 
     override fun getAll(key: String): Flux<PautaDomain?> {
-        return reactiveRedisOperations.opsForSet().members(key)
+        return reactiveRedisOperations.keys(key)
             .flatMap { redisKey ->
                 reactiveRedisOperations.opsForValue().get(redisKey)
             }
             .map {
                 deserialize(it)
+            }
+    }
+
+    override fun removeAll(): Flux<Boolean> {
+        return reactiveRedisOperations.keys("pauta:id*")
+            .flatMap { redisKey ->
+                reactiveRedisOperations.opsForValue().delete(redisKey)
             }
     }
 

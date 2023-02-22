@@ -12,6 +12,8 @@ abstract class RedisServiceImpl<T : Any> : RedisService<T> {
 
     abstract override fun getAll(key: String): Flux<T?>
 
+    abstract override fun removeAll(): Flux<Boolean>
+
     abstract override fun remove(key: String): Mono<Boolean>
 
     protected abstract fun serialize(value: T?): String

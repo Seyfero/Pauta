@@ -11,5 +11,7 @@ interface RedisService<T> {
 
     fun getAll(key: String): Flux<T?>
 
+    fun removeAll(): Flux<Boolean>
+
     fun remove(key: String): Mono<Boolean>
 }
