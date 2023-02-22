@@ -26,9 +26,10 @@ class PautaServiceImpl(
     override fun create(pauta: PautaOutputDto): Mono<PautaDomain> {
         logger.info("pautaRepository.save, status=try")
         return pautaRepository.save(pauta.toDomain().toEntity())
-            .map {
-                redisService.put(it.toDomain()).subscribe()
-                it.toDomain()
+            .flatMap {
+                redisService.put(it.toDomain()).thenReturn(it.toDomain())
+                    .doOnSuccess { logger.info("Order created with success!") }
+                    .doOnError { logger.error("Order not created!") }
             }
             .doOnSuccess {
                 logger.info("pautaRepository.save, status=complete")
@@ -42,9 +43,10 @@ class PautaServiceImpl(
     override fun update(pauta: PautaOutputDto): Mono<PautaDomain> {
         logger.info("pautaRepository.update, status=try")
         return pautaRepository.save(pauta.toDomain().toEntity())
-            .map {
-                redisService.put(it.toDomain()).subscribe()
-                it.toDomain()
+            .flatMap {
+                redisService.put(it.toDomain()).thenReturn(it.toDomain())
+                    .doOnSuccess { logger.info("Order created with success!") }
+                    .doOnError { logger.error("Order not created!") }
             }
             .doOnSuccess {
                 logger.info("pautaRepository.update, status=complete")
@@ -59,7 +61,9 @@ class PautaServiceImpl(
         logger.info("pautaRepository.deleteByName, status=try")
         return pautaRepository.deleteByPautaNome(nome)
             .flatMap {
-                Mono.just(true)
+                redisService.remove("pauta:nome:$nome:pauta")
+                    .doOnSuccess { logger.info("Order removed with success!") }
+                    .doOnError { logger.error("Order not removed!") }
             }
             .doOnSuccess {
                 logger.info("pautaRepository.deleteByName, status=complete")
@@ -67,13 +71,6 @@ class PautaServiceImpl(
             .onErrorResume {
                 logger.error("pautaRepository.deleteByName, status=error message:${it.message}")
                 Mono.error(UnsupportedOperationException("Error to delete!"))
-            }
-            .also {
-                redisService.remove("pauta:nome:$nome:pauta").subscribe()
-                logger.info("Order removed on redis with success!")
-            }
-            .doOnError {
-                logger.error("Order not removed on redis with success!")
             }
     }
 
@@ -86,8 +83,10 @@ class PautaServiceImpl(
                     return@flatMap Mono.just(redisValue)
                 }
                 pautaRepository.findById(id)
-                    .map { dbValue ->
-                        dbValue.toDomain()
+                    .flatMap { dbValue ->
+                        redisService.put(dbValue.toDomain()).thenReturn(dbValue.toDomain())
+                            .doOnSuccess { logger.info("Order created with success!") }
+                            .doOnError { logger.error("Order not created!") }
                     }
                     .doOnSuccess {
                         logger.info("pautaRepository.findById, status=complete by db")
@@ -95,12 +94,6 @@ class PautaServiceImpl(
                     .onErrorResume {
                         logger.error("pautaRepository.findById, status=error message:${it.message}")
                         Mono.error(UnsupportedOperationException("Error to search!"))
-                    }
-                    .also {
-                        it.map { valueRedis ->
-                            redisService.put(valueRedis).subscribe()
-                            logger.info("pautaRepository.findById, added on redis")
-                        }.subscribe()
                     }
             }
     }
@@ -114,10 +107,10 @@ class PautaServiceImpl(
                     return@flatMap Mono.just(redisValue)
                 }
                 pautaRepository.findByPautaNome(nome)
-                    .map {
-                        redisService.put(it.toDomain()).subscribe()
-                        logger.info("pautaRepository.findById, added on redis")
-                        it.toDomain()
+                    .flatMap { dbValue ->
+                        redisService.put(dbValue.toDomain()).thenReturn(dbValue.toDomain())
+                            .doOnSuccess { logger.info("Order created with success!") }
+                            .doOnError { logger.error("Order not created!") }
                     }
                     .doOnSuccess {
                         logger.info("pautaRepository.findByName, status=complete")
@@ -139,8 +132,9 @@ class PautaServiceImpl(
                 }
                 pautaRepository.findAll()
                     .flatMap { pautaDb ->
-                        redisService.put(pautaDb.toDomain()).subscribe()
-                        Flux.just(pautaDb.toDomain())
+                        redisService.put(pautaDb.toDomain()).thenReturn(pautaDb.toDomain())
+                            .doOnSuccess { logger.info("Order created with success!") }
+                            .doOnError { logger.error("Order not created!") }
                     }
                     .doOnTerminate {
                         logger.info("pautaRepository.findAll, status=complete")
@@ -154,12 +148,8 @@ class PautaServiceImpl(
 
     override fun removeAll(): Flux<Boolean> {
         logger.info("pautaRepository.removeAll, status=try")
-        return redisService.removeAll()
-            .flatMap { Flux.just(true) }
-            .also {
-                pautaRepository.deleteAll().subscribe()
-                logger.info("Remove all Order completed!")
-            }
+        return redisService.removeAll().map { true }
+            .doOnTerminate { logger.info("Order created with success!") }
             .onErrorResume { error ->
                 logger.error("pautaRepository.removeAll, status=error message:${error.message}")
                 Mono.error(UnsupportedOperationException("Error to search!"))

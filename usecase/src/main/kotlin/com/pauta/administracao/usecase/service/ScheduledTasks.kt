@@ -33,8 +33,27 @@ class ScheduledTasks(
         getAllPauta()
             .flatMap {
                 if (orderExpiredDuration(it)) {
-                    sendAnounciant(it).subscribe()
-                    removePauta(it).subscribe()
+                    sendAnounciant(it)
+                        .map {
+                            true
+                        }
+                        .doOnSuccess {
+                            logger.info("Sent with success to kafka!")
+                        }
+                        .doOnError {
+                            logger.error("Error te sent order!")
+                        }
+
+                    removePauta(it)
+                        .map {
+                            true
+                        }
+                        .doOnSuccess {
+                            logger.info("Order removed with success!")
+                        }
+                        .doOnError {
+                            logger.error("Error te remove order!")
+                        }
                 }
                 Mono.just(true)
             }
@@ -61,8 +80,11 @@ class ScheduledTasks(
     private fun removePauta(pautaDomain: PautaDomain): Mono<Boolean> {
         return pautaDomain.pautaNome.let {
             pautaService.deleteByName(it)
+                .doOnSuccess {
+                    logger.info("Order deleted with success!")
+                }
                 .doOnError {
-                    logger.error("Error te remove order!")
+                    logger.error("Error to remove order!")
                 }
         }
     }
@@ -72,9 +94,13 @@ class ScheduledTasks(
             .flatMap {
                 logger.info("Prepare to sent message!")
                 kafkaProducerService.sendMessage(it.toString())
-            }
-            .doOnSuccess {
-                logger.info("Message sent with success!")
+                    .map { true }
+                    .doOnSuccess {
+                        logger.info("Message sent with success!")
+                    }
+                    .doOnError {
+                        logger.error("Error to sent message!")
+                    }
             }
             .onErrorResume {
                 logger.error("Error to sent message to kafka message=${it.message}")

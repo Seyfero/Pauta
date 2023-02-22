@@ -8,6 +8,7 @@ import com.pauta.administracao.outputboundary.service.repository.PautaService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.onErrorResume
 
 @Service
 class CreatePautaServiceImpl(
@@ -25,9 +26,15 @@ class CreatePautaServiceImpl(
                     logger.error("This order exists!")
                     Mono.error(IllegalArgumentException("This order exists!"))
                 } else {
-                    pautaService.create(inputPautaDto.toDomain().toOutputDto()).subscribe()
-                    logger.info("Order created!")
-                    Mono.just(true)
+                    pautaService.create(inputPautaDto.toDomain().toOutputDto())
+                        .map {
+                            logger.info("Order created!")
+                            true
+                        }
+                        .onErrorResume { e ->
+                            logger.error("Error creating order: ${e.message}")
+                            Mono.just(false)
+                        }
                 }
             }
     }

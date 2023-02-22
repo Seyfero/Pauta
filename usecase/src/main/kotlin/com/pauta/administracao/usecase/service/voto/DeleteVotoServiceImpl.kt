@@ -20,6 +20,14 @@ class DeleteVotoServiceImpl(
             .flatMap {
                 logger.info("Vote deleted with success!")
                 votoService.delete(idVoto)
+                    .map {
+                        logger.info("Vote deleted!")
+                        true
+                    }
+                    .onErrorResume { e ->
+                        logger.error("Error deleting order: ${e.message}")
+                        Mono.just(false)
+                    }
             }
             .onErrorResume {
                 logger.error("Error to delete vote message = ${it.message}")

@@ -20,9 +20,15 @@ class DeletePautaServiceImpl(
         return verifyIfExistsPautaByNome(inputNome)
             .flatMap { exists ->
                 if (exists) {
-                    pautaService.deleteByName(inputNome).subscribe()
-                    logger.info("Order deleted with success!")
-                    Mono.just(true)
+                    pautaService.deleteByName(inputNome)
+                        .map {
+                            logger.info("Order removed!")
+                            true
+                        }
+                        .onErrorResume { e ->
+                            logger.error("Error removed order: ${e.message}")
+                            Mono.just(false)
+                        }
                 } else {
                     logger.error("Order exists!")
                     Mono.error(NoSuchElementException("Order not found!"))
@@ -32,11 +38,6 @@ class DeletePautaServiceImpl(
 
     override fun execute(): Flux<Boolean> {
         return pautaService.removeAll()
-    }
-
-    private fun verifyIfExistsPautaById(id: Long): Mono<Boolean> {
-        return pautaService.findById(id)
-            .hasElement()
     }
 
     private fun verifyIfExistsPautaByNome(nome: String): Mono<Boolean> {

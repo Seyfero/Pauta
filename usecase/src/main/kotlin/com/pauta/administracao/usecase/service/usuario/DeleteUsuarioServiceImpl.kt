@@ -33,9 +33,15 @@ class DeleteUsuarioServiceImpl(
         return verifyIfExistsUsuarioByCpf(inputUsuarioCpf)
             .flatMap { exists ->
                 if (exists) {
-                    usuarioService.deleteByCpf(inputUsuarioCpf).subscribe()
-                    logger.info("User deleted with success!")
-                    Mono.just(true)
+                    usuarioService.deleteByCpf(inputUsuarioCpf)
+                        .map {
+                            logger.info("User removed!")
+                            true
+                        }
+                        .onErrorResume { e ->
+                            logger.error("Error removing order: ${e.message}")
+                            Mono.just(false)
+                        }
                 } else {
                     Mono.error(NoSuchElementException("User not voted!"))
                 }

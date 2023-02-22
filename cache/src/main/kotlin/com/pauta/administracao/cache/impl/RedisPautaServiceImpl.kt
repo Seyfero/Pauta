@@ -42,6 +42,8 @@ class RedisPautaServiceImpl(
             .map {
                 deserialize(it)
             }
+            .doOnSuccess { logger.info("Order created on redis with success!") }
+            .doOnError { logger.error("Order not created on redis!") }
             .switchIfEmpty(Mono.empty())
     }
 
@@ -53,6 +55,8 @@ class RedisPautaServiceImpl(
             .map {
                 deserialize(it)
             }
+            .doOnTerminate { logger.info("Order founded on redis with success!") }
+            .doOnError { logger.error("Order not founded on redis!") }
     }
 
     override fun removeAll(): Flux<Boolean> {
@@ -61,6 +65,7 @@ class RedisPautaServiceImpl(
                 reactiveRedisOperations.opsForValue().delete(redisKey).subscribe()
                 Flux.just(true)
             }
+            .doOnTerminate { logger.info("Order removed on redis with success!") }
             .onErrorResume {
                 logger.error("Not success to delete data in redis!")
                 Flux.just(false)
@@ -69,8 +74,8 @@ class RedisPautaServiceImpl(
 
     override fun remove(key: String): Mono<Boolean> {
         return reactiveRedisOperations.opsForValue().delete(key)
-            .doOnSuccess { }
-            .doOnError { }
+            .doOnSuccess { logger.info("Order removed on redis with success!") }
+            .doOnError { logger.error("Order not removed on redis!") }
     }
 
     override fun serialize(value: PautaDomain?): String {
