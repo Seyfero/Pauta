@@ -51,19 +51,22 @@ class RedisPautaServiceImpl(
         return reactiveRedisOperations.keys("*")
             .flatMap { redisKey ->
                 reactiveRedisOperations.opsForValue().get(redisKey)
+                    .map {
+                        deserialize(it)
+                    }
+                    .doOnSuccess { logger.info("Order got on redis with success!") }
+                    .onErrorResume {
+                        logger.error("Not success to take data in redis!")
+                        null
+                    }
             }
-            .map {
-                deserialize(it)
-            }
-            .doOnTerminate { logger.info("Order founded on redis with success!") }
-            .doOnError { logger.error("Order not founded on redis!") }
     }
 
     override fun removeAll(): Flux<Boolean> {
         return reactiveRedisOperations.keys("*")
             .flatMap { redisKey ->
-                reactiveRedisOperations.opsForValue().delete(redisKey).subscribe()
-                Flux.just(true)
+                reactiveRedisOperations.opsForValue().delete(redisKey)
+                    .map { true }
             }
             .doOnTerminate { logger.info("Order removed on redis with success!") }
             .onErrorResume {

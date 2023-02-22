@@ -82,10 +82,10 @@ class PautaController(
     }
 
     @Operation(
-        summary = "EndPoint de deleção da pauta por Id",
-        description = "EndPoint de deleção da pauta por Id"
+        summary = "EndPoint de deleção das pautas no redis",
+        description = "EndPoint de deleção das pautas no redis"
     )
-    @DeleteMapping(value = ["/all"])
+    @DeleteMapping(value = ["/redis/all"])
     fun deleteAllPauta(): Flux<Boolean> {
         return deletePautaService.execute()
     }

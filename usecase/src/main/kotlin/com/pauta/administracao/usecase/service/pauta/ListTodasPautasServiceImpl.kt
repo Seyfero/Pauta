@@ -7,6 +7,7 @@ import com.pauta.administracao.outputboundary.service.repository.PautaService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @Service
 class ListTodasPautasServiceImpl(
@@ -23,9 +24,9 @@ class ListTodasPautasServiceImpl(
             .doOnTerminate {
                 logger.info("Order founded with success!")
             }
-            .onErrorMap {
+            .onErrorResume {
                 logger.error("Error to convert order!")
-                IllegalStateException("Error on convert all orders!", it)
+                Flux.error(IllegalStateException("Error on convert all orders!", it))
             }
     }
 }

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.switchIfEmptyDeferred
 
 @Service
 class PautaServiceImpl(
@@ -128,8 +129,11 @@ class PautaServiceImpl(
             .flatMap {
                 if (it != null) {
                     logger.info("pautaRepository.findById, status=complete by redis")
-                    return@flatMap Mono.just(it)
+                    return@flatMap Flux.just(it)
                 }
+                Flux.empty()
+            }
+            .switchIfEmpty {
                 pautaRepository.findAll()
                     .flatMap { pautaDb ->
                         redisService.put(pautaDb.toDomain()).thenReturn(pautaDb.toDomain())

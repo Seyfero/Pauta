@@ -20,7 +20,9 @@ class ListPautasAtivasServiceImpl(
 
     override fun execute(): Flux<InputPautasAtivasDto> {
         return pautaService.findAll()
-            .filter { isValidPautaByDuration(it.toInputAtivos()) }
+            .collectList()
+            .map { it.filter { pauta -> isValidPautaByDuration(pauta.toInputAtivos()) } }
+            .flatMapMany { Flux.fromIterable(it) }
             .map { it.toInputAtivos() }
             .doOnTerminate {
                 logger.info("Order founded with success!")
