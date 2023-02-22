@@ -4,7 +4,7 @@ import com.pauta.administracao.cache.service.RedisService
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-abstract class RedisServiceImpl<T : Any>: RedisService<T> {
+abstract class RedisServiceImpl<T : Any> : RedisService<T> {
 
     abstract override fun put(value: T): Mono<Boolean>
 

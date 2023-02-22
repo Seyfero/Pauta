@@ -11,7 +11,7 @@ springdoc:
   api-docs:
     path: /api-docs
   app:
-    proxy: ${pauta.url.host}/swagger-ui.html
+    proxy: ${pauta.url.host}
 
 spring:
   r2dbc:

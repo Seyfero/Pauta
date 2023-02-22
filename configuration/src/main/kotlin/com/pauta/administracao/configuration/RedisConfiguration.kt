@@ -3,10 +3,14 @@ package com.pauta.administracao.configuration
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory
 import org.springframework.data.redis.connection.RedisPassword
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
-import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.core.ReactiveRedisOperations
+import org.springframework.data.redis.core.ReactiveRedisTemplate
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
+import org.springframework.data.redis.serializer.RedisSerializationContext
 import org.springframework.data.redis.serializer.StringRedisSerializer
 
 @Configuration
@@ -29,12 +33,15 @@ class RedisConfiguration {
     }
 
     @Bean
-    fun redisTemplate(connectionFactory: LettuceConnectionFactory): RedisTemplate<String, Any> {
-        val template = RedisTemplate<String, Any>()
-        template.setConnectionFactory(connectionFactory)
-        template.setDefaultSerializer(StringRedisSerializer())
-        template.setEnableTransactionSupport(true)
-        template.afterPropertiesSet()
-        return template
+    fun reactiveRedisOperations(connectionFactory: ReactiveRedisConnectionFactory): ReactiveRedisOperations<String, Any> {
+        val serializer = StringRedisSerializer()
+        val hashValueSerializer = GenericJackson2JsonRedisSerializer()
+
+        val context = RedisSerializationContext.newSerializationContext<String, Any>(serializer)
+            .hashKey(serializer)
+            .hashValue(hashValueSerializer)
+            .build()
+
+        return ReactiveRedisTemplate(connectionFactory, context)
     }
 }

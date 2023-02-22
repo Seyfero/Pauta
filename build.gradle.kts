@@ -65,12 +65,13 @@ subprojects {
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-        implementation("org.springframework.kafka:spring-kafka:2.8.0")
+        implementation("org.springframework.kafka:spring-kafka:2.9.0")
 
         implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive:${property("springBootVersion")}")
         implementation("io.lettuce:lettuce-core:6.1.6.RELEASE")
 
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+        implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test:${property("springBootVersion")}")
         testImplementation("io.projectreactor:reactor-test:3.4.18")
