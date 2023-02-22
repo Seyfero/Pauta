@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.switchIfEmpty
 
 @Service
 class PautaServiceImpl(
@@ -36,13 +35,11 @@ class PautaServiceImpl(
                 Mono.error(UnsupportedOperationException("Error to create order!"))
             }
             .also {
-                redisService.put(pauta.toDomain())
-                    .doOnSuccess {
-                        logger.info("Order added on redis with success!")
-                    }
-                    .doOnError {
-                        logger.error("Order not added on redis with success!")
-                    }
+                redisService.put(pauta.toDomain()).subscribe()
+                logger.info("Order added on redis with success!")
+            }
+            .doOnError {
+                logger.error("Order not created on redis with success!")
             }
     }
 
@@ -60,13 +57,11 @@ class PautaServiceImpl(
                 Mono.error(UnsupportedOperationException("Error to update update!"))
             }
             .also {
-                redisService.put(pauta.toDomain())
-                    .doOnSuccess {
-                        logger.info("Order updated on redis with success!")
-                    }
-                    .doOnError {
-                        logger.error("Order not updated on redis with success!")
-                    }
+                redisService.put(pauta.toDomain()).subscribe()
+                logger.info("Order updated on redis with success!")
+            }
+            .doOnError {
+                logger.error("Order not updated on redis with success!")
             }
     }
 
@@ -84,13 +79,11 @@ class PautaServiceImpl(
                 Mono.error(UnsupportedOperationException("Error to delete!"))
             }
             .also {
-                redisService.remove("pauta:id:${id}:pauta")
-                    .doOnSuccess {
-                        logger.info("Order removed on redis with success!")
-                    }
-                    .doOnError {
-                        logger.error("Order not removed on redis with success!")
-                    }
+                redisService.remove("pauta:id:$id:pauta").subscribe()
+                logger.info("Order removed on redis with success!")
+            }
+            .doOnError {
+                logger.error("Order not removed on redis with success!")
             }
     }
 
@@ -108,26 +101,24 @@ class PautaServiceImpl(
                 Mono.error(UnsupportedOperationException("Error to delete!"))
             }
             .also {
-                redisService.remove("pauta:nome:${nome}:pauta")
-                    .doOnSuccess {
-                        logger.info("Order removed on redis with success!")
-                    }
-                    .doOnError {
-                        logger.error("Order not removed on redis with success!")
-                    }
+                redisService.remove("pauta:nome:$nome:pauta").subscribe()
+                logger.info("Order removed on redis with success!")
+            }
+            .doOnError {
+                logger.error("Order not removed on redis with success!")
             }
     }
 
     override fun findById(id: Long): Mono<PautaDomain> {
         logger.info("pautaRepository.findById, status=try")
-        return redisService.get("pauta:id:${id}:pauta")
+        return redisService.get("pauta:id:$id:pauta")
             .flatMap { redisValue ->
-                if(redisValue != null) {
+                if (redisValue != null) {
                     logger.info("pautaRepository.findById, status=complete by redis")
                     return@flatMap Mono.just(redisValue)
                 }
                 pautaRepository.findById(id)
-                    .map { dbValue->
+                    .map { dbValue ->
                         dbValue.toDomain()
                     }
                     .doOnSuccess {
@@ -151,7 +142,7 @@ class PautaServiceImpl(
 
     override fun findByName(nome: String): Mono<PautaDomain> {
         logger.info("pautaRepository.findByName, status=try")
-        return redisService.get("pauta:nome:${nome}:pauta")
+        return redisService.get("pauta:nome:$nome:pauta")
             .flatMap { redisValue ->
                 if (redisValue != null) {
                     logger.info("pautaRepository.findById, status=complete by redis")
@@ -184,7 +175,7 @@ class PautaServiceImpl(
         logger.info("pautaRepository.findAll, status=try")
         return redisService.getAll("pauta:id:*")
             .flatMap {
-                if(it != null) {
+                if (it != null) {
                     logger.info("pautaRepository.findById, status=complete by redis")
                     return@flatMap Mono.just(it)
                 }

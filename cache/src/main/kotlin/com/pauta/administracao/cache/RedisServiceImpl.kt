@@ -1,13 +1,10 @@
 package com.pauta.administracao.cache
 
 import com.pauta.administracao.cache.service.RedisService
-import org.springframework.data.redis.core.ReactiveRedisOperations
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-abstract class RedisServiceImpl<T : Any>(
-    private val reactiveRedisOperations: ReactiveRedisOperations<String, Any>
-) : RedisService<T> {
+abstract class RedisServiceImpl<T : Any>: RedisService<T> {
 
     abstract override fun put(value: T): Mono<Boolean>
 

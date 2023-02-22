@@ -4,15 +4,19 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.pauta.administracao.cache.RedisServiceImpl
 import com.pauta.administracao.domain.PautaDomain
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.context.annotation.Primary
 import org.springframework.data.redis.core.ReactiveRedisOperations
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Service
+@Primary
+@Qualifier(value = "redisService")
 class RedisPautaServiceImpl(
-    private val reactiveRedisOperations: ReactiveRedisOperations<String, Any>
-) : RedisServiceImpl<PautaDomain>(reactiveRedisOperations) {
+    private val reactiveRedisOperations: ReactiveRedisOperations<String, Any>,
+) : RedisServiceImpl<PautaDomain>() {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 

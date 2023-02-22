@@ -2,4 +2,5 @@ dependencies {
     implementation project(":domain")
     implementation project(":input-boundary")
     implementation project(":output-boundary")
+    implementation project(":kafka-producer")
 }
