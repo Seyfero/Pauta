@@ -1,5 +1,6 @@
 package com.pauta.administracao.cache.impl
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.pauta.administracao.cache.RedisServiceImpl
 import com.pauta.administracao.domain.PautaDomain
@@ -28,7 +29,7 @@ class RedisPautaServiceImpl(
             .flatMap { success ->
                 if (success) {
                     logger.info("Value of order created with success in redis!")
-                    reactiveRedisOperations.opsForSet().add(nameIndexKey, hashKey)
+                    reactiveRedisOperations.opsForSet().add(nameIndexKey, hashKey).subscribe()
                     logger.info("Compose keys created with success!")
                     Mono.just(true)
                 } else {
@@ -78,7 +79,7 @@ class RedisPautaServiceImpl(
 
     override fun serialize(value: PautaDomain?): String {
         return try {
-            val objectMapper = jacksonObjectMapper()
+            val objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
             objectMapper.writeValueAsString(value)
         } catch (e: Exception) {
             logger.error("Error to serializable, message=${e.message}")
@@ -91,7 +92,7 @@ class RedisPautaServiceImpl(
             return null
         }
         return try {
-            val objectMapper = jacksonObjectMapper()
+            val objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
             val json = value as String
             objectMapper.readValue(json, PautaDomain::class.java)
         } catch (e: Exception) {

@@ -19,7 +19,7 @@ class DeleteUsuarioServiceImpl(
         return verifyIfExistsUsuarioById(inputUsuarioId)
             .flatMap { exists ->
                 if (exists) {
-                    usuarioService.deleteById(inputUsuarioId)
+                    usuarioService.deleteById(inputUsuarioId).subscribe()
                     logger.info("User deleted with success!")
                     Mono.just(true)
                 } else {
@@ -33,7 +33,7 @@ class DeleteUsuarioServiceImpl(
         return verifyIfExistsUsuarioByCpf(inputUsuarioCpf)
             .flatMap { exists ->
                 if (exists) {
-                    usuarioService.deleteByCpf(inputUsuarioCpf)
+                    usuarioService.deleteByCpf(inputUsuarioCpf).subscribe()
                     logger.info("User deleted with success!")
                     Mono.just(true)
                 } else {

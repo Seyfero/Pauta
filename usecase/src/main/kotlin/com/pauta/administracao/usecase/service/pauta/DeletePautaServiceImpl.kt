@@ -19,7 +19,7 @@ class DeletePautaServiceImpl(
         return verifyIfExistsPautaById(inputId)
             .flatMap { exists ->
                 if (exists) {
-                    pautaService.deleteById(inputId)
+                    pautaService.deleteById(inputId).subscribe()
                     logger.info("Order deleted with success!")
                     Mono.just(true)
                 } else {
@@ -33,7 +33,7 @@ class DeletePautaServiceImpl(
         return verifyIfExistsPautaByNome(inputNome)
             .flatMap { exists ->
                 if (exists) {
-                    pautaService.deleteByName(inputNome)
+                    pautaService.deleteByName(inputNome).subscribe()
                     logger.info("Order deleted with success!")
                     Mono.just(true)
                 } else {

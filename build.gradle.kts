@@ -70,8 +70,8 @@ subprojects {
         implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive:${property("springBootVersion")}")
         implementation("io.lettuce:lettuce-core:6.1.6.RELEASE")
 
-        implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-        implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4")
+        implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.0-rc2")
+        implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.5")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test:${property("springBootVersion")}")
         testImplementation("io.projectreactor:reactor-test:3.4.18")

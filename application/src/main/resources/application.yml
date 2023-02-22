@@ -17,7 +17,8 @@ spring:
   r2dbc:
     host: localhost
     port: 5432
-    data-base: database-name
+    data-base: postgres
+    schema: controle_pautas
     username: postgres
     password: postgres
   kafka:

@@ -18,6 +18,9 @@ class PostgreSql(
     @Value("\${spring.r2dbc.data-base}")
     private val dataBase: String,
 
+    @Value("\${spring.r2dbc.schema}")
+    private val schema: String,
+
     @Value("\${spring.r2dbc.username}")
     private val username: String,
 
@@ -29,6 +32,7 @@ class PostgreSql(
     fun connectionFactory(): ConnectionFactory {
         return PostgresqlConnectionFactory(
             PostgresqlConnectionConfiguration.builder()
+                .schema(schema)
                 .host(host)
                 .port(port.toInt())
                 .database(dataBase)

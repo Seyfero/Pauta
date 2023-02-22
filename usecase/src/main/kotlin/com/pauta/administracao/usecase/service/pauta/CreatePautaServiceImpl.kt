@@ -25,7 +25,7 @@ class CreatePautaServiceImpl(
                     logger.error("This order exists!")
                     Mono.error(IllegalArgumentException("This order exists!"))
                 } else {
-                    pautaService.create(inputPautaDto.toDomain().toOutputDto())
+                    pautaService.create(inputPautaDto.toDomain().toOutputDto()).subscribe()
                     logger.info("Order created!")
                     Mono.just(true)
                 }

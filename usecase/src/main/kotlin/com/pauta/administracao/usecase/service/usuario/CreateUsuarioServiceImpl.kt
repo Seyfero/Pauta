@@ -25,7 +25,7 @@ class CreateUsuarioServiceImpl(
                     logger.error("This user voted before on this order!")
                     Mono.error(IllegalStateException("This user voted before on this order!"))
                 } else {
-                    usuarioService.create(inputUsuarioDto.toDomain().toOutputDto())
+                    usuarioService.create(inputUsuarioDto.toDomain().toOutputDto()).subscribe()
                     logger.info("Used created!")
                     Mono.just(true)
                 }
