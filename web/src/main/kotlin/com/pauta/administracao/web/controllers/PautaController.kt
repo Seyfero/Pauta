@@ -85,9 +85,9 @@ class PautaController(
         summary = "EndPoint de deleção da pauta por Id",
         description = "EndPoint de deleção da pauta por Id"
     )
-    @DeleteMapping(value = ["/id"])
-    fun deletePautaById(@RequestParam id: Long): Mono<Boolean> {
-        return deletePautaService.execute(id)
+    @DeleteMapping(value = ["/all"])
+    fun deleteAllPauta(): Flux<Boolean> {
+        return deletePautaService.execute()
     }
 
     @Operation(

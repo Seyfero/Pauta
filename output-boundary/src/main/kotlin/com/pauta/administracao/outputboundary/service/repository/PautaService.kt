@@ -11,8 +11,6 @@ interface PautaService {
 
     fun update(pauta: PautaOutputDto): Mono<PautaDomain>
 
-    fun deleteById(id: Long): Mono<Boolean>
-
     fun deleteByName(nome: String): Mono<Boolean>
 
     fun findById(id: Long): Mono<PautaDomain>
@@ -20,4 +18,6 @@ interface PautaService {
     fun findByName(nome: String): Mono<PautaDomain>
 
     fun findAll(): Flux<PautaDomain>
+
+    fun removeAll(): Flux<Boolean>
 }

@@ -23,36 +23,30 @@ class RedisPautaServiceImpl(
 
     override fun put(value: PautaDomain): Mono<Boolean> {
         val serializedValue = serialize(value)
-        val hashKey = "pauta:id:${value.id}:pauta"
         val nameIndexKey = "pauta:nome:${value.pautaNome}:pauta"
-        return reactiveRedisOperations.opsForValue().set(hashKey, serializedValue)
-            .flatMap { success ->
+        return reactiveRedisOperations.opsForValue().set(nameIndexKey, serializedValue)
+            .map { success ->
                 if (success) {
                     logger.info("Value of order created with success in redis!")
-                    reactiveRedisOperations.opsForSet().add(nameIndexKey, hashKey).subscribe()
-                    logger.info("Compose keys created with success!")
-                    Mono.just(true)
+                    true
                 } else {
                     logger.error("Not success to create data in redis!")
-                    Mono.just(false)
+                    false
                 }
             }
             .onErrorResume { Mono.just(false) }
     }
 
     override fun get(key: String): Mono<PautaDomain?> {
-        return reactiveRedisOperations.opsForSet().members(key)
-            .flatMap { redisKey ->
-                reactiveRedisOperations.opsForValue().get(redisKey)
-            }
+        return reactiveRedisOperations.opsForValue().get(key)
             .map {
                 deserialize(it)
             }
-            .singleOrEmpty()
+            .switchIfEmpty(Mono.empty())
     }
 
     override fun getAll(key: String): Flux<PautaDomain?> {
-        return reactiveRedisOperations.keys(key)
+        return reactiveRedisOperations.keys("*")
             .flatMap { redisKey ->
                 reactiveRedisOperations.opsForValue().get(redisKey)
             }
@@ -62,26 +56,21 @@ class RedisPautaServiceImpl(
     }
 
     override fun removeAll(): Flux<Boolean> {
-        return reactiveRedisOperations.keys("pauta:id*")
+        return reactiveRedisOperations.keys("*")
             .flatMap { redisKey ->
-                reactiveRedisOperations.opsForValue().delete(redisKey)
+                reactiveRedisOperations.opsForValue().delete(redisKey).subscribe()
+                Flux.just(true)
+            }
+            .onErrorResume {
+                logger.error("Not success to delete data in redis!")
+                Flux.just(false)
             }
     }
 
     override fun remove(key: String): Mono<Boolean> {
-        return reactiveRedisOperations.opsForSet()
-            .members(key)
-            .map { redisKey -> redisKey.toString() }
-            .collectList()
-            .flatMapMany { redisKeys -> Flux.fromIterable(redisKeys) }
-            .flatMap { redisKey ->
-                reactiveRedisOperations.opsForValue().delete(redisKey)
-            }
-            .then(Mono.just(true))
-            .onErrorResume {
-                logger.error("Not success to delete data in redis!")
-                Mono.just(false)
-            }
+        return reactiveRedisOperations.opsForValue().delete(key)
+            .doOnSuccess { }
+            .doOnError { }
     }
 
     override fun serialize(value: PautaDomain?): String {

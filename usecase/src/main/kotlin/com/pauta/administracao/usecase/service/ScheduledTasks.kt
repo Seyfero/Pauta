@@ -59,12 +59,12 @@ class ScheduledTasks(
     }
 
     private fun removePauta(pautaDomain: PautaDomain): Mono<Boolean> {
-        return pautaDomain.id?.let {
-            pautaService.deleteById(it)
-        } ?: Mono.error<Boolean?>(UnsupportedOperationException("Error to delete pauta on database!"))
-            .doOnError {
-                logger.error("Error to delete pauta on database message=${it.message}")
-            }
+        return pautaDomain.pautaNome.let {
+            pautaService.deleteByName(it)
+                .doOnError {
+                    logger.error("Error te remove order!")
+                }
+        }
     }
 
     private fun sendAnounciant(pautaDomain: PautaDomain): Mono<Boolean> {
