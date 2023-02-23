@@ -26,7 +26,7 @@ class ListVotoByPautaServiceImpl(
         return verifyIfExistsPauta(inputPautaNome)
             .flatMapMany { inputVotoDto ->
                 inputVotoDto.id?.let { id ->
-                    votoService.findByVotoPautaNome(id)
+                    votoService.findByVotoPauta(id)
                         .map {
                             it.toInputDto()
                         }

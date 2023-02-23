@@ -79,24 +79,9 @@ class VotoServiceImpl(
             }
     }
 
-    override fun findByVotoPautaNome(idVotoPauta: Long?): Flux<VotoDomain> {
-        logger.info("votoRepository.findByVotoPauta, status=try")
-        return votoRepository.findByVotoUsuario(idVotoPauta)
-            .map {
-                it.toDomain()
-            }
-            .doOnTerminate {
-                logger.info("votoRepository.findByVotoPauta, status=complete")
-            }
-            .onErrorResume {
-                logger.error("votoRepository.findByVotoPautaNome, status=error message:${it.message}")
-                Mono.error(IllegalAccessException("Error to find vote by name's order!"))
-            }
-    }
-
-    override fun findByVotoPautaAndVotoUsuario(idVotoPauta: Long?, idVotoUsuario: Long?): Mono<VotoDomain> {
+    override fun findByVotoPautaAndVotoUsuarioCpf(idVotoPauta: Long?, cpfUsuario: String): Mono<VotoDomain> {
         logger.info("votoRepository.findByVotoPautaAndVotoUsuario, status=try")
-        return votoRepository.findByVotoPautaAndVotoUsuario(idVotoPauta, idVotoUsuario)
+        return votoRepository.findByVotoPautaAndVotoUsuarioCpf(idVotoPauta, cpfUsuario)
             .map {
                 it.toDomain()
             }

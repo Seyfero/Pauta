@@ -15,9 +15,7 @@ interface VotoService {
 
     fun findByVotoPauta(idVotoPauta: Long?): Flux<VotoDomain>
 
-    fun findByVotoPautaNome(idVotoPauta: Long?): Flux<VotoDomain>
-
-    fun findByVotoPautaAndVotoUsuario(idVotoPauta: Long?, idVotoUsuario: Long?): Mono<VotoDomain>
+    fun findByVotoPautaAndVotoUsuarioCpf(idVotoPauta: Long?, cpfUsuario: String): Mono<VotoDomain>
 
     fun getCountVotosByPautaId(idVotoPauta: Long?, votoEscolha: String): Mono<Long>
 }

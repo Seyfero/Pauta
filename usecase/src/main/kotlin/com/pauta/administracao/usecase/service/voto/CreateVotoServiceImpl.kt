@@ -3,24 +3,18 @@ package com.pauta.administracao.usecase.service.voto
 import com.pauta.administracao.domain.exception.ExpiredPautaException
 import com.pauta.administracao.domain.exception.IllegalPautaException
 import com.pauta.administracao.inputservice.converters.pauta.toInputDto
-import com.pauta.administracao.inputservice.converters.usuario.toDomain
-import com.pauta.administracao.inputservice.converters.usuario.toIpuntDto
 import com.pauta.administracao.inputservice.converters.voto.toDomain
 import com.pauta.administracao.inputservice.dto.pauta.InputPautaDto
-import com.pauta.administracao.inputservice.dto.usuario.InputUsuarioDto
 import com.pauta.administracao.inputservice.dto.voto.InputVotoExternalDto
 import com.pauta.administracao.inputservice.dto.voto.InputVotoInternalDto
 import com.pauta.administracao.inputservice.services.voto.CreateVotoService
-import com.pauta.administracao.outputboundary.converters.usuario.toOutputDto
 import com.pauta.administracao.outputboundary.converters.voto.toOutputDto
 import com.pauta.administracao.outputboundary.service.gateway.ValidateExternalCallUserCpfService
 import com.pauta.administracao.outputboundary.service.repository.PautaService
-import com.pauta.administracao.outputboundary.service.repository.UsuarioService
 import com.pauta.administracao.outputboundary.service.repository.VotoService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.switchIfEmpty
 import reactor.kotlin.core.util.function.component1
 import reactor.kotlin.core.util.function.component2
 import reactor.kotlin.core.util.function.component3
@@ -32,7 +26,6 @@ class CreateVotoServiceImpl(
     private val votoService: VotoService,
     private val pautaService: PautaService,
     private val validateExternalCallUserCpfService: ValidateExternalCallUserCpfService,
-    private val usuarioService: UsuarioService
 
 ) : CreateVotoService {
 
@@ -41,15 +34,8 @@ class CreateVotoServiceImpl(
     override fun execute(inputVotoExternalDto: InputVotoExternalDto): Mono<Boolean> {
         return validUserCpf(inputVotoExternalDto.cpfUsuario)
             .flatMap {
-                if (it) {
-                    persistUserIfNotExists(inputVotoExternalDto.cpfUsuario)
-                } else {
-                    Mono.error(UnsupportedOperationException("Error to validate cpf on vote!"))
-                }
-            }
-            .flatMap {
                 logger.info("Cpf's user could be validate!")
-                verifyIfCanPersistVoto(it, inputVotoExternalDto)
+                verifyIfCanPersistVoto(inputVotoExternalDto.cpfUsuario, inputVotoExternalDto)
             }
             .flatMap {
                 logger.info("Vote could be validate!")
@@ -75,33 +61,14 @@ class CreateVotoServiceImpl(
             }
     }
 
-    private fun persistUserIfNotExists(cpfUsuario: String): Mono<InputUsuarioDto> {
-        return usuarioService.findByCpf(cpfUsuario)
-            .flatMap {
-                logger.info("User could be founded!")
-                Mono.just(it.toIpuntDto())
-            }
-            .switchIfEmpty {
-                logger.info("Vote's user couldn't be founded!")
-                usuarioService.create(InputUsuarioDto(null, cpfUsuario).toDomain().toOutputDto())
-                    .map {
-                        it.toIpuntDto()
-                    }
-            }
-            .onErrorResume { throwable: Throwable ->
-                logger.error("Error to search user message = ${throwable.message}!!")
-                Mono.error(IllegalStateException("Error to search user!", throwable))
-            }
-    }
-
-    private fun verifyIfCanPersistVoto(user: InputUsuarioDto, inputVotoExternalDto: InputVotoExternalDto): Mono<InputVotoInternalDto> {
+    private fun verifyIfCanPersistVoto(userCpf: String, inputVotoExternalDto: InputVotoExternalDto): Mono<InputVotoInternalDto> {
         return verifyIfExistsPauta(inputVotoExternalDto.pautaNome)
             .flatMap { inputPauta ->
                 logger.info("Order could be founded!")
-                verifyPreConditionsToCreateVote(user, inputVotoExternalDto, inputPauta)
+                verifyPreConditionsToCreateVote(userCpf, inputVotoExternalDto, inputPauta)
                     .flatMap {
                         if (it) {
-                            Mono.just(InputVotoInternalDto(null, inputVotoExternalDto.votoEscolha, inputPauta, user))
+                            Mono.just(InputVotoInternalDto(null, inputVotoExternalDto.votoEscolha, userCpf, inputPauta.id))
                         } else {
                             Mono.error(NoSuchElementException("Error to validate user!"))
                         }
@@ -115,14 +82,14 @@ class CreateVotoServiceImpl(
     }
 
     private fun verifyPreConditionsToCreateVote(
-        user: InputUsuarioDto,
+        userCpf: String,
         inputVotoExternalDto: InputVotoExternalDto,
         inputPautaDto: InputPautaDto
     ): Mono<Boolean> {
         return Mono.zip(
             isValidPautaByTime(inputPautaDto),
             validateVoteValue(inputVotoExternalDto),
-            verifyIfExistsVoteWithCpfUser(user, inputPautaDto.id)
+            verifyIfExistsVoteWithCpfUser(userCpf, inputPautaDto.id)
         )
             .map { tupla ->
                 val (fun1, fun2, fun3) = tupla
@@ -175,10 +142,10 @@ class CreateVotoServiceImpl(
             }
     }
 
-    private fun verifyIfExistsVoteWithCpfUser(user: InputUsuarioDto, idPauta: Long?): Mono<Boolean> {
-        return votoService.findByVotoPautaAndVotoUsuario(
+    private fun verifyIfExistsVoteWithCpfUser(userCpf: String, idPauta: Long?): Mono<Boolean> {
+        return votoService.findByVotoPautaAndVotoUsuarioCpf(
             idPauta,
-            user.id
+            userCpf
         )
             .hasElement()
             .onErrorResume { throwable: Throwable ->

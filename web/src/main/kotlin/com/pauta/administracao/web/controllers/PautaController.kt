@@ -8,6 +8,7 @@ import com.pauta.administracao.inputservice.services.pauta.DeletePautaService
 import com.pauta.administracao.inputservice.services.pauta.ListPautasAtivasService
 import com.pauta.administracao.inputservice.services.pauta.ListTodasPautasService
 import com.pauta.administracao.inputservice.services.pauta.UpdatePautaService
+import io.swagger.v3.oas.annotations.Hidden
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.slf4j.LoggerFactory
@@ -61,6 +62,7 @@ class PautaController(
         return updatePautaService.execute(inputPautaDto)
     }
 
+    @Hidden
     @Operation(
         summary = "EndPoint de listagem das pautas",
         description = "EndPoint de listagem das pautas"
@@ -79,6 +81,7 @@ class PautaController(
     @ResponseBody
     fun getTodasPautas(): Flux<InputTodasPautasDto> {
         return listTodasPautasService.execute()
+            .switchIfEmpty(Flux.error(NoSuchElementException("Teste")))
     }
 
     @Operation(
