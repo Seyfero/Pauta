@@ -54,8 +54,8 @@ class VotoController(
     )
     @GetMapping
     @ResponseBody
-    fun getVotosAtivas(@RequestParam id: Long, @RequestParam valorVoto: String): Mono<Long> {
-        return listVotoByEscolhaService.execute(id, valorVoto)
+    fun getVotosAtivas(@RequestParam idVotoPauta: Long, @RequestParam valorVoto: String): Mono<Long> {
+        return listVotoByEscolhaService.execute(idVotoPauta, valorVoto)
     }
 
     @Operation(

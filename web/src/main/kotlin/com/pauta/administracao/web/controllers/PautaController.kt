@@ -1,14 +1,11 @@
 package com.pauta.administracao.web.controllers
 
 import com.pauta.administracao.inputservice.dto.pauta.InputPautaDto
-import com.pauta.administracao.inputservice.dto.pauta.InputPautasAtivasDto
 import com.pauta.administracao.inputservice.dto.pauta.InputTodasPautasDto
 import com.pauta.administracao.inputservice.services.pauta.CreatePautaService
 import com.pauta.administracao.inputservice.services.pauta.DeletePautaService
-import com.pauta.administracao.inputservice.services.pauta.ListPautasAtivasService
 import com.pauta.administracao.inputservice.services.pauta.ListTodasPautasService
 import com.pauta.administracao.inputservice.services.pauta.UpdatePautaService
-import io.swagger.v3.oas.annotations.Hidden
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.slf4j.LoggerFactory
@@ -32,7 +29,6 @@ import reactor.core.publisher.Mono
 @RestController
 @RequestMapping(value = ["/v1/pauta"], produces = [MediaType.APPLICATION_JSON_VALUE])
 class PautaController(
-    val listPautasAtivas: ListPautasAtivasService,
     val createPautaService: CreatePautaService,
     val listTodasPautasService: ListTodasPautasService,
     val updatePautaService: UpdatePautaService,
@@ -62,17 +58,6 @@ class PautaController(
         return updatePautaService.execute(inputPautaDto)
     }
 
-    @Hidden
-    @Operation(
-        summary = "EndPoint de listagem das pautas",
-        description = "EndPoint de listagem das pautas"
-    )
-    @GetMapping
-    @ResponseBody
-    fun getPautasAtivas(): Flux<InputPautasAtivasDto> {
-        return listPautasAtivas.execute()
-    }
-
     @Operation(
         summary = "EndPoint de listagem das pautas",
         description = "EndPoint de listagem das pautas"
@@ -81,7 +66,6 @@ class PautaController(
     @ResponseBody
     fun getTodasPautas(): Flux<InputTodasPautasDto> {
         return listTodasPautasService.execute()
-            .switchIfEmpty(Flux.error(NoSuchElementException("Teste")))
     }
 
     @Operation(

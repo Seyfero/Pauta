@@ -80,16 +80,16 @@ class VotoServiceImpl(
     }
 
     override fun findByVotoPautaAndVotoUsuarioCpf(idVotoPauta: Long?, cpfUsuario: String): Mono<VotoDomain> {
-        logger.info("votoRepository.findByVotoPautaAndVotoUsuario, status=try")
+        logger.info("votoRepository.findByVotoPautaAndVotoUsuarioCpf, status=try")
         return votoRepository.findByVotoPautaAndVotoUsuarioCpf(idVotoPauta, cpfUsuario)
             .map {
                 it.toDomain()
             }
             .doOnSuccess {
-                logger.info("votoRepository.findByVotoPautaAndVotoUsuario, status=complete")
+                logger.info("votoRepository.findByVotoPautaAndVotoUsuarioCpf, status=complete")
             }
             .onErrorResume {
-                logger.error("votoRepository.findByVotoPautaAndVotoUsuario, status=error message:${it.message}")
+                logger.error("votoRepository.findByVotoPautaAndVotoUsuarioCpf, status=error message:${it.message}")
                 Mono.error(IllegalAccessException("Error to find vote by order and user!"))
             }
     }
@@ -98,10 +98,10 @@ class VotoServiceImpl(
         logger.info("votoRepository.getCountVotosByPautaId, status=try")
         return votoRepository.getCountVotosByPautaId(idVotoPauta, votoEscolha)
             .doOnSuccess {
-                logger.info("votoRepository.findByVotoPautaAndVotoUsuario, status=complete")
+                logger.info("votoRepository.getCountVotosByPautaId, status=complete")
             }
             .onErrorResume {
-                logger.error("votoRepository.findByVotoPautaAndVotoUsuario, status=error message:${it.message}")
+                logger.error("votoRepository.getCountVotosByPautaId, status=error message:${it.message}")
                 Mono.error(IllegalAccessException("Error to execute find by user and order!"))
             }
     }

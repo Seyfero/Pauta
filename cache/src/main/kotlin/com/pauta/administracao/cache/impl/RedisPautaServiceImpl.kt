@@ -45,25 +45,20 @@ class RedisPautaServiceImpl(
 
     override fun getAll(): Flux<PautaDomain?> {
         return reactiveRedisOperations.keys("*")
-            .flatMap { redisKey ->
-                reactiveRedisOperations.opsForValue().get(redisKey)
-                    .map {
-                        logger.info("Order got on redis with success!")
-                        deserialize(it)
-                    }
-                    .onErrorResume {
-                        logger.error("Not success to take data in redis!")
-                        Mono.empty()
-                    }
+            .collectList()
+            .flatMap (reactiveRedisOperations.opsForValue()::multiGet)
+            .flatMapMany { Flux.fromIterable((it)) }
+            .map { deserialize(it) }
+            .onErrorResume {
+                logger.error("Not success to take data in redis!")
+                Mono.empty()
             }
-            .switchIfEmpty(Flux.empty())
     }
 
     override fun removeAll(): Flux<Boolean> {
         return reactiveRedisOperations.keys("*")
             .flatMap { redisKey ->
-                reactiveRedisOperations.opsForValue().delete(redisKey)
-                    .map { true }
+                reactiveRedisOperations.opsForValue().delete(redisKey).thenReturn(true)
             }
             .doOnTerminate { logger.info("Order removed on redis with success!") }
             .onErrorResume {

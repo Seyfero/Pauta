@@ -4,5 +4,5 @@ import reactor.core.publisher.Mono
 
 interface ListVotoByEscolhaService {
 
-    fun execute(idVoto: Long, votoEscolha: String): Mono<Long>
+    fun execute(idVotoPauta: Long, votoEscolha: String): Mono<Long>
 }

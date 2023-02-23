@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.switchIfEmpty
 
 @Service
 class PautaServiceImpl(
@@ -82,6 +83,9 @@ class PautaServiceImpl(
                     logger.info("pautaRepository.findById, status=complete by redis")
                     return@flatMap Mono.just(redisValue)
                 }
+                Mono.empty()
+            }
+            .switchIfEmpty {
                 pautaRepository.findById(id)
                     .flatMap { dbValue ->
                         redisService.put(dbValue.toDomain()).thenReturn(dbValue.toDomain())
@@ -106,6 +110,9 @@ class PautaServiceImpl(
                     logger.info("pautaRepository.findById, status=complete by redis")
                     return@flatMap Mono.just(redisValue)
                 }
+                Mono.empty()
+            }
+            .switchIfEmpty {
                 pautaRepository.findByPautaNome(nome)
                     .flatMap { dbValue ->
                         redisService.put(dbValue.toDomain()).thenReturn(dbValue.toDomain())
@@ -125,21 +132,26 @@ class PautaServiceImpl(
     override fun findAll(): Flux<PautaDomain> {
         return redisService.getAll()
             .flatMap {
-                it?.let {
-                    logger.info("pautaRepository.findById, status=complete by redis")
+                if (it != null) {
                     Flux.just(it)
+                } else {
+                    Flux.empty()
                 }
             }
-            .switchIfEmpty {
-                pautaRepository.findAll()
-                    .flatMap { pautaDb ->
-                        redisService.put(pautaDb.toDomain()).thenReturn(pautaDb.toDomain())
-                            .doOnSuccess { logger.info("Order created with success!") }
-                            .doOnError { logger.error("Order not created!") }
-                    }
+            .switchIfEmpty(getAllByDatabase())
+    }
+
+    private fun getAllByDatabase(): Flux<PautaDomain> {
+        return pautaRepository.findAll()
+            .collectList()
+            .flatMapMany {
+                Flux.fromIterable(it)
+            }
+            .flatMap { pautaDb ->
+                redisService.put(pautaDb.toDomain()).thenReturn(pautaDb.toDomain())
+                    .doOnSuccess { logger.info("Order created with success!") }
                     .doOnError { logger.error("Order not created!") }
             }
-            .switchIfEmpty(Flux.empty())
             .doOnComplete {
                 logger.info("pautaRepository.findAll, status=complete")
             }
@@ -147,6 +159,9 @@ class PautaServiceImpl(
                 logger.error("pautaRepository.findAll, status=error message:${error.message}")
                 Flux.error(UnsupportedOperationException("Error to search!"))
             }
+            .collectList()
+            .flatMapMany { Flux.fromIterable(it) }
+            .switchIfEmpty(Flux.empty())
     }
 
     override fun removeAll(): Flux<Boolean> {

@@ -12,7 +12,7 @@ interface VotoRepository : ReactiveCrudRepository<VotoEntity, Long?> {
 
     fun findByVotoPauta(idVotoPauta: Long?): Flux<VotoEntity>
 
-    @Query("SELECT COUNT(v) FROM VotoEntity v WHERE v.votoPauta = :idVotoPauta AND votoEscolha = :votoEscolha")
+    @Query("SELECT COUNT(v) FROM vt_voto v WHERE v.vt_pauta_id = :idVotoPauta AND v.vt_usuario_cpf = :votoEscolha")
     fun getCountVotosByPautaId(idVotoPauta: Long?, votoEscolha: String): Mono<Long>
 
     fun findByVotoPautaAndVotoUsuarioCpf(idVotoPauta: Long?, cpfUsuario: String): Mono<VotoEntity>

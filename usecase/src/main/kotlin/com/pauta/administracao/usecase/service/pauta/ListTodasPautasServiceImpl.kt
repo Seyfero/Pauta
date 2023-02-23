@@ -21,7 +21,7 @@ class ListTodasPautasServiceImpl(
         return pautaService.findAll()
             .map { it.toInputTotal() }
             .doOnTerminate {
-                logger.info("Order founded with success!")
+                logger.info("All search finalized with success!")
             }
             .onErrorResume {
                 logger.error("Error to convert order!")

@@ -15,8 +15,8 @@ class ListVotoByEscolhaServiceImpl(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun execute(idVoto: Long, votoEscolha: String): Mono<Long> {
-        return votoService.getCountVotosByPautaId(idVoto, votoEscolha)
+    override fun execute(idVotoPauta: Long, votoEscolha: String): Mono<Long> {
+        return votoService.getCountVotosByPautaId(idVotoPauta, votoEscolha)
             .doOnSuccess {
                 logger.info("Success to get count of votes!")
             }

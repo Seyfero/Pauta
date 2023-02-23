@@ -20,24 +20,6 @@ ALTER TABLE controle_pautas.vt_pauta OWNER TO postgres;
 GRANT ALL ON TABLE controle_pautas.vt_pauta TO postgres;
 
 
--- controle_pautas.vt_usuario definition
-
--- Drop table
-
--- DROP TABLE controle_pautas.vt_usuario;
-
-CREATE TABLE IF NOT EXISTS controle_pautas.vt_usuario (
-	vt_usuario_id SERIAL PRIMARY KEY,
-	vt_usuario_cpf varchar(11) NOT NULL
-);
-CREATE INDEX vt_usuario_vt_usuario_cpf_idx ON controle_pautas.vt_usuario USING btree (vt_usuario_cpf);
-
--- Permissions
-
-ALTER TABLE controle_pautas.vt_usuario OWNER TO postgres;
-GRANT ALL ON TABLE controle_pautas.vt_usuario TO postgres;
-
-
 -- controle_pautas.vt_voto definition
 
 -- Drop table
@@ -47,13 +29,12 @@ GRANT ALL ON TABLE controle_pautas.vt_usuario TO postgres;
 CREATE TABLE IF NOT EXISTS controle_pautas.vt_voto (
 	vt_voto_id SERIAL PRIMARY KEY,
 	vt_voto_escolha varchar(3) NOT NULL,
-	vt_usuario_id int8 NOT NULL,
+	vt_usuario_cpf varchar(11) NOT NULL,
 	vt_pauta_id int8 NOT NULL,
-	CONSTRAINT vt_voto_vt_pauta_id_fkey FOREIGN KEY (vt_pauta_id) REFERENCES controle_pautas.vt_pauta(vt_pauta_id),
-	CONSTRAINT vt_voto_vt_usuario_id_fkey FOREIGN KEY (vt_usuario_id) REFERENCES controle_pautas.vt_usuario(vt_usuario_id)
+	CONSTRAINT vt_voto_vt_pauta_id_fkey FOREIGN KEY (vt_pauta_id) REFERENCES controle_pautas.vt_pauta(vt_pauta_id) ON DELETE CASCADE
 );
 CREATE INDEX vt_voto_vt_pauta_id_idx ON controle_pautas.vt_voto USING btree (vt_pauta_id);
-CREATE INDEX vt_voto_vt_usuario_id_idx ON controle_pautas.vt_voto USING btree (vt_usuario_id);
+CREATE INDEX vt_voto_vt_usuario_cpf_idx ON controle_pautas.vt_voto USING btree (vt_usuario_cpf);
 
 -- Permissions
 
