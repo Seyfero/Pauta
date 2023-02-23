@@ -7,6 +7,7 @@ import com.pauta.administracao.kafkaproducer.service.KafkaProducerService
 import com.pauta.administracao.outputboundary.service.repository.PautaService
 import com.pauta.administracao.outputboundary.service.repository.VotoService
 import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -26,15 +27,12 @@ class ScheduledTasks(
     @PostConstruct
     fun init() {
         Flux.interval(Duration.ofSeconds(1))
-            .delaySubscription(Duration.ofSeconds(20))
-            .subscribe {
-                scheduleTasks()
-            }
+            .delaySubscription(Duration.ofSeconds(10))
+            .subscribe { scheduleTasks().subscribe() }
     }
 
-    fun scheduleTasks() {
-        logger.info("Function to verify order starts")
-        getAllPauta()
+    fun scheduleTasks(): Flux<Boolean> {
+        return getAllPauta()
             .flatMap {
                 if (orderExpiredDuration(it)) {
                     sendAnounciant(it)

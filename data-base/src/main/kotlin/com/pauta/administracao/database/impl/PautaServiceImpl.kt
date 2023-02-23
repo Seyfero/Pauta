@@ -123,7 +123,6 @@ class PautaServiceImpl(
     }
 
     override fun findAll(): Flux<PautaDomain> {
-        logger.info("pautaRepository.findAll, status=try")
         return redisService.getAll("pauta:id:*")
             .flatMap {
                 if (it != null) {
