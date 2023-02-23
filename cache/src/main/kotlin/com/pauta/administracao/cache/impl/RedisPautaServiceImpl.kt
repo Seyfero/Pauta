@@ -25,16 +25,12 @@ class RedisPautaServiceImpl(
         val serializedValue = serialize(value)
         val nameIndexKey = "pauta:nome:${value.pautaNome}:pauta"
         return reactiveRedisOperations.opsForValue().set(nameIndexKey, serializedValue)
-            .map { success ->
-                if (success) {
-                    logger.info("Value of order created with success in redis!")
-                    true
-                } else {
-                    logger.error("Not success to create data in redis!")
-                    false
-                }
+            .thenReturn(true)
+            .doOnSuccess { logger.info("Value of order created with success in redis!") }
+            .onErrorResume {
+                logger.error("Not success to create data in redis!")
+                Mono.just(false)
             }
-            .onErrorResume { Mono.just(false) }
     }
 
     override fun get(key: String): Mono<PautaDomain?> {
@@ -42,24 +38,25 @@ class RedisPautaServiceImpl(
             .map {
                 deserialize(it)
             }
-            .doOnSuccess { logger.info("Order created on redis with success!") }
-            .doOnError { logger.error("Order not created on redis!") }
+            .doOnSuccess { logger.info("Order searched on redis with success!") }
+            .doOnError { logger.error("Order not searched on redis!") }
             .switchIfEmpty(Mono.empty())
     }
 
-    override fun getAll(key: String): Flux<PautaDomain?> {
+    override fun getAll(): Flux<PautaDomain?> {
         return reactiveRedisOperations.keys("*")
             .flatMap { redisKey ->
                 reactiveRedisOperations.opsForValue().get(redisKey)
                     .map {
+                        logger.info("Order got on redis with success!")
                         deserialize(it)
                     }
-                    .doOnSuccess { logger.info("Order got on redis with success!") }
                     .onErrorResume {
                         logger.error("Not success to take data in redis!")
-                        null
+                        Mono.empty()
                     }
             }
+            .switchIfEmpty(Flux.empty())
     }
 
     override fun removeAll(): Flux<Boolean> {

@@ -10,7 +10,7 @@ abstract class RedisServiceImpl<T : Any> : RedisService<T> {
 
     abstract override fun get(key: String): Mono<T?>
 
-    abstract override fun getAll(key: String): Flux<T?>
+    abstract override fun getAll(): Flux<T?>
 
     abstract override fun removeAll(): Flux<Boolean>
 

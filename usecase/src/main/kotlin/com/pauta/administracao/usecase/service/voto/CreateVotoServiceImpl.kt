@@ -65,7 +65,7 @@ class CreateVotoServiceImpl(
         return validateExternalCallUserCpfService.validateExternalCallUserCpf(cpf)
             .flatMap {
                 if (it.contains("ABLE_TO_VOTE")) {
-                    Mono.just(true)
+                    return@flatMap Mono.just(true)
                 }
                 Mono.just(false)
             }
@@ -150,7 +150,7 @@ class CreateVotoServiceImpl(
 
     private fun isValidPautaByTime(inputPautaDto: InputPautaDto): Mono<Boolean> {
         return inputPautaDto.let {
-            if (it.pautaDataCriacao.plusSeconds(it.pautaDuracao).isBefore(LocalDateTime.now())) {
+            if (it.pautaDataCriacao.plusSeconds(it.pautaDuracao).isAfter(LocalDateTime.now())) {
                 logger.info("This order is valid!")
                 Mono.just(true)
             } else {

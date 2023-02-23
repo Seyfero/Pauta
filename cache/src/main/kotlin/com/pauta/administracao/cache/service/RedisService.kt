@@ -9,7 +9,7 @@ interface RedisService<T> {
 
     fun get(key: String): Mono<T?>
 
-    fun getAll(key: String): Flux<T?>
+    fun getAll(): Flux<T?>
 
     fun removeAll(): Flux<Boolean>
 

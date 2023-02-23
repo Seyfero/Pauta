@@ -123,13 +123,12 @@ class PautaServiceImpl(
     }
 
     override fun findAll(): Flux<PautaDomain> {
-        return redisService.getAll("pauta:id:*")
+        return redisService.getAll()
             .flatMap {
-                if (it != null) {
+                it?.let {
                     logger.info("pautaRepository.findById, status=complete by redis")
-                    return@flatMap Flux.just(it)
+                    Flux.just(it)
                 }
-                Flux.empty()
             }
             .switchIfEmpty {
                 pautaRepository.findAll()
@@ -138,13 +137,15 @@ class PautaServiceImpl(
                             .doOnSuccess { logger.info("Order created with success!") }
                             .doOnError { logger.error("Order not created!") }
                     }
-                    .doOnTerminate {
-                        logger.info("pautaRepository.findAll, status=complete")
-                    }
-                    .onErrorResume { error ->
-                        logger.error("pautaRepository.findAll, status=error message:${error.message}")
-                        Mono.error(UnsupportedOperationException("Error to search!"))
-                    }
+                    .doOnError { logger.error("Order not created!") }
+            }
+            .switchIfEmpty(Flux.empty())
+            .doOnComplete {
+                logger.info("pautaRepository.findAll, status=complete")
+            }
+            .onErrorResume { error ->
+                logger.error("pautaRepository.findAll, status=error message:${error.message}")
+                Flux.error(UnsupportedOperationException("Error to search!"))
             }
     }
 
@@ -154,7 +155,7 @@ class PautaServiceImpl(
             .doOnTerminate { logger.info("Order created with success!") }
             .onErrorResume { error ->
                 logger.error("pautaRepository.removeAll, status=error message:${error.message}")
-                Mono.error(UnsupportedOperationException("Error to search!"))
+                Flux.error(UnsupportedOperationException("Error to search!"))
             }
     }
 }

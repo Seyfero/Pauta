@@ -7,7 +7,6 @@ import com.pauta.administracao.kafkaproducer.service.KafkaProducerService
 import com.pauta.administracao.outputboundary.service.repository.PautaService
 import com.pauta.administracao.outputboundary.service.repository.VotoService
 import org.slf4j.LoggerFactory
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -26,8 +25,8 @@ class ScheduledTasks(
 
     @PostConstruct
     fun init() {
-        Flux.interval(Duration.ofSeconds(1))
-            .delaySubscription(Duration.ofSeconds(10))
+        Flux.interval(Duration.ofSeconds(60))
+            .delaySubscription(Duration.ofSeconds(15))
             .subscribe { scheduleTasks().subscribe() }
     }
 
@@ -54,9 +53,6 @@ class ScheduledTasks(
                         .subscribe()
                 }
                 Mono.just(true)
-            }
-            .switchIfEmpty {
-                logger.info("Doesn't data to process!")
             }
     }
 
