@@ -25,35 +25,32 @@ class ScheduledTasks(
 
     @PostConstruct
     fun init() {
-        scheduleTasks()
+        scheduleTasks().subscribe()
     }
 
     @Scheduled(fixedDelay = 1000)
-    fun scheduleTasks() {
-        getAllPauta()
+    fun scheduleTasks(): Flux<Boolean> {
+        logger.info("Function to verify order starts")
+        return getAllPauta()
             .flatMap {
                 if (orderExpiredDuration(it)) {
                     sendAnounciant(it)
-                        .map {
-                            true
-                        }
                         .doOnSuccess {
                             logger.info("Sent with success to kafka!")
                         }
                         .doOnError {
                             logger.error("Error te sent order!")
                         }
+                        .subscribe()
 
                     removePauta(it)
-                        .map {
-                            true
-                        }
                         .doOnSuccess {
                             logger.info("Order removed with success!")
                         }
                         .doOnError {
                             logger.error("Error te remove order!")
                         }
+                        .subscribe()
                 }
                 Mono.just(true)
             }
@@ -64,6 +61,7 @@ class ScheduledTasks(
 
     private fun getAllPauta(): Flux<PautaDomain> {
         return pautaService.findAll()
+            .map { it }
             .onErrorResume {
                 logger.error("Error to toke list from redis or database! Message=${it.message}")
                 Flux.error(IllegalAccessException("Error to toke order lists!"))
@@ -86,6 +84,7 @@ class ScheduledTasks(
                 .doOnError {
                     logger.error("Error to remove order!")
                 }
+                .thenReturn(true)
         }
     }
 
@@ -94,13 +93,13 @@ class ScheduledTasks(
             .flatMap {
                 logger.info("Prepare to sent message!")
                 kafkaProducerService.sendMessage(it.toString())
-                    .map { true }
                     .doOnSuccess {
                         logger.info("Message sent with success!")
                     }
                     .doOnError {
                         logger.error("Error to sent message!")
                     }
+                    .thenReturn(true)
             }
             .onErrorResume {
                 logger.error("Error to sent message to kafka message=${it.message}")
@@ -110,17 +109,15 @@ class ScheduledTasks(
 
     private fun getDtoTosend(pautaDomain: PautaDomain): Mono<KafkaDto> {
         return getTotalVoteCount(pautaDomain)
-            .flatMap {
+            .map {
                 logger.info("Got count votes from pauta with success!")
-                Mono.just(
-                    KafkaDto(
-                        pautaDomain.pautaNome,
-                        pautaDomain.pautaDataCriacao,
-                        pautaDomain.pautaDataCriacao.plusSeconds(pautaDomain.pautaDuracao),
-                        it.sim,
-                        it.nao,
-                        it.sim + it.nao,
-                    )
+                KafkaDto(
+                    pautaDomain.pautaNome,
+                    pautaDomain.pautaDataCriacao,
+                    pautaDomain.pautaDataCriacao.plusSeconds(pautaDomain.pautaDuracao),
+                    it.sim,
+                    it.nao,
+                    it.sim + it.nao,
                 )
             }
             .doOnSuccess {
@@ -133,7 +130,11 @@ class ScheduledTasks(
     }
 
     private fun getTotalVoteCount(pautaDomain: PautaDomain): Mono<VoteCount> {
-        return expressionCountVote(votoService.findByVotoPauta(pautaDomain.id))
+        return votoService.findByVotoPauta(pautaDomain.id)
+            .collectList()
+            .map {
+                expressionCountVote(it)
+            }
             .doOnSuccess {
                 logger.info("Votes counted with success!")
             }
@@ -143,22 +144,15 @@ class ScheduledTasks(
             }
     }
 
-    fun expressionCountVote(votes: Flux<VotoDomain>): Mono<VoteCount> {
-        return votes.reduce(VoteCount()) { acc, vote ->
-            if (vote.votoEscolha.lowercase() == "sim") {
+    fun expressionCountVote(votes: List<VotoDomain>): VoteCount {
+        return votes.fold(VoteCount()) { acc, voto ->
+            if (voto.votoEscolha.lowercase() == "sim") {
                 acc.sim++
             } else {
                 acc.nao++
             }
-            acc
+            VoteCount(acc.sim, acc.nao)
         }
-            .doOnSuccess {
-                logger.info("Votes counted with success!")
-            }
-            .onErrorResume {
-                logger.error("Error to get votes sim or nao message=${it.message}")
-                Mono.error(UnsupportedOperationException("Error to get votes sim or nao!"))
-            }
     }
 
     data class VoteCount(var sim: Long = 0, var nao: Long = 0)
