@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono
 class ValidCpfHelper {
     companion object {
         fun checkCpf(et: String): Mono<Boolean> {
-            val str = et.replace("-", "").replace("/", "").replace(".", "")
+            val str = et.replace("-", "").replace("/", "").replace(".", "").padStart(11, '0')
             var calc: Int
             var num = 10
             var sum = 0
@@ -23,7 +23,9 @@ class ValidCpfHelper {
 
             if (test > 9) test = 0
 
-            if (test != str[9].toString().toInt()) return Mono.error(IllegalArgumentException("Cpf is not valid!"))
+            if (test != str[9].toString().toInt()) {
+                return Mono.just(false)
+            }
 
             num = 11
             sum = 0
@@ -39,9 +41,14 @@ class ValidCpfHelper {
 
             if (test > 9) test = 0
 
-            if (test != str[10].toString().toInt()) return Mono.error(IllegalArgumentException("Cpf is not valid!"))
+            if (test != str[10].toString().toInt()) {
+                return Mono.just(false)
+            }
 
             return Mono.just(true)
+                .onErrorResume {
+                    Mono.error(IllegalArgumentException("Cpf is not valid!"))
+                }
         }
     }
 }

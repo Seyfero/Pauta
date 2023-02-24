@@ -25,7 +25,6 @@ class UsuarioController(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @Hidden
     @GetMapping(value = ["valid-cpf/{cpf}"])
     @ResponseBody
     fun getValidatePossibleVote(

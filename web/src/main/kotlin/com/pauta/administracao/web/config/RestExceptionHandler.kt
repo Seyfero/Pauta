@@ -75,7 +75,7 @@ class RestExceptionHandler {
         return ApiError(
             code = "E${HttpStatus.BAD_REQUEST.value()}",
             message = "This user was no accepted!",
-            description = "This cpf voted before on this pauta!",
+            description = "This cpf wasn't validate to vote! Please, verify and try again.",
             timesTemp = LocalDateTime.now()
         )
     }
