@@ -25,40 +25,41 @@ class ScheduledTasks(
 
     @PostConstruct
     fun init() {
-        Flux.interval(Duration.ofSeconds(60))
+        Flux.interval(Duration.ofSeconds(1))
             .delaySubscription(Duration.ofSeconds(15))
             .subscribe { scheduleTasks().subscribe() }
     }
 
     fun scheduleTasks(): Flux<Boolean> {
         return getAllPauta()
+            .collectList()
+            .flatMapMany { Flux.fromIterable(it) }
             .flatMap {
                 if (orderExpiredDuration(it)) {
-                    sendAnounciant(it)
+                    val p1 = sendAnounciant(it)
                         .doOnSuccess {
                             logger.info("Sent with success to kafka!")
                         }
                         .doOnError {
                             logger.error("Error te sent order!")
                         }
-                        .subscribe()
 
-                    removePauta(it)
+                    val p2 = removePauta(it)
                         .doOnSuccess {
                             logger.info("Order removed with success!")
                         }
                         .doOnError {
                             logger.error("Error te remove order!")
                         }
-                        .subscribe()
+                    Mono.zip(p1,p2).then().subscribe()
                 }
-                Mono.just(true)
+                Flux.just(true)
             }
+            .switchIfEmpty(Flux.just(true))
     }
 
     private fun getAllPauta(): Flux<PautaDomain> {
         return pautaService.findAll()
-            .map { it }
             .onErrorResume {
                 logger.error("Error to toke list from redis or database! Message=${it.message}")
                 Flux.error(IllegalAccessException("Error to toke order lists!"))
@@ -79,7 +80,7 @@ class ScheduledTasks(
                     logger.info("Order deleted with success!")
                 }
                 .doOnError {
-                    logger.error("Error to remove order!")
+                    logger.error("Error to remove order in kafka process!")
                 }
                 .thenReturn(true)
         }

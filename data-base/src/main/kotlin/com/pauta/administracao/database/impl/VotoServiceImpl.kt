@@ -75,7 +75,7 @@ class VotoServiceImpl(
             }
             .onErrorResume {
                 logger.error("votoRepository.findByVotoPauta, status=error message:${it.message}")
-                Mono.error(IllegalAccessException("Error to find vote by order!"))
+                Mono.error(IllegalAccessException("Error to find vote by id order!"))
             }
     }
 
@@ -90,7 +90,7 @@ class VotoServiceImpl(
             }
             .onErrorResume {
                 logger.error("votoRepository.findByVotoPautaAndVotoUsuarioCpf, status=error message:${it.message}")
-                Mono.error(IllegalAccessException("Error to find vote by order and user!"))
+                Mono.error(IllegalAccessException("Error to find vote by id order and cpf user!"))
             }
     }
 
@@ -102,7 +102,7 @@ class VotoServiceImpl(
             }
             .onErrorResume {
                 logger.error("votoRepository.getCountVotosByPautaId, status=error message:${it.message}")
-                Mono.error(IllegalAccessException("Error to execute find by user and order!"))
+                Mono.error(IllegalAccessException("Error to execute find by id order and value vote!"))
             }
     }
 }

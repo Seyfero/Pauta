@@ -6,6 +6,8 @@ import com.pauta.administracao.domain.VotoDomain
 fun VotoDomain.toEntity() = VotoEntity(
     id = null,
     votoEscolha,
-    votoUsuarioDomainCpf,
+    votoUsuarioDomainCpf.replace("-", "")
+        .replace("/", "")
+        .replace(".", ""),
     votoPautaDomainId
 )

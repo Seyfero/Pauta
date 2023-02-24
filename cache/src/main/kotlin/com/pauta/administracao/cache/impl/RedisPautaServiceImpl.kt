@@ -38,8 +38,8 @@ class RedisPautaServiceImpl(
             .map {
                 deserialize(it)
             }
-            .doOnSuccess { logger.info("Order searched on redis with success!") }
-            .doOnError { logger.error("Order not searched on redis!") }
+            .doOnSuccess { logger.info("Process to found finished in redis!") }
+            .doOnError { logger.error("Error on search in redis!") }
             .switchIfEmpty(Mono.empty())
     }
 
@@ -48,7 +48,10 @@ class RedisPautaServiceImpl(
             .collectList()
             .flatMap (reactiveRedisOperations.opsForValue()::multiGet)
             .flatMapMany { Flux.fromIterable((it)) }
-            .map { deserialize(it) }
+            .map {
+                logger.info("Process to found finished in redis!")
+                deserialize(it)
+            }
             .onErrorResume {
                 logger.error("Not success to take data in redis!")
                 Mono.empty()
@@ -60,7 +63,7 @@ class RedisPautaServiceImpl(
             .flatMap { redisKey ->
                 reactiveRedisOperations.opsForValue().delete(redisKey).thenReturn(true)
             }
-            .doOnTerminate { logger.info("Order removed on redis with success!") }
+            .doOnTerminate { logger.info("Process to remove order from redis finished!") }
             .onErrorResume {
                 logger.error("Not success to delete data in redis!")
                 Flux.just(false)
@@ -69,8 +72,8 @@ class RedisPautaServiceImpl(
 
     override fun remove(key: String): Mono<Boolean> {
         return reactiveRedisOperations.opsForValue().delete(key)
-            .doOnSuccess { logger.info("Order removed on redis with success!") }
-            .doOnError { logger.error("Order not removed on redis!") }
+            .doOnSuccess { logger.info("Process to remove order from redis finished!") }
+            .doOnError { logger.error("Error to remove data from redis!") }
     }
 
     override fun serialize(value: PautaDomain?): String {

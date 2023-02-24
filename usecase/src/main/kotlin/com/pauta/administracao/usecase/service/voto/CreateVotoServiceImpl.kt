@@ -43,7 +43,7 @@ class CreateVotoServiceImpl(
             }
             .onErrorResume { throwable: Throwable ->
                 logger.error("Error to persist vote message = ${throwable.message}!!")
-                Mono.error(IllegalStateException("Error to persist vote!", throwable))
+                Mono.error(IllegalStateException("Error to persist vote!"))
             }
     }
 
@@ -55,9 +55,9 @@ class CreateVotoServiceImpl(
                 }
                 Mono.just(false)
             }
-            .onErrorResume { throwable: Throwable ->
-                logger.error("Error to validate cpf on vote!")
-                Mono.error(IllegalStateException("Error to validate cpf on vote!", throwable))
+            .onErrorResume {
+                logger.error("Error to validate cpf on vote by external call!")
+                Mono.error(IllegalStateException("Error to validate cpf on vote!"))
             }
     }
 

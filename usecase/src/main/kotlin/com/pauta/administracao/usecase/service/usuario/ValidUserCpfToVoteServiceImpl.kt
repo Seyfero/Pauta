@@ -23,8 +23,8 @@ class ValidUserCpfToVoteServiceImpl() : ValidUserCpfToVoteService {
                 }
             }
             .onErrorResume {
-                logger.error("Error to validate cpf!")
-                Mono.error(IllegalUsuarioException("Invalid CPF: ${it.message}"))
+                logger.error("Error to validate cpf on external flow!")
+                Mono.error(IllegalUsuarioException("Error to validate Cpf!"))
             }
     }
 
@@ -40,8 +40,8 @@ class ValidUserCpfToVoteServiceImpl() : ValidUserCpfToVoteService {
                 }
             }
             .onErrorResume {
-                logger.error("Error to validate cpf!")
-                Mono.error(IllegalAccessException("Invalid CPF: ${it.message}"))
+                logger.error("Occurred error in validation cpf!")
+                Mono.error(IllegalAccessException("Error to validate cpf!"))
             }
     }
 

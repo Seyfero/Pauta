@@ -33,7 +33,7 @@ class ValidateExternalCallUserCpfServiceImpl(
             .retrieve()
             .bodyToMono(String::class.java)
             .doOnSuccess {
-                logger.info("User founded with succsess!")
+                logger.info("User validated with success!")
             }
             .onErrorResume {
                 logger.info("Error to verify user's cpf in external call!")
