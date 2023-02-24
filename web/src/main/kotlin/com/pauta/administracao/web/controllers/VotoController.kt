@@ -4,7 +4,6 @@ import com.pauta.administracao.inputservice.dto.voto.InputVotoExternalDto
 import com.pauta.administracao.inputservice.dto.voto.InputVotoInternalDto
 import com.pauta.administracao.inputservice.services.voto.CreateVotoService
 import com.pauta.administracao.inputservice.services.voto.DeleteVotoService
-import com.pauta.administracao.inputservice.services.voto.ListVotoByEscolhaService
 import com.pauta.administracao.inputservice.services.voto.ListVotoByPautaService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -31,7 +30,6 @@ class VotoController(
 
     private val createVotoService: CreateVotoService,
     private val deleteVotoService: DeleteVotoService,
-    private val listVotoByEscolhaService: ListVotoByEscolhaService,
     private val listVotoByPautaService: ListVotoByPautaService
 
 ) {
@@ -46,16 +44,6 @@ class VotoController(
     fun createVoto(@RequestBody inputVotoExternalDto: InputVotoExternalDto): Mono<Boolean> {
         logger.info("Data took input=$inputVotoExternalDto")
         return createVotoService.execute(inputVotoExternalDto)
-    }
-
-    @Operation(
-        summary = "EndPoint que contabiliza os votos",
-        description = "EndPoint que contabiliza os votos"
-    )
-    @GetMapping
-    @ResponseBody
-    fun getVotosAtivas(@RequestParam idVotoPauta: Long, @RequestParam valorVoto: String): Mono<Long> {
-        return listVotoByEscolhaService.execute(idVotoPauta, valorVoto)
     }
 
     @Operation(

@@ -38,7 +38,6 @@ class RedisPautaServiceImpl(
             .map {
                 deserialize(it)
             }
-            .doOnSuccess { logger.info("Process to found finished in redis!") }
             .doOnError { logger.error("Error on search in redis!") }
             .switchIfEmpty(Mono.empty())
     }
@@ -49,7 +48,6 @@ class RedisPautaServiceImpl(
             .flatMap(reactiveRedisOperations.opsForValue()::multiGet)
             .flatMapMany { Flux.fromIterable((it)) }
             .map {
-                logger.info("Process to found finished in redis!")
                 deserialize(it)
             }
             .onErrorResume {
