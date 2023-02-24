@@ -51,7 +51,7 @@ class ScheduledTasks(
                         .doOnError {
                             logger.error("Error te remove order!")
                         }
-                    Mono.zip(p1,p2).then().subscribe()
+                    Mono.zip(p1, p2).then().subscribe()
                 }
                 Flux.just(true)
             }

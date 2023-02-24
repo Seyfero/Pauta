@@ -46,7 +46,7 @@ class RedisPautaServiceImpl(
     override fun getAll(): Flux<PautaDomain?> {
         return reactiveRedisOperations.keys("*")
             .collectList()
-            .flatMap (reactiveRedisOperations.opsForValue()::multiGet)
+            .flatMap(reactiveRedisOperations.opsForValue()::multiGet)
             .flatMapMany { Flux.fromIterable((it)) }
             .map {
                 logger.info("Process to found finished in redis!")
