@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 extra["springBootVersion"] = "2.7.8"
-extra["reactorExtensions"] = "1.1.6"
+extra["reactorExtensions"] = "1.1.9"
 
 plugins {
     id("org.springframework.boot") version "2.7.8"
@@ -61,20 +61,25 @@ subprojects {
         // KOTLIN
         implementation("org.springframework.boot:spring-boot-starter-webflux:${property("springBootVersion")}")
         implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:${property("reactorExtensions")}")
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.6.2")
-        implementation("org.jetbrains.kotlin:kotlin-reflect")
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.6.4")
+        implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.21")
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.21")
 
-        implementation("org.springframework.kafka:spring-kafka:2.9.0")
+        implementation("org.springframework.kafka:spring-kafka:2.8.11")
 
         implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive:${property("springBootVersion")}")
-        implementation("io.lettuce:lettuce-core:6.1.6.RELEASE")
+        implementation("io.lettuce:lettuce-core:6.1.10.RELEASE")
 
-        implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.0-rc2")
+        implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.4")
         implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.5")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test:${property("springBootVersion")}")
-        testImplementation("io.projectreactor:reactor-test:3.4.18")
+        testImplementation("io.projectreactor:reactor-test:3.4.26")
+
+        constraints {
+            implementation("io.projectreactor.netty:reactor-netty:1.0.27")
+            implementation("io.projectreactor.netty:reactor-nett-corey:1.0.27")
+        }
     }
 
     tasks.withType<KotlinCompile> {

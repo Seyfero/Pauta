@@ -1,0 +1,50 @@
+pauta:
+  url:
+    host: http://localhost:8080
+    path: /pauta
+
+springdoc:
+  api:
+    title: My API
+    description: This is my API description
+    version: 1.0.0
+  api-docs:
+    path: /api-docs
+  app:
+    proxy: ${pauta.url.host}
+
+spring:
+  r2dbc:
+    host: localhost
+    port: 5432
+    data-base: postgres
+    schema: controle_pautas
+    username: postgres
+    password: postgres
+  kafka:
+    admin:
+      enabled: true
+  redis:
+    host: localhost
+    port: 6379
+    password: order1234
+    lettuce:
+      pool:
+        max-idle: 8
+        min-idle: 0
+        max-active: 8
+
+kafka:
+  bootstrap-servers: localhost:9092
+  producer:
+    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    acks: 1
+    retries: 3
+  topic:
+    name: order
+    partition: 1
+    replicationFactor: 1
+
+gateway:
+  url: http://localhost:8080/v1/usuario/valid-cpf/
