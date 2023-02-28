@@ -26,7 +26,7 @@ class RestExceptionHandler {
     fun notFoundException(ex: RuntimeException): ApiError {
         return ApiError(
             code = "E${HttpStatus.NOT_FOUND.value()}",
-            message = "This request returned no results",
+            message = "This request returned no results!",
             description = ex.message,
             timesTemp = LocalDateTime.now()
         )

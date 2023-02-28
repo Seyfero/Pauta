@@ -27,10 +27,13 @@ class PautaServiceImpl(
     override fun create(pauta: PautaOutputDto): Mono<PautaDomain> {
         logger.info("pautaRepository.save, status=try")
         return pautaRepository.save(pauta.toDomain().toEntity())
-            .flatMap {
-                redisService.put(it.toDomain()).thenReturn(it.toDomain())
+            .flatMap { pautaEntity ->
+                redisService.put(pautaEntity.toDomain()).thenReturn(pautaEntity.toDomain())
                     .doOnSuccess { logger.info("Order created with success!") }
-                    .doOnError { logger.error("Order not created!") }
+                    .onErrorResume {
+                        logger.error("pautaRepository.save, status=error message:${it.message}")
+                        Mono.just(pautaEntity.toDomain())
+                    }
             }
             .doOnSuccess {
                 logger.info("pautaRepository.save, status=complete")

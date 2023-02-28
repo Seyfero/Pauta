@@ -55,7 +55,7 @@ class PautaControllerTest {
     }
 
     @Test
-    fun `should return error an order when data is incorrect by name`() {
+    fun `should return error an order from create when data is incorrect by name`() {
         val pauta = populateOrder()
         doThrow(IllegalArgumentException::class.java).`when`(createPautaService).execute(pauta)
 
@@ -67,11 +67,52 @@ class PautaControllerTest {
             .expectStatus().isBadRequest
             .expectBody()
             .jsonPath("$.message").isEqualTo("This request was no accepted!")
-
     }
 
+    @Test
+    fun `should update an order and return 200 when data is correct`() {
+        val pauta = populateOrder()
+        val request = webTestClient.put()
+            .uri(URL)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(Mono.just(pauta), InputPautaDto::class.java)
+            .exchange()
 
-    private fun populateOrder():InputPautaDto {
+        request.expectStatus().isOk
+        verify(updatePautaService).execute(pauta)
+    }
+
+    @Test
+    fun `should return error an order from update when data is incorrect by name`() {
+        val pauta = populateOrder()
+        doThrow(IllegalArgumentException::class.java).`when`(updatePautaService).execute(pauta)
+
+        webTestClient.put()
+            .uri(URL)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(pauta)
+            .exchange()
+            .expectStatus().isBadRequest
+            .expectBody()
+            .jsonPath("$.message").isEqualTo("This request was no accepted!")
+    }
+
+    @Test
+    fun `should return not found an order from update when data not exists`() {
+        val pauta = populateOrder()
+        doThrow(NoSuchElementException::class.java).`when`(updatePautaService).execute(pauta)
+
+        webTestClient.put()
+            .uri(URL)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(pauta)
+            .exchange()
+            .expectStatus().isNotFound
+            .expectBody()
+            .jsonPath("$.message").isEqualTo("This request returned no results!")
+    }
+
+    private fun populateOrder(): InputPautaDto {
         return InputPautaDto(null, "name", LocalDateTime.now(), 60, 0)
     }
 }
