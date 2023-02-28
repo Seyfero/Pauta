@@ -11,6 +11,7 @@ import com.pauta.administracao.outputboundary.converters.pauta.toOutputDto
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.any
 import org.mockito.InjectMocks
@@ -77,10 +78,20 @@ class PautaServiceImplTest {
         pautaService.create(order.toOutputDto())
             .`as`(StepVerifier::create)
             .assertNext {
+                assertThrows<UnsupportedOperationException> {
+                    throw UnsupportedOperationException("Error to create order!")
+                }
+            }
+            .verifyComplete()
+
+        pautaService.create(order.toOutputDto())
+            .`as`(StepVerifier::create)
+            .assertNext {
                 assertNotNull(it.id)
                 assertEquals(orderSaved.pautaNome, it.pautaNome)
             }
             .verifyComplete()
+
     }
 
     private fun populateOrder(): PautaDomain {
