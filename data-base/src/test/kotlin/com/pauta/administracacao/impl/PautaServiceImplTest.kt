@@ -94,6 +94,68 @@ class PautaServiceImplTest {
 
     }
 
+    @Test
+    fun `return ok when update order with success`() {
+        val order = populateOrder().copy(id = 1)
+        val preSaveorder = order.copy(pautaNome = "namePre")
+        val posSaveOrder = order.copy(pautaNome = "namePos")
+
+        `when`(orderRepository.save(preSaveorder.toEntity().copy(id = 1))).thenReturn(Mono.just(posSaveOrder.toEntity().copy(id = 1)))
+
+        `when`(redisService.put(posSaveOrder)).thenReturn(Mono.just(true))
+
+        pautaService.update(preSaveorder.toOutputDto())
+            .`as`(StepVerifier::create)
+            .assertNext {
+                assertNotNull(it.id)
+                assertEquals(posSaveOrder.pautaNome, it.pautaNome)
+            }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `return unsupported operation when update order with error`() {
+        val order = populateOrder().copy(id = 1)
+
+        `when`(orderRepository.save(order.toEntity().copy(id = 1))).thenReturn(Mono.error(Exception("Error")))
+
+        pautaService.update(order.toOutputDto())
+            .`as`(StepVerifier::create)
+            .expectErrorMatches {
+                it is UnsupportedOperationException && it.message == "Error to update order!"
+            }
+            .verify()
+    }
+
+    @Test
+    fun `continue operation when redis return error on update`() {
+        val order = populateOrder().copy(id = 1)
+        val preSaveorder = order.copy(pautaNome = "namePre")
+        val posSaveOrder = order.copy(pautaNome = "namePos")
+
+        `when`(orderRepository.save(preSaveorder.toEntity().copy(id = 1))).thenReturn(Mono.just(posSaveOrder.toEntity().copy(id = 1)))
+
+        `when`(redisService.put(posSaveOrder)).thenReturn(Mono.error(Exception("Error")))
+
+        pautaService.update(preSaveorder.toOutputDto())
+            .`as`(StepVerifier::create)
+            .assertNext {
+                assertThrows<UnsupportedOperationException> {
+                    throw UnsupportedOperationException("Error to update order!")
+                }
+            }
+            .verifyComplete()
+
+        pautaService.update(preSaveorder.toOutputDto())
+            .`as`(StepVerifier::create)
+            .assertNext {
+                assertNotNull(it.id)
+                assertEquals(posSaveOrder.pautaNome, it.pautaNome)
+            }
+            .verifyComplete()
+
+    }
+
     private fun populateOrder(): PautaDomain {
         return PautaDomain(null, "name", LocalDateTime.now(), 60, 0)
     }

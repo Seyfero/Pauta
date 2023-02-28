@@ -46,11 +46,14 @@ class PautaServiceImpl(
 
     override fun update(pauta: PautaOutputDto): Mono<PautaDomain> {
         logger.info("pautaRepository.update, status=try")
-        return pautaRepository.save(pauta.toDomain().toEntity())
-            .flatMap {
-                redisService.put(it.toDomain()).thenReturn(it.toDomain())
+        return pautaRepository.save(pauta.toDomain().toEntity().copy(id = pauta.id))
+            .flatMap { pautaEntity ->
+                redisService.put(pautaEntity.toDomain()).thenReturn(pautaEntity.toDomain())
                     .doOnSuccess { logger.info("Order updated with success!") }
-                    .doOnError { logger.error("Order not updated!") }
+                    .onErrorResume {
+                        logger.error("pautaRepository.save, status=error message:${it.message}")
+                        Mono.just(pautaEntity.toDomain())
+                    }
             }
             .doOnSuccess {
                 logger.info("pautaRepository.update, status=complete")
