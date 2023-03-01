@@ -156,6 +156,62 @@ class PautaServiceImplTest {
 
     }
 
+    @Test
+    fun `return ok when delete order with success`() {
+        val orderDelete = populateOrder().copy(id = 1)
+
+        `when`(orderRepository.deleteByPautaNome(orderDelete.pautaNome)).thenReturn(Mono.just(true))
+
+        `when`(redisService.remove("pauta:nome:${orderDelete.pautaNome}:pauta")).thenReturn(Mono.just(true))
+
+        pautaService.deleteByName(orderDelete.pautaNome)
+            .`as`(StepVerifier::create)
+            .assertNext {
+                assertEquals(it, true)
+            }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `return unsupported operation when delete order with error`() {
+        val orderDelete = populateOrder().copy(id = 1)
+
+        `when`(orderRepository.deleteByPautaNome(orderDelete.pautaNome)).thenReturn(Mono.error(Exception("Error")))
+
+        pautaService.deleteByName(orderDelete.pautaNome)
+            .`as`(StepVerifier::create)
+            .expectErrorMatches {
+                it is UnsupportedOperationException && it.message == "Error to delete order by name!"
+            }
+            .verify()
+    }
+
+    @Test
+    fun `continue operation when redis return error on delete`() {
+        val orderDelete = populateOrder().copy(id = 1)
+
+        `when`(orderRepository.deleteByPautaNome(orderDelete.pautaNome)).thenReturn(Mono.just(true))
+
+        `when`(redisService.remove("pauta:nome:${orderDelete.pautaNome}:pauta")).thenReturn(Mono.error(Exception("Error")))
+
+        pautaService.deleteByName(orderDelete.pautaNome)
+            .`as`(StepVerifier::create)
+            .assertNext {
+                assertThrows<UnsupportedOperationException> {
+                    throw UnsupportedOperationException("Error to delete order by name!")
+                }
+            }
+            .verifyComplete()
+
+        pautaService.deleteByName(orderDelete.pautaNome)
+            .`as`(StepVerifier::create)
+            .assertNext {
+                assertEquals(true, it)
+            }
+            .verifyComplete()
+
+    }
+
     private fun populateOrder(): PautaDomain {
         return PautaDomain(null, "name", LocalDateTime.now(), 60, 0)
     }

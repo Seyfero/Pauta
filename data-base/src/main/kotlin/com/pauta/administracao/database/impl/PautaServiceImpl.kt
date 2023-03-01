@@ -70,7 +70,10 @@ class PautaServiceImpl(
             .flatMap {
                 redisService.remove("pauta:nome:$nome:pauta")
                     .doOnSuccess { logger.info("Order removed with success!") }
-                    .doOnError { logger.error("Order not removed!") }
+                    .onErrorResume {
+                        logger.error("Order not removed!")
+                        Mono.just(true)
+                    }
             }
             .doOnSuccess {
                 logger.info("pautaRepository.deleteByName, status=complete")
