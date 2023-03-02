@@ -87,10 +87,8 @@ class PautaServiceImpl(
     override fun findById(id: Long): Mono<PautaDomain> {
         logger.info("pautaRepository.findById, status=try")
         return pautaRepository.findById(id)
-            .flatMap { dbValue ->
-                redisService.put(dbValue.toDomain()).thenReturn(dbValue.toDomain())
-                    .doOnSuccess { logger.info("Order founded with success!") }
-                    .doOnError { logger.error("Order not founded!") }
+            .map { dbValue ->
+                dbValue.toDomain()
             }
             .doOnSuccess {
                 logger.info("pautaRepository.findById, status=complete by db")

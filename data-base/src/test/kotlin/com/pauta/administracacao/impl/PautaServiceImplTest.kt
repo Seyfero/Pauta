@@ -1,9 +1,7 @@
 package com.pauta.administracacao.impl
 
 import com.pauta.administracao.cache.service.RedisService
-import com.pauta.administracao.database.converters.pauta.toDomain
 import com.pauta.administracao.database.converters.pauta.toEntity
-import com.pauta.administracao.database.entity.PautaEntity
 import com.pauta.administracao.database.impl.PautaServiceImpl
 import com.pauta.administracao.database.repository.PautaRepository
 import com.pauta.administracao.domain.PautaDomain
@@ -13,7 +11,6 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers.any
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
@@ -91,7 +88,6 @@ class PautaServiceImplTest {
                 assertEquals(orderSaved.pautaNome, it.pautaNome)
             }
             .verifyComplete()
-
     }
 
     @Test
@@ -153,7 +149,6 @@ class PautaServiceImplTest {
                 assertEquals(posSaveOrder.pautaNome, it.pautaNome)
             }
             .verifyComplete()
-
     }
 
     @Test
@@ -209,7 +204,35 @@ class PautaServiceImplTest {
                 assertEquals(true, it)
             }
             .verifyComplete()
+    }
 
+    @Test
+    fun `return ok when find by Id order with success`() {
+        val order = populateOrder().copy(id = 1)
+
+        `when`(orderRepository.findById(order.id!!)).thenReturn(Mono.just(order.toEntity().copy(id = 1)))
+
+        pautaService.findById(order.id!!)
+            .`as`(StepVerifier::create)
+            .assertNext {
+                assertNotNull(it.id)
+                assertEquals(order.pautaNome, it.pautaNome)
+            }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `return unsupported operation when find by Id order with error`() {
+        val order = populateOrder().copy(id = 1)
+
+        `when`(orderRepository.findById(order.id!!)).thenReturn(Mono.error(Exception("Error")))
+
+        pautaService.findById(order.id!!)
+            .`as`(StepVerifier::create)
+            .expectErrorMatches {
+                it is UnsupportedOperationException && it.message == "Error to find order by ID!"
+            }
+            .verify()
     }
 
     private fun populateOrder(): PautaDomain {
