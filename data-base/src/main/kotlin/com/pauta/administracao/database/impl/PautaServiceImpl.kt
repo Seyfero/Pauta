@@ -103,10 +103,12 @@ class PautaServiceImpl(
         logger.info("pautaRepository.findByName, status=try")
         return redisService.get("pauta:nome:$nome:pauta")
             .flatMap { redisValue ->
-                if (redisValue != null) {
+                redisValue?.let {
                     logger.info("pautaRepository.findById, status=complete by redis")
-                    return@flatMap Mono.just(redisValue)
-                }
+                    return@flatMap Mono.just(it)
+                } ?: Mono.empty()
+            }
+            .onErrorResume {
                 Mono.empty()
             }
             .switchIfEmpty {
@@ -114,7 +116,10 @@ class PautaServiceImpl(
                     .flatMap { dbValue ->
                         redisService.put(dbValue.toDomain()).thenReturn(dbValue.toDomain())
                             .doOnSuccess { logger.info("Order founded with success!") }
-                            .doOnError { logger.error("Order not founded!") }
+                            .onErrorResume {
+                                logger.error("Order not created!")
+                                Mono.just(dbValue.toDomain())
+                            }
                     }
                     .doOnSuccess {
                         logger.info("pautaRepository.findByName, status=complete")

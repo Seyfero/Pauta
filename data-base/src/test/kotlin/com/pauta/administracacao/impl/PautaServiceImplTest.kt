@@ -235,6 +235,85 @@ class PautaServiceImplTest {
             .verify()
     }
 
+    @Test
+    fun `return ok when find by name order with success on redis`() {
+        val order = populateOrder().copy(id = 1)
+
+        `when`(redisService.get("pauta:nome:${order.pautaNome}:pauta")).thenReturn(Mono.just(order))
+
+        pautaService.findByName(order.pautaNome)
+            .`as`(StepVerifier::create)
+            .assertNext {
+                assertNotNull(it.id)
+                assertEquals(order.pautaNome, it.pautaNome)
+            }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `return ok when find by name order with success on database`() {
+        val order = populateOrder().copy(id = 1)
+
+        `when`(redisService.get("pauta:nome:${order.pautaNome}:pauta")).thenReturn(Mono.empty())
+
+        `when`(orderRepository.findByPautaNome(order.pautaNome)).thenReturn(Mono.just(order.toEntity().copy(id = 1)))
+
+        `when`(redisService.put(order)).thenReturn(Mono.just(true))
+
+        pautaService.findByName(order.pautaNome)
+            .`as`(StepVerifier::create)
+            .assertNext {
+                assertNotNull(it.id)
+                assertEquals(order.pautaNome, it.pautaNome)
+            }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `return ok when find by name order with error on redis`() {
+        val order = populateOrder().copy(id = 1)
+
+        `when`(redisService.get("pauta:nome:${order.pautaNome}:pauta")).thenReturn(Mono.error(Exception("Error")))
+
+        `when`(orderRepository.findByPautaNome(order.pautaNome)).thenReturn(Mono.just(order.toEntity().copy(id = 1)))
+
+        `when`(redisService.put(order)).thenReturn(Mono.error(Exception("Error")))
+
+        pautaService.findByName(order.pautaNome)
+            .`as`(StepVerifier::create)
+            .assertNext {
+                assertThrows<Exception> {
+                    throw Exception("Error to delete order by name!")
+                }
+            }
+            .verifyComplete()
+
+        pautaService.findByName(order.pautaNome)
+            .`as`(StepVerifier::create)
+            .assertNext {
+                assertNotNull(it.id)
+                assertEquals(order.pautaNome, it.pautaNome)
+            }
+            .verifyComplete()
+
+    }
+
+    @Test
+    fun `return unsupported operation when find by name order with error`() {
+        val order = populateOrder().copy(id = 1)
+
+        `when`(redisService.get("pauta:nome:${order.pautaNome}:pauta")).thenReturn(Mono.error(Exception("Error")))
+
+        `when`(orderRepository.findByPautaNome(order.pautaNome)).thenReturn(Mono.error(Exception("Error")))
+
+        pautaService.findByName(order.pautaNome)
+            .`as`(StepVerifier::create)
+            .expectErrorMatches {
+                it is UnsupportedOperationException && it.message == "Error to search order by name!"
+            }
+            .verify()
+    }
+
     private fun populateOrder(): PautaDomain {
         return PautaDomain(null, "name", LocalDateTime.now(), 60, 0)
     }

@@ -38,7 +38,10 @@ class RedisPautaServiceImpl(
             .map {
                 deserialize(it)
             }
-            .doOnError { logger.error("Error on search in redis!") }
+            .onErrorResume {
+                logger.error("Error on search in redis!")
+                Mono.empty()
+            }
             .switchIfEmpty(Mono.empty())
     }
 
