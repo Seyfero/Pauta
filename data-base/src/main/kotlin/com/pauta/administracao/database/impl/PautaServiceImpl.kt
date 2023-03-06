@@ -28,12 +28,8 @@ class PautaServiceImpl(
         logger.info("pautaRepository.save, status=try")
         return pautaRepository.save(pauta.toDomain().toEntity())
             .flatMap { pautaEntity ->
-                redisService.put(pautaEntity.toDomain()).thenReturn(pautaEntity.toDomain())
-                    .doOnSuccess { logger.info("Order created with success!") }
-                    .onErrorResume {
-                        logger.error("pautaRepository.save, status=error message:${it.message}")
-                        Mono.just(pautaEntity.toDomain())
-                    }
+                addOnRedis(pautaEntity.toDomain())
+                    .flatMap { Mono.just(it) }
             }
             .doOnSuccess {
                 logger.info("pautaRepository.save, status=complete")
@@ -48,12 +44,8 @@ class PautaServiceImpl(
         logger.info("pautaRepository.update, status=try")
         return pautaRepository.save(pauta.toDomain().toEntity().copy(id = pauta.id))
             .flatMap { pautaEntity ->
-                redisService.put(pautaEntity.toDomain()).thenReturn(pautaEntity.toDomain())
-                    .doOnSuccess { logger.info("Order updated with success!") }
-                    .onErrorResume {
-                        logger.error("pautaRepository.save, status=error message:${it.message}")
-                        Mono.just(pautaEntity.toDomain())
-                    }
+                addOnRedis(pautaEntity.toDomain())
+                    .flatMap { Mono.just(it) }
             }
             .doOnSuccess {
                 logger.info("pautaRepository.update, status=complete")
@@ -114,12 +106,8 @@ class PautaServiceImpl(
             .switchIfEmpty {
                 pautaRepository.findByPautaNome(nome)
                     .flatMap { dbValue ->
-                        redisService.put(dbValue.toDomain()).thenReturn(dbValue.toDomain())
-                            .doOnSuccess { logger.info("Order founded with success!") }
-                            .onErrorResume {
-                                logger.error("Order not created!")
-                                Mono.just(dbValue.toDomain())
-                            }
+                        addOnRedis(dbValue.toDomain())
+                            .flatMap { Mono.just(it) }
                     }
                     .doOnSuccess {
                         logger.info("pautaRepository.findByName, status=complete")
@@ -143,6 +131,25 @@ class PautaServiceImpl(
             .switchIfEmpty(getAllByDatabase())
     }
 
+    override fun removeAll(): Flux<Boolean> {
+        logger.info("pautaRepository.removeAll, status=try")
+        return redisService.removeAll().map { true }
+            .doOnTerminate { logger.info("Orders removed with success!") }
+            .onErrorResume { error ->
+                logger.error("pautaRepository.removeAll, status=error message:${error.message}")
+                Flux.error(UnsupportedOperationException("Error to remove all keys from redis!"))
+            }
+    }
+
+    private fun addOnRedis(pautaDomain: PautaDomain): Mono<PautaDomain> {
+        return redisService.put(pautaDomain).thenReturn(pautaDomain)
+            .doOnSuccess { logger.info("Order founded with success!") }
+            .onErrorResume {
+                logger.error("Order not created!")
+                Mono.just(pautaDomain)
+            }
+    }
+
     private fun getAllByDatabase(): Flux<PautaDomain> {
         return pautaRepository.findAll()
             .collectList()
@@ -150,9 +157,8 @@ class PautaServiceImpl(
                 Flux.fromIterable(it)
             }
             .flatMap { pautaDb ->
-                redisService.put(pautaDb.toDomain()).thenReturn(pautaDb.toDomain())
-                    .doOnSuccess { logger.info("Order founded with success!") }
-                    .doOnError { logger.error("Error to find orders !") }
+                addOnRedis(pautaDb.toDomain())
+                    .flatMap { Mono.just(it) }
             }
             .doOnComplete {
                 logger.info("pautaRepository.findAll, status=complete")
@@ -164,15 +170,5 @@ class PautaServiceImpl(
             .collectList()
             .flatMapMany { Flux.fromIterable(it) }
             .switchIfEmpty(Flux.empty())
-    }
-
-    override fun removeAll(): Flux<Boolean> {
-        logger.info("pautaRepository.removeAll, status=try")
-        return redisService.removeAll().map { true }
-            .doOnTerminate { logger.info("Orders removed with success!") }
-            .onErrorResume { error ->
-                logger.error("pautaRepository.removeAll, status=error message:${error.message}")
-                Flux.error(UnsupportedOperationException("Error to remove all keys from redis!"))
-            }
     }
 }
