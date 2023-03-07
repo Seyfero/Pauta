@@ -7,6 +7,11 @@ import reactor.core.publisher.Mono
 class ValidCpfHelper {
     companion object {
         fun checkCpf(et: String): Mono<Boolean> {
+            val regex = Regex("[a-zA-Z]")
+            if(regex.containsMatchIn(et)) {
+                return Mono.error(IllegalArgumentException("Cpf contains letters!"))
+            }
+
             val str = et.replace("-", "").replace("/", "").replace(".", "").padStart(11, '0')
             var calc: Int
             var num = 10
