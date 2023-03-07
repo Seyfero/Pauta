@@ -45,7 +45,7 @@ class VotoServiceImpl(
             }
             .onErrorResume {
                 logger.error("votoRepository.delete, status=error message:${it.message}")
-                Mono.error(IllegalAccessException("Error to delete vote!"))
+                Mono.error(UnsupportedOperationException("Error to delete vote!"))
             }
     }
 
@@ -60,7 +60,7 @@ class VotoServiceImpl(
             }
             .onErrorResume {
                 logger.error("votoRepository.findAll, status=error message:${it.message}")
-                Mono.error(IllegalAccessException("Error to find all votes!"))
+                Mono.error(UnsupportedOperationException("Error to find all votes!"))
             }
     }
 
@@ -75,7 +75,7 @@ class VotoServiceImpl(
             }
             .onErrorResume {
                 logger.error("votoRepository.findByVotoPauta, status=error message:${it.message}")
-                Mono.error(IllegalAccessException("Error to find vote by id order!"))
+                Mono.error(UnsupportedOperationException("Error to find vote by id order!"))
             }
     }
 
@@ -90,7 +90,7 @@ class VotoServiceImpl(
             }
             .onErrorResume {
                 logger.error("votoRepository.findByVotoPautaAndVotoUsuarioCpf, status=error message:${it.message}")
-                Mono.error(IllegalAccessException("Error to find vote by id order and cpf user!"))
+                Mono.error(UnsupportedOperationException("Error to find vote by id order and cpf user!"))
             }
     }
 
@@ -102,7 +102,7 @@ class VotoServiceImpl(
             }
             .onErrorResume {
                 logger.error("votoRepository.getCountVotosByPautaId, status=error message:${it.message}")
-                Mono.error(IllegalAccessException("Error to execute find by id order and value vote!"))
+                Mono.error(UnsupportedOperationException("Error to execute find by id order and value vote!"))
             }
     }
 }
