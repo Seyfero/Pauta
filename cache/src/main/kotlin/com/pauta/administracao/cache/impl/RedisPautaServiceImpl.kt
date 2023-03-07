@@ -55,7 +55,10 @@ class RedisPautaServiceImpl(
             }
             .onErrorResume {
                 logger.error("Not success to take data in redis!")
-                Mono.empty()
+                Flux.empty()
+            }
+            .switchIfEmpty {
+                Flux.empty<PautaDomain>()
             }
     }
 

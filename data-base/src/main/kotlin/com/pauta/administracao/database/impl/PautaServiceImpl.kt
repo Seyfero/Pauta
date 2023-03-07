@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import reactor.kotlin.core.publisher.switchIfEmpty
 
 @Service
@@ -121,14 +122,25 @@ class PautaServiceImpl(
 
     override fun findAll(): Flux<PautaDomain> {
         return redisService.getAll()
-            .flatMap {
-                if (it != null) {
-                    Flux.just(it)
+            .collectList()
+            .flatMapMany {
+                if (it.isNotEmpty()) {
+                    Flux.fromIterable((it))
+                        .flatMap { pautaDoamin ->
+                            Flux.just(pautaDoamin)
+                        }
                 } else {
-                    Flux.empty()
+                    getAllByDatabase()
                 }
             }
-            .switchIfEmpty(getAllByDatabase())
+            .onErrorResume {
+                return@onErrorResume getAllByDatabase()
+                    .switchIfEmpty { Flux.empty<PautaDomain>() }
+            }
+            .flatMap {
+                return@flatMap Flux.just(it)
+            }
+
     }
 
     override fun removeAll(): Flux<Boolean> {
@@ -152,13 +164,8 @@ class PautaServiceImpl(
 
     private fun getAllByDatabase(): Flux<PautaDomain> {
         return pautaRepository.findAll()
-            .collectList()
-            .flatMapMany {
-                Flux.fromIterable(it)
-            }
             .flatMap { pautaDb ->
                 addOnRedis(pautaDb.toDomain())
-                    .flatMap { Mono.just(it) }
             }
             .doOnComplete {
                 logger.info("pautaRepository.findAll, status=complete")
@@ -167,8 +174,6 @@ class PautaServiceImpl(
                 logger.error("pautaRepository.findAll, status=error message:${error.message}")
                 Flux.error(UnsupportedOperationException("Error to search all orders!"))
             }
-            .collectList()
-            .flatMapMany { Flux.fromIterable(it) }
-            .switchIfEmpty(Flux.empty())
+            .switchIfEmpty { Flux.empty<PautaDomain>() }
     }
 }

@@ -14,7 +14,10 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.atLeast
+import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import java.time.LocalDateTime
@@ -61,6 +64,7 @@ class PautaServiceImplTest {
                 it is UnsupportedOperationException && it.message == "Error to create order!"
             }
             .verify()
+        verify(PautaServiceImpl::class.java, atLeast()).add
     }
 
     @Test
@@ -295,7 +299,6 @@ class PautaServiceImplTest {
                 assertEquals(order.pautaNome, it.pautaNome)
             }
             .verifyComplete()
-
     }
 
     @Test
@@ -310,6 +313,73 @@ class PautaServiceImplTest {
             .`as`(StepVerifier::create)
             .expectErrorMatches {
                 it is UnsupportedOperationException && it.message == "Error to search order by name!"
+            }
+            .verify()
+    }
+
+    @Test
+    fun `return ok when find all order with success on redis`() {
+        val order = populateOrder().copy(id = 1)
+        val order2 = populateOrder().copy(id = 2)
+
+        `when`(redisService.getAll()).thenReturn(Flux.just(order, order2))
+
+        pautaService.findAll()
+            .`as`(StepVerifier::create)
+            .expectNext(order)
+            .expectNext(order2)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `return ok when find all order with success on database`() {
+        val order = populateOrder().copy(id = 1)
+        val order2 = populateOrder().copy(id = 2)
+
+        `when`(redisService.getAll()).thenReturn(Flux.empty())
+
+        `when`(orderRepository.findAll()).thenReturn(Flux.just(order.toEntity().copy(id = 1), order2.toEntity().copy(id = 2)))
+
+        `when`(redisService.put(order)).thenReturn(Mono.just(true))
+        `when`(redisService.put(order2)).thenReturn(Mono.just(true))
+
+        pautaService.findAll()
+            .`as`(StepVerifier::create)
+            .expectNext(order)
+            .expectNext(order2)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `return ok when find all order with error on redis`() {
+        val order = populateOrder().copy(id = 1)
+        val order2 = populateOrder().copy(id = 2)
+
+        `when`(redisService.getAll()).thenReturn(Flux.error(Exception("Error")))
+
+        `when`(orderRepository.findAll()).thenReturn(Flux.just(order.toEntity().copy(id = 1), order2.toEntity().copy(id = 2)))
+
+        `when`(redisService.put(order)).thenReturn(Mono.error(Exception("Error")))
+        `when`(redisService.put(order2)).thenReturn(Mono.error(Exception("Error")))
+
+        pautaService.findAll()
+            .`as`(StepVerifier::create)
+            .expectNext(order)
+            .expectNext(order2)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `return unsupported operation when find all order with error`() {
+
+        `when`(redisService.getAll()).thenReturn(Flux.error(Exception("Error")))
+
+        `when`(orderRepository.findAll()).thenReturn(Flux.error(Exception("Error")))
+
+        pautaService.findAll()
+            .`as`(StepVerifier::create)
+            .expectErrorMatches {
+                it is UnsupportedOperationException && it.message == "Error to search all orders!"
             }
             .verify()
     }
