@@ -19,5 +19,5 @@ interface PautaService {
 
     fun findAll(): Flux<PautaDomain>
 
-    fun removeAll(): Flux<Boolean>
+    fun removeAllDataOnRedis(): Flux<Boolean>
 }

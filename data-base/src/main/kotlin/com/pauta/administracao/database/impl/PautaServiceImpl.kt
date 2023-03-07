@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
 import reactor.kotlin.core.publisher.switchIfEmpty
 
 @Service
@@ -140,15 +139,14 @@ class PautaServiceImpl(
             .flatMap {
                 return@flatMap Flux.just(it)
             }
-
     }
 
-    override fun removeAll(): Flux<Boolean> {
-        logger.info("pautaRepository.removeAll, status=try")
-        return redisService.removeAll().map { true }
+    override fun removeAllDataOnRedis(): Flux<Boolean> {
+        logger.info("pautaRepository.removeAllDataOnRedis, status=try")
+        return redisService.removeAllDataOnRedis().map { true }
             .doOnTerminate { logger.info("Orders removed with success!") }
             .onErrorResume { error ->
-                logger.error("pautaRepository.removeAll, status=error message:${error.message}")
+                logger.error("pautaRepository.removeAllDataOnRedis, status=error message:${error.message}")
                 Flux.error(UnsupportedOperationException("Error to remove all keys from redis!"))
             }
     }

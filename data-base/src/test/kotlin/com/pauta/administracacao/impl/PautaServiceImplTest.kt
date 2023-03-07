@@ -13,9 +13,8 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.atLeast
 import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -64,7 +63,6 @@ class PautaServiceImplTest {
                 it is UnsupportedOperationException && it.message == "Error to create order!"
             }
             .verify()
-        verify(PautaServiceImpl::class.java, atLeast()).add
     }
 
     @Test

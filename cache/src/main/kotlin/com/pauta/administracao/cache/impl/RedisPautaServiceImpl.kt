@@ -62,7 +62,7 @@ class RedisPautaServiceImpl(
             }
     }
 
-    override fun removeAll(): Flux<Boolean> {
+    override fun removeAllDataOnRedis(): Flux<Boolean> {
         return reactiveRedisOperations.keys("*")
             .flatMap { redisKey ->
                 reactiveRedisOperations.opsForValue().delete(redisKey).thenReturn(true)

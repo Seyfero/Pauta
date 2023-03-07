@@ -37,7 +37,7 @@ class DeletePautaServiceImpl(
     }
 
     override fun execute(): Flux<Boolean> {
-        return pautaService.removeAll()
+        return pautaService.removeAllDataOnRedis()
     }
 
     private fun verifyIfExistsPautaByNome(nome: String): Mono<Boolean> {
