@@ -5,10 +5,23 @@ extra["reactorExtensions"] = "1.1.9"
 
 plugins {
     id("org.springframework.boot") version "2.7.8"
+    id("jacoco")
     id("io.spring.dependency-management") version "1.0.15.RELEASE"
     id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
     kotlin("jvm") version "1.7.0"
     kotlin("plugin.spring") version "1.7.0"
+}
+
+jacoco {
+    toolVersion = "0.8.7"
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
 }
 
 buildscript {
