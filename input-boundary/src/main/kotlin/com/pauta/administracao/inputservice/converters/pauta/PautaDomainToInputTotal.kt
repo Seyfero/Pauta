@@ -9,7 +9,7 @@ fun PautaDomain.toInputTotal() = InputTodasPautasDto(
     pautaNome,
     pautaUrl = "",
     pautaDataCriacao,
-    pautaDataExpiracao = LocalDateTime.now(),
+    pautaDataExpiracao = pautaDataCriacao.plusSeconds(pautaDuracao),
     pautaDuracao,
     pautaVotosTotal
 )
