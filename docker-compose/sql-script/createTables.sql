@@ -8,7 +8,7 @@ CREATE SCHEMA IF NOT EXISTS controle_pautas AUTHORIZATION postgres;
 CREATE TABLE IF NOT EXISTS controle_pautas.vt_pauta (
 	vt_pauta_id SERIAL PRIMARY KEY,
 	vt_pauta_nome varchar(100) NOT NULL,
-	vt_pauta_criacao timestamptz NOT NULL,
+	vt_pauta_criacao timestamptz NOT NULL DEFAULT NOW(),
 	vt_pauta_duracao int4 NOT NULL,
 	vt_pauta_votos_total int4 NOT NULL
 );
