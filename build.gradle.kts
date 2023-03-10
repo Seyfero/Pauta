@@ -61,8 +61,7 @@ tasks.jacocoTestCoverageVerification {
                 maximum = "200".toBigDecimal()
             }
 
-            excludes = listOf(
-            )
+            excludes = listOf()
         }
     }
 }
@@ -71,9 +70,11 @@ val testCoverage by tasks.registering {
     group = "verification"
     description = "Runs the unit tests with coverage"
 
-    dependsOn(":test",
+    dependsOn(
+        ":test",
         ":jacocoTestReport",
-        ":jacocoTestCoverageVerification")
+        ":jacocoTestCoverageVerification"
+    )
 
     tasks["jacocoTestReport"].mustRunAfter(tasks["test"])
     tasks["jacocoTestCoverageVerification"].mustRunAfter(tasks["jacocoTestReport"])

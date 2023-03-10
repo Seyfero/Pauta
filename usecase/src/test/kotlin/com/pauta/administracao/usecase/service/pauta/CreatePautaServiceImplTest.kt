@@ -5,8 +5,8 @@ import com.pauta.administracao.inputservice.dto.pauta.InputPautaDto
 import com.pauta.administracao.outputboundary.converters.pauta.toOutputDto
 import com.pauta.administracao.outputboundary.service.repository.PautaService
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import java.time.LocalDateTime
@@ -30,9 +30,7 @@ class CreatePautaServiceImplTest {
             .`as`(StepVerifier::create)
             .expectNext(true)
             .verifyComplete()
-
     }
-
 
     @Test
     fun `should return error if exists order wirth same name`() {

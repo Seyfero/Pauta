@@ -2,11 +2,10 @@ package com.pauta.administracao.usecase.service.pauta
 
 import com.pauta.administracao.inputservice.converters.pauta.toDomain
 import com.pauta.administracao.inputservice.dto.pauta.InputPautaDto
-import com.pauta.administracao.outputboundary.converters.pauta.toOutputDto
 import com.pauta.administracao.outputboundary.service.repository.PautaService
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import java.time.LocalDateTime
@@ -30,9 +29,7 @@ class DeletePautaServiceImplTest {
             .`as`(StepVerifier::create)
             .expectNext(true)
             .verifyComplete()
-
     }
-
 
     @Test
     fun `should return error if not exists order wirth name`() {

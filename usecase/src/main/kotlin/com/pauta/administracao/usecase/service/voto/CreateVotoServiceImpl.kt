@@ -43,21 +43,35 @@ class CreateVotoServiceImpl(
             }
             .onErrorResume { throwable: Throwable ->
                 logger.error("Error to persist vote message = ${throwable.message}!!")
-                Mono.error(IllegalStateException("Error to persist vote!"))
+                Mono.error(
+                    IllegalStateException(
+                        throwable.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to persist vote!" else it
+                        }
+                    )
+                )
             }
     }
 
     private fun validUserCpf(cpf: String): Mono<Boolean> {
         return validateExternalCallUserCpfService.validateExternalCallUserCpf(cpf)
             .flatMap {
-                if (it.contains("ABLE_TO_VOTE")) {
+                if (it.equals("ABLE_TO_VOTE")) {
                     return@flatMap Mono.just(true)
                 }
-                Mono.just(false)
+                Mono.error(IllegalArgumentException("User not valid"))
             }
-            .onErrorResume {
+            .onErrorResume { throwable: Throwable ->
                 logger.error("Error to validate cpf on vote by external call!")
-                Mono.error(IllegalStateException("Error to validate cpf on vote!"))
+                Mono.error(
+                    IllegalStateException(
+                        throwable.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to validate cpf on vote!" else it
+                        }
+                    )
+                )
             }
     }
 
@@ -70,14 +84,21 @@ class CreateVotoServiceImpl(
                         if (it) {
                             Mono.just(InputVotoInternalDto(null, inputVotoExternalDto.votoEscolha, userCpf, inputPauta.id))
                         } else {
-                            Mono.error(NoSuchElementException("Error to validate user!"))
+                            Mono.error(NoSuchElementException("Error to validate vote!"))
                         }
                     }
             }
             .switchIfEmpty(Mono.error(NoSuchElementException("")))
-            .onErrorResume {
+            .onErrorResume { throwable: Throwable ->
                 logger.error("")
-                Mono.error(IllegalStateException("Error to validate user!", it))
+                Mono.error(
+                    IllegalStateException(
+                        throwable.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to validate conditions of vote!" else it
+                        }
+                    )
+                )
             }
     }
 
@@ -96,7 +117,7 @@ class CreateVotoServiceImpl(
                 fun1 && fun2 && !fun3
             }
             .switchIfEmpty(
-                Mono.error(NoSuchElementException("Order couldn't be founded!"))
+                Mono.error(NoSuchElementException("server.error.Order couldn't be founded!"))
             )
             .doOnError {
                 logger.error("Order couldn't be founded!")
@@ -109,7 +130,7 @@ class CreateVotoServiceImpl(
                 logger.info("Founded order by name!")
                 it.toInputDto()
             }
-            .switchIfEmpty(Mono.error(IllegalPautaException("This order doesn't exists in database!")))
+            .switchIfEmpty(Mono.error(IllegalPautaException("server.error.This order doesn't exists in database!")))
             .doOnError {
                 logger.error("Error to find order!")
             }
@@ -121,7 +142,7 @@ class CreateVotoServiceImpl(
                 logger.info("This order is valid!")
                 Mono.just(true)
             } else {
-                Mono.error(ExpiredPautaException("Order expired!"))
+                Mono.error(ExpiredPautaException("server.error.Order expired!"))
             }
                 .doOnError {
                     logger.error("This order expired!")
@@ -135,7 +156,7 @@ class CreateVotoServiceImpl(
             logger.info("Vote value could be validate!")
             Mono.just(true)
         } else {
-            Mono.error(IllegalArgumentException("The value of vote is invalid!"))
+            Mono.error(IllegalArgumentException("server.error.The value of vote is invalid!"))
         }
             .doOnError {
                 logger.error("Error to validate vote message = ${it.message}")
@@ -150,7 +171,14 @@ class CreateVotoServiceImpl(
             .hasElement()
             .onErrorResume { throwable: Throwable ->
                 logger.error("Error to create user message = ${throwable.message}!!")
-                Mono.error(IllegalStateException("Error to validate user!", throwable))
+                Mono.error(
+                    IllegalStateException(
+                        throwable.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to validate user!" else it
+                        }
+                    )
+                )
             }
     }
 }

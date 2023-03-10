@@ -8,7 +8,7 @@ class ValidCpfHelper {
     companion object {
         fun checkCpf(et: String): Mono<Boolean> {
             val regex = Regex("[a-zA-Z]")
-            if(regex.containsMatchIn(et)) {
+            if (regex.containsMatchIn(et)) {
                 return Mono.error(IllegalArgumentException("Cpf contains letters!"))
             }
 
