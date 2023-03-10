@@ -159,7 +159,7 @@ class CreateVotoServiceImplTest {
     }
 
     private fun populateOrder(): InputPautaDto {
-        return InputPautaDto(1, "name", LocalDateTime.now(), 60, 0)
+        return InputPautaDto(1, "name", LocalDateTime.now(), 60, false)
     }
 
     private fun populateVote(): VotoDomain {

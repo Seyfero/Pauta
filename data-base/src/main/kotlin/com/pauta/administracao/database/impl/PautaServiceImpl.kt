@@ -122,7 +122,7 @@ class PautaServiceImpl(
     override fun findByPautaProcessada(value: Boolean): Flux<PautaDomain> {
         return redisService.getAll()
             .filter {
-                it?.pautaProcessada == false
+                it?.pautaProcessada == value
             }
             .collectList()
             .flatMapMany {
@@ -132,12 +132,30 @@ class PautaServiceImpl(
                             Flux.just(pautaDoamin)
                         }
                 } else {
-                    getAllByDatabase()
+                    pautaRepository.findByPautaProcessada(value)
+                        .flatMap { pautaDomain ->
+                            addOnRedis(pautaDomain.toDomain())
+                            Flux.just(pautaDomain.toDomain())
+                        }
                 }
             }
             .onErrorResume {
-                return@onErrorResume getAllByDatabase()
+                pautaRepository.findByPautaProcessada(value)
+                    .flatMap { pautaDomain ->
+                        Flux.just(pautaDomain.toDomain())
+                    }
                     .switchIfEmpty { Flux.empty<PautaDomain>() }
+                    .onErrorResume { error ->
+                        logger.error("pautaRepository.findByPautaProcessada, status=error message:${error.message}")
+                        Flux.error(
+                            UnsupportedOperationException(
+                                error.message?.let {
+                                    if (!it.contains("server.error"))
+                                        "server.Error to find orders actives on data base!" else it
+                                }
+                            )
+                        )
+                    }
             }
             .flatMap {
                 return@flatMap Flux.just(it)

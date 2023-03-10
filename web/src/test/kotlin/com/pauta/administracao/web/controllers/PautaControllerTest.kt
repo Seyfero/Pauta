@@ -113,6 +113,6 @@ class PautaControllerTest {
     }
 
     private fun populateOrder(): InputPautaDto {
-        return InputPautaDto(null, "name", LocalDateTime.now(), 60, 0)
+        return InputPautaDto(null, "name", LocalDateTime.now(), 60, false)
     }
 }

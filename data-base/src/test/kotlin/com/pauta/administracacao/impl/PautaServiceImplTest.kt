@@ -330,6 +330,62 @@ class PautaServiceImplTest {
     }
 
     @Test
+    fun `return order from database filtered by process`() {
+        val order = populateOrder().copy(id = 1)
+
+        `when`(redisService.getAll()).thenReturn(Flux.empty())
+
+        `when`(orderRepository.findByPautaProcessada(false)).thenReturn(Flux.just(order.toEntity().copy(id = 1)))
+
+        pautaService.findByPautaProcessada(false)
+            .`as`(StepVerifier::create)
+            .expectNext(order)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `return order from redis filtered by process`() {
+        val order = populateOrder().copy(id = 1)
+        val order2 = populateOrder().copy(id = 2, pautaProcessada = true)
+
+        `when`(redisService.getAll()).thenReturn(Flux.just(order, order2))
+
+        pautaService.findByPautaProcessada(false)
+            .`as`(StepVerifier::create)
+            .expectNext(order)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `return order when find on database and redis error`() {
+        val order = populateOrder().copy(id = 1)
+
+        `when`(redisService.getAll()).thenReturn(Flux.error(Exception("Error")))
+
+        `when`(orderRepository.findByPautaProcessada(false)).thenReturn(Flux.just(order.toEntity().copy(id = 1)))
+
+        pautaService.findByPautaProcessada(false)
+            .`as`(StepVerifier::create)
+            .expectNext(order)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `return unsupported operation when find unactive order with error`() {
+
+        `when`(redisService.getAll()).thenReturn(Flux.error(Exception("Error")))
+
+        `when`(orderRepository.findByPautaProcessada(false)).thenReturn(Flux.error(Exception("Error")))
+
+        pautaService.findByPautaProcessada(false)
+            .`as`(StepVerifier::create)
+            .expectErrorMatches {
+                it is UnsupportedOperationException && it.message == "server.Error to find orders actives on data base!"
+            }
+            .verify()
+    }
+
+    @Test
     fun `return ok when find all order with success on database`() {
         val order = populateOrder().copy(id = 1)
         val order2 = populateOrder().copy(id = 2)
@@ -383,6 +439,6 @@ class PautaServiceImplTest {
     }
 
     private fun populateOrder(): PautaDomain {
-        return PautaDomain(null, "name", LocalDateTime.now(), 60, 0)
+        return PautaDomain(null, "name", LocalDateTime.now(), 60, false)
     }
 }
