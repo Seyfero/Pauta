@@ -11,5 +11,5 @@ fun PautaDomain.toInputAtivos() = InputPautasAtivasDto(
     pautaDataCriacao,
     pautaDataExpiracao = LocalDateTime.now(),
     pautaDuracao,
-    pautaVotosTotal
+    pautaProcessada
 )

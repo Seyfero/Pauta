@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS controle_pautas.vt_pauta (
 	vt_pauta_nome varchar(100) NOT NULL,
 	vt_pauta_criacao timestamptz NOT NULL DEFAULT NOW(),
 	vt_pauta_duracao int4 NOT NULL,
-	vt_pauta_votos_total int4 NOT NULL
+	vt_pauta_processada boolean NOT NULL
 );
 CREATE INDEX vt_pauta_vt_pauta_nome_idx ON controle_pautas.vt_pauta USING btree (vt_pauta_nome);
 

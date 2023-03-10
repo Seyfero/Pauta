@@ -10,5 +10,5 @@ fun PautaDomain.toInputTotal() = InputTodasPautasDto(
     pautaDataCriacao,
     pautaDataExpiracao = pautaDataCriacao.plusSeconds(pautaDuracao),
     pautaDuracao,
-    pautaVotosTotal
+    pautaProcessada
 )

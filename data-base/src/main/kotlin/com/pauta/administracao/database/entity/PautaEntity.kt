@@ -11,5 +11,5 @@ data class PautaEntity(
     @Column("vt_pauta_nome") val pautaNome: String,
     @Column("vt_pauta_criacao") val pautaDataCriacao: LocalDateTime,
     @Column("vt_pauta_duracao") val pautaDuracao: Long,
-    @Column("vt_pauta_votos_total") val pautaVotosTotal: Long?,
+    @Column("vt_pauta_processada") val pautaProcessada: Boolean? = false,
 )

@@ -4,6 +4,7 @@ import com.pauta.administracao.domain.PautaDomain
 import com.pauta.administracao.domain.VotoDomain
 import com.pauta.administracao.kafkaproducer.dto.KafkaDto
 import com.pauta.administracao.kafkaproducer.service.KafkaProducerService
+import com.pauta.administracao.outputboundary.converters.pauta.toOutputDto
 import com.pauta.administracao.outputboundary.service.repository.PautaService
 import com.pauta.administracao.outputboundary.service.repository.VotoService
 import org.slf4j.LoggerFactory
@@ -44,7 +45,7 @@ class ScheduledTasks(
                             logger.error("Error te sent order!")
                         }
 
-                    val p2 = removePauta(it)
+                    val p2 = updatePauta(it)
                         .doOnSuccess {
                             logger.info("Order removed with success!")
                         }
@@ -59,7 +60,7 @@ class ScheduledTasks(
     }
 
     private fun getAllPauta(): Flux<PautaDomain> {
-        return pautaService.findAll()
+        return pautaService.findByPautaProcessada(false)
             .onErrorResume {
                 logger.error("Error to toke list from redis or database! Message=${it.message}")
                 Flux.error(IllegalAccessException("Error to toke order lists!"))
@@ -73,9 +74,9 @@ class ScheduledTasks(
         return false
     }
 
-    private fun removePauta(pautaDomain: PautaDomain): Mono<Boolean> {
-        return pautaDomain.pautaNome.let {
-            pautaService.deleteByName(it)
+    private fun updatePauta(pautaDomain: PautaDomain): Mono<Boolean> {
+        return pautaDomain.let {
+            pautaService.update(it.toOutputDto().copy(pautaProcessada = true))
                 .doOnSuccess {
                     logger.info("Order deleted with success!")
                 }

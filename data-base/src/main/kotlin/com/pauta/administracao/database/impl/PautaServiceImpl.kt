@@ -119,6 +119,31 @@ class PautaServiceImpl(
             }
     }
 
+    override fun findByPautaProcessada(value: Boolean): Flux<PautaDomain> {
+        return redisService.getAll()
+            .filter {
+                it?.pautaProcessada == false
+            }
+            .collectList()
+            .flatMapMany {
+                if (it.isNotEmpty()) {
+                    Flux.fromIterable((it))
+                        .flatMap { pautaDoamin ->
+                            Flux.just(pautaDoamin)
+                        }
+                } else {
+                    getAllByDatabase()
+                }
+            }
+            .onErrorResume {
+                return@onErrorResume getAllByDatabase()
+                    .switchIfEmpty { Flux.empty<PautaDomain>() }
+            }
+            .flatMap {
+                return@flatMap Flux.just(it)
+            }
+    }
+
     override fun findAll(): Flux<PautaDomain> {
         return redisService.getAll()
             .collectList()

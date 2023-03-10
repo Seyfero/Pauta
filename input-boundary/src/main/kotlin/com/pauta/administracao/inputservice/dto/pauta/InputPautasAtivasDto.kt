@@ -9,5 +9,5 @@ data class InputPautasAtivasDto(
     val pautaDataCriacao: LocalDateTime,
     val pautaDataExpiracao: LocalDateTime,
     val pautaDuracao: Long = 60,
-    val pautaVotosTotal: Long? = 0
+    val pautaProcessada: Boolean? = false
 )

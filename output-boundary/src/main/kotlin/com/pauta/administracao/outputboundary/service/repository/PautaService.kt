@@ -17,6 +17,8 @@ interface PautaService {
 
     fun findByName(nome: String): Mono<PautaDomain>
 
+    fun findByPautaProcessada(value: Boolean): Flux<PautaDomain>
+
     fun findAll(): Flux<PautaDomain>
 
     fun removeAllDataOnRedis(): Flux<Boolean>

@@ -7,5 +7,5 @@ data class PautaDomain(
     val pautaNome: String,
     val pautaDataCriacao: LocalDateTime,
     val pautaDuracao: Long = 60,
-    val pautaVotosTotal: Long? = 0
+    val pautaProcessada: Boolean? = false
 )

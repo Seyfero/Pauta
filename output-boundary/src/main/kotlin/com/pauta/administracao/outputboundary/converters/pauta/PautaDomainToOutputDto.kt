@@ -8,5 +8,5 @@ fun PautaDomain.toOutputDto() = PautaOutputDto(
     pautaNome,
     pautaDataCriacao,
     pautaDuracao,
-    pautaVotosTotal
+    pautaProcessada
 )

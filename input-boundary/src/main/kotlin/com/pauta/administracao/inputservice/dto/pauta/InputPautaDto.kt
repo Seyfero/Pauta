@@ -7,5 +7,5 @@ data class InputPautaDto(
     val pautaNome: String,
     val pautaDataCriacao: LocalDateTime = LocalDateTime.now(),
     val pautaDuracao: Long = 60,
-    val pautaVotosTotal: Long? = 0
+    val pautaProcessada: Boolean? = false
 )

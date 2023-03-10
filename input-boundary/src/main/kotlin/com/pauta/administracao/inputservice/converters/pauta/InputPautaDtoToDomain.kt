@@ -8,5 +8,5 @@ fun InputPautaDto.toDomain() = PautaDomain(
     pautaNome,
     pautaDataCriacao,
     pautaDuracao,
-    pautaVotosTotal
+    pautaProcessada
 )

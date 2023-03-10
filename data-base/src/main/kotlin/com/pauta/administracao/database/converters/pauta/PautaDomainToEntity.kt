@@ -8,5 +8,5 @@ fun PautaDomain.toEntity() = PautaEntity(
     pautaNome,
     pautaDataCriacao,
     pautaDuracao,
-    pautaVotosTotal
+    pautaProcessada
 )
