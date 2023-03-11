@@ -29,9 +29,17 @@ class DeleteVotoServiceImpl(
                         Mono.just(false)
                     }
             }
-            .onErrorResume {
-                logger.error("Error to delete vote message = ${it.message}")
-                Mono.error(IllegalAccessException("Error te delete vote!"))
+            .onErrorResume { error ->
+
+                logger.error("Error to delete vote message = ${error.message}")
+                Mono.error(
+                    IllegalAccessException(
+                        error.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error te delete vote!" else it
+                        }
+                    )
+                )
             }
     }
 

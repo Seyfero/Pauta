@@ -37,7 +37,7 @@ class ValidateExternalCallUserCpfServiceImpl(
             }
             .onErrorResume {
                 logger.info("Error to verify user's cpf in external call!")
-                Mono.error(IllegalStateException("Error to verify validate user's cpf!", it))
+                Mono.error(IllegalStateException("server.error.Error to verify validate user's cpf!", it))
             }
     }
 }

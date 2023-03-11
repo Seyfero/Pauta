@@ -44,7 +44,7 @@ class CreatePautaServiceImplTest {
         createPautaServiceImpl.execute(order)
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is IllegalArgumentException && it.message == "This order exists!"
+                it is IllegalArgumentException && it.message == "server.error.This order exists!"
             }
             .verify()
     }

@@ -34,9 +34,16 @@ class PautaServiceImpl(
             .doOnSuccess {
                 logger.info("pautaRepository.save, status=complete")
             }
-            .onErrorResume {
-                logger.error("pautaRepository.save, status=error message:${it.message}")
-                Mono.error(UnsupportedOperationException("Error to create order!"))
+            .onErrorResume { error ->
+                logger.error("pautaRepository.save, status=error message:${error.message}")
+                Mono.error(
+                    UnsupportedOperationException(
+                        error.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to create order!" else it
+                        }
+                    )
+                )
             }
     }
 
@@ -51,8 +58,16 @@ class PautaServiceImpl(
                 logger.info("pautaRepository.update, status=complete")
             }
             .onErrorResume {
-                logger.error("pautaRepository.update, status=error message:${it.message}")
-                Mono.error(UnsupportedOperationException("Error to update order!"))
+                error ->
+                logger.error("pautaRepository.update, status=error message:${error.message}")
+                Mono.error(
+                    UnsupportedOperationException(
+                        error.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to update order!" else it
+                        }
+                    )
+                )
             }
     }
 
@@ -70,9 +85,16 @@ class PautaServiceImpl(
             .doOnSuccess {
                 logger.info("pautaRepository.deleteByName, status=complete")
             }
-            .onErrorResume {
-                logger.error("pautaRepository.deleteByName, status=error message:${it.message}")
-                Mono.error(UnsupportedOperationException("Error to delete order by name!"))
+            .onErrorResume { error ->
+                logger.error("pautaRepository.deleteByName, status=error message:${error.message}")
+                Mono.error(
+                    UnsupportedOperationException(
+                        error.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to delete order by name!" else it
+                        }
+                    )
+                )
             }
     }
 
@@ -85,9 +107,17 @@ class PautaServiceImpl(
             .doOnSuccess {
                 logger.info("pautaRepository.findById, status=complete by db")
             }
-            .onErrorResume {
-                logger.error("pautaRepository.findById, status=error message:${it.message}")
-                Mono.error(UnsupportedOperationException("Error to find order by ID!"))
+            .onErrorResume { error ->
+
+                logger.error("pautaRepository.findById, status=error message:${error.message}")
+                Mono.error(
+                    UnsupportedOperationException(
+                        error.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to find order by ID!" else it
+                        }
+                    )
+                )
             }
     }
 
@@ -112,9 +142,17 @@ class PautaServiceImpl(
                     .doOnSuccess {
                         logger.info("pautaRepository.findByName, status=complete")
                     }
-                    .onErrorResume {
-                        logger.error("pautaRepository.findByName, status=error message:${it.message}")
-                        Mono.error(UnsupportedOperationException("Error to search order by name!"))
+                    .onErrorResume { error ->
+
+                        logger.error("pautaRepository.findByName, status=error message:${error.message}")
+                        Mono.error(
+                            UnsupportedOperationException(
+                                error.message?.let {
+                                    if (!it.contains("server.error"))
+                                        "server.error.Error to search order by name!" else it
+                                }
+                            )
+                        )
                     }
             }
     }
@@ -151,7 +189,7 @@ class PautaServiceImpl(
                             UnsupportedOperationException(
                                 error.message?.let {
                                     if (!it.contains("server.error"))
-                                        "server.Error to find orders actives on data base!" else it
+                                        "server.error.Error to find orders actives on data base!" else it
                                 }
                             )
                         )
@@ -189,8 +227,16 @@ class PautaServiceImpl(
         return redisService.removeAllDataOnRedis().map { true }
             .doOnTerminate { logger.info("Orders removed with success!") }
             .onErrorResume { error ->
+
                 logger.error("pautaRepository.removeAllDataOnRedis, status=error message:${error.message}")
-                Flux.error(UnsupportedOperationException("Error to remove all keys from redis!"))
+                Flux.error(
+                    UnsupportedOperationException(
+                        error.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to remove all keys from redis!" else it
+                        }
+                    )
+                )
             }
     }
 
@@ -213,7 +259,14 @@ class PautaServiceImpl(
             }
             .onErrorResume { error ->
                 logger.error("pautaRepository.findAll, status=error message:${error.message}")
-                Flux.error(UnsupportedOperationException("Error to search all orders!"))
+                Flux.error(
+                    UnsupportedOperationException(
+                        error.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to search all orders!" else it
+                        }
+                    )
+                )
             }
             .switchIfEmpty { Flux.empty<PautaDomain>() }
     }

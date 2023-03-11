@@ -60,7 +60,7 @@ class PautaServiceImplTest {
         pautaService.create(order.toOutputDto())
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is UnsupportedOperationException && it.message == "Error to create order!"
+                it is UnsupportedOperationException && it.message == "server.error.Error to create order!"
             }
             .verify()
     }
@@ -78,7 +78,7 @@ class PautaServiceImplTest {
             .`as`(StepVerifier::create)
             .assertNext {
                 assertThrows<UnsupportedOperationException> {
-                    throw UnsupportedOperationException("Error to create order!")
+                    throw UnsupportedOperationException("server.error.Error to create order!")
                 }
             }
             .verifyComplete()
@@ -120,7 +120,7 @@ class PautaServiceImplTest {
         pautaService.update(order.toOutputDto())
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is UnsupportedOperationException && it.message == "Error to update order!"
+                it is UnsupportedOperationException && it.message == "server.error.Error to update order!"
             }
             .verify()
     }
@@ -139,7 +139,7 @@ class PautaServiceImplTest {
             .`as`(StepVerifier::create)
             .assertNext {
                 assertThrows<UnsupportedOperationException> {
-                    throw UnsupportedOperationException("Error to update order!")
+                    throw UnsupportedOperationException("server.error.Error to update order!")
                 }
             }
             .verifyComplete()
@@ -178,7 +178,7 @@ class PautaServiceImplTest {
         pautaService.deleteByName(orderDelete.pautaNome)
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is UnsupportedOperationException && it.message == "Error to delete order by name!"
+                it is UnsupportedOperationException && it.message == "server.error.Error to delete order by name!"
             }
             .verify()
     }
@@ -195,7 +195,7 @@ class PautaServiceImplTest {
             .`as`(StepVerifier::create)
             .assertNext {
                 assertThrows<UnsupportedOperationException> {
-                    throw UnsupportedOperationException("Error to delete order by name!")
+                    throw UnsupportedOperationException("server.error.Error to delete order by name!")
                 }
             }
             .verifyComplete()
@@ -232,7 +232,7 @@ class PautaServiceImplTest {
         pautaService.findById(order.id!!)
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is UnsupportedOperationException && it.message == "Error to find order by ID!"
+                it is UnsupportedOperationException && it.message == "server.error.Error to find order by ID!"
             }
             .verify()
     }
@@ -310,7 +310,7 @@ class PautaServiceImplTest {
         pautaService.findByName(order.pautaNome)
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is UnsupportedOperationException && it.message == "Error to search order by name!"
+                it is UnsupportedOperationException && it.message == "server.error.Error to search order by name!"
             }
             .verify()
     }
@@ -380,7 +380,7 @@ class PautaServiceImplTest {
         pautaService.findByPautaProcessada(false)
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is UnsupportedOperationException && it.message == "server.Error to find orders actives on data base!"
+                it is UnsupportedOperationException && it.message == "server.error.Error to find orders actives on data base!"
             }
             .verify()
     }
@@ -433,7 +433,7 @@ class PautaServiceImplTest {
         pautaService.findAll()
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is UnsupportedOperationException && it.message == "Error to search all orders!"
+                it is UnsupportedOperationException && it.message == "server.error.Error to search all orders!"
             }
             .verify()
     }

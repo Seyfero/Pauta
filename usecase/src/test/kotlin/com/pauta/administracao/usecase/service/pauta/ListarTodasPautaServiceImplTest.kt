@@ -48,7 +48,7 @@ class ListarTodasPautaServiceImplTest {
         listTodasPautaServiceImpl.execute()
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is IllegalStateException && it.message == "Error on convert all orders!"
+                it is IllegalStateException && it.message == "server.error.Error on convert all orders!"
             }
             .verify()
     }

@@ -48,7 +48,7 @@ class ListVotoByPautaServiceImpl(
             .switchIfEmpty(
                 Mono.defer {
                     logger.error("Order not found!")
-                    Mono.error(NoSuchElementException("Order not found!"))
+                    Mono.error(NoSuchElementException("server.error.Order not found!"))
                 }
             )
     }

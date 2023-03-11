@@ -30,9 +30,16 @@ class VotoServiceImpl(
             .doOnSuccess {
                 logger.info("votoRepository.create, status=complete")
             }
-            .onErrorResume {
-                logger.error("votoRepository.create, status=error message:${it.message}")
-                Mono.error(UnsupportedOperationException("Error to create vote!"))
+            .onErrorResume { error ->
+                logger.error("votoRepository.create, status=error message:${error.message}")
+                Mono.error(
+                    UnsupportedOperationException(
+                        error.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to create vote!" else it
+                        }
+                    )
+                )
             }
     }
 
@@ -43,9 +50,16 @@ class VotoServiceImpl(
                 logger.info("votoRepository.delete, status=complete")
                 Mono.just(true)
             }
-            .onErrorResume {
-                logger.error("votoRepository.delete, status=error message:${it.message}")
-                Mono.error(UnsupportedOperationException("Error to delete vote!"))
+            .onErrorResume { error ->
+                logger.error("votoRepository.delete, status=error message:${error.message}")
+                Mono.error(
+                    UnsupportedOperationException(
+                        error.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to delete vote!" else it
+                        }
+                    )
+                )
             }
     }
 
@@ -58,9 +72,17 @@ class VotoServiceImpl(
             .doOnTerminate {
                 logger.info("votoRepository.findAll, status=complete")
             }
-            .onErrorResume {
-                logger.error("votoRepository.findAll, status=error message:${it.message}")
-                Mono.error(UnsupportedOperationException("Error to find all votes!"))
+            .onErrorResume { error ->
+
+                logger.error("votoRepository.findAll, status=error message:${error.message}")
+                Mono.error(
+                    UnsupportedOperationException(
+                        error.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to find all votes!" else it
+                        }
+                    )
+                )
             }
     }
 
@@ -73,9 +95,17 @@ class VotoServiceImpl(
             .doOnTerminate {
                 logger.info("votoRepository.findByVotoPauta, status=complete")
             }
-            .onErrorResume {
-                logger.error("votoRepository.findByVotoPauta, status=error message:${it.message}")
-                Mono.error(UnsupportedOperationException("Error to find vote by id order!"))
+            .onErrorResume { error ->
+
+                logger.error("votoRepository.findByVotoPauta, status=error message:${error.message}")
+                Mono.error(
+                    UnsupportedOperationException(
+                        error.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to find vote by id order!" else it
+                        }
+                    )
+                )
             }
     }
 
@@ -88,9 +118,17 @@ class VotoServiceImpl(
             .doOnSuccess {
                 logger.info("votoRepository.findByVotoPautaAndVotoUsuarioCpf, status=complete")
             }
-            .onErrorResume {
-                logger.error("votoRepository.findByVotoPautaAndVotoUsuarioCpf, status=error message:${it.message}")
-                Mono.error(UnsupportedOperationException("Error to find vote by id order and cpf user!"))
+            .onErrorResume { error ->
+
+                logger.error("votoRepository.findByVotoPautaAndVotoUsuarioCpf, status=error message:${error.message}")
+                Mono.error(
+                    UnsupportedOperationException(
+                        error.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to find vote by id order and cpf user!" else it
+                        }
+                    )
+                )
             }
     }
 
@@ -100,9 +138,17 @@ class VotoServiceImpl(
             .doOnSuccess {
                 logger.info("votoRepository.getCountVotosByPautaId, status=complete")
             }
-            .onErrorResume {
-                logger.error("votoRepository.getCountVotosByPautaId, status=error message:${it.message}")
-                Mono.error(UnsupportedOperationException("Error to execute find by id order and value vote!"))
+            .onErrorResume { error ->
+
+                logger.error("votoRepository.getCountVotosByPautaId, status=error message:${error.message}")
+                Mono.error(
+                    UnsupportedOperationException(
+                        error.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to execute find by id order and value vote!" else it
+                        }
+                    )
+                )
             }
     }
 }

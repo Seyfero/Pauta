@@ -31,7 +31,7 @@ class UpdatePautaServiceImpl(
             }
             .onErrorMap {
                 logger.error("Error to update order!")
-                IllegalStateException("Error to update order!", it)
+                IllegalStateException("server.error.Error to update order!", it)
             }
     }
 }

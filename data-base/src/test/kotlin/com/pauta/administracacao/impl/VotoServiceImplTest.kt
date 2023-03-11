@@ -49,7 +49,7 @@ class VotoServiceImplTest {
         votoServiceImpl.create(vote.toOutputDto())
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is UnsupportedOperationException && it.message == "Error to create vote!"
+                it is UnsupportedOperationException && it.message == "server.error.Error to create vote!"
             }
             .verify()
     }
@@ -75,7 +75,7 @@ class VotoServiceImplTest {
         votoServiceImpl.delete(voteDelete.id!!)
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is UnsupportedOperationException && it.message == "Error to delete vote!"
+                it is UnsupportedOperationException && it.message == "server.error.Error to delete vote!"
             }
             .verify()
     }
@@ -104,7 +104,7 @@ class VotoServiceImplTest {
         votoServiceImpl.findByVotoPauta(vote.id!!)
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is UnsupportedOperationException && it.message == "Error to find vote by id order!"
+                it is UnsupportedOperationException && it.message == "server.error.Error to find vote by id order!"
             }
             .verify()
     }
@@ -131,7 +131,7 @@ class VotoServiceImplTest {
         votoServiceImpl.findAll()
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is UnsupportedOperationException && it.message == "Error to find all votes!"
+                it is UnsupportedOperationException && it.message == "server.error.Error to find all votes!"
             }
             .verify()
     }
@@ -158,7 +158,7 @@ class VotoServiceImplTest {
         votoServiceImpl.findByVotoPautaAndVotoUsuarioCpf(vote.id!!, vote.votoUsuarioDomainCpf)
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is UnsupportedOperationException && it.message == "Error to find vote by id order and cpf user!"
+                it is UnsupportedOperationException && it.message == "server.error.Error to find vote by id order and cpf user!"
             }
             .verify()
     }
@@ -185,7 +185,7 @@ class VotoServiceImplTest {
         votoServiceImpl.getCountVotosByPautaId(vote.id!!, "sim")
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is UnsupportedOperationException && it.message == "Error to execute find by id order and value vote!"
+                it is UnsupportedOperationException && it.message == "server.error.Error to execute find by id order and value vote!"
             }
             .verify()
     }

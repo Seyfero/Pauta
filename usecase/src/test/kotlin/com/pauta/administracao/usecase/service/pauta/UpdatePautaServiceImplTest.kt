@@ -43,7 +43,7 @@ class UpdatePautaServiceImplTest {
         updatePautaServiceImpl.execute(order)
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is IllegalStateException && it.message == "Error to update order!"
+                it is IllegalStateException && it.message == "server.error.Error to update order!"
             }
             .verify()
     }
@@ -57,7 +57,7 @@ class UpdatePautaServiceImplTest {
         updatePautaServiceImpl.execute(order)
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is IllegalStateException && it.message == "Error to update order!"
+                it is IllegalStateException && it.message == "server.error.Error to update order!"
             }
             .verify()
     }

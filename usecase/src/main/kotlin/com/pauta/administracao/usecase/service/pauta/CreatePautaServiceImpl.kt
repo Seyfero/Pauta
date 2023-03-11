@@ -24,7 +24,7 @@ class CreatePautaServiceImpl(
             .flatMap { exists ->
                 if (exists) {
                     logger.error("This order exists!")
-                    Mono.error(IllegalArgumentException("This order exists!"))
+                    Mono.error(IllegalArgumentException("server.error.This order exists!"))
                 } else {
                     pautaService.create(inputPautaDto.toDomain().toOutputDto())
                         .map {

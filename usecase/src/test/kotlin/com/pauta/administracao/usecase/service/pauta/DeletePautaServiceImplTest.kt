@@ -43,7 +43,7 @@ class DeletePautaServiceImplTest {
         deletePautaServiceImpl.execute(order.pautaNome)
             .`as`(StepVerifier::create)
             .expectErrorMatches {
-                it is NoSuchElementException && it.message == "Order not found!"
+                it is NoSuchElementException && it.message == "server.error.Order not found!"
             }
             .verify()
     }

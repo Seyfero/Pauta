@@ -27,7 +27,7 @@ class KafkaProducerServiceImpl(
             }
             .onErrorResume {
                 logger.error("Error on sent message, error=${it.message}")
-                Mono.error(IllegalStateException("Error to send message in kafka"))
+                Mono.error(IllegalStateException("server.error.Error to send message in kafka"))
             }
     }
 }

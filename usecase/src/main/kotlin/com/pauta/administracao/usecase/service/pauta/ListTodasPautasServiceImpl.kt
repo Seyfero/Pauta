@@ -23,9 +23,17 @@ class ListTodasPautasServiceImpl(
             .doOnTerminate {
                 logger.info("All search finalized with success!")
             }
-            .onErrorResume {
+            .onErrorResume { error ->
                 logger.error("Error to convert order!")
-                Flux.error(IllegalStateException("Error on convert all orders!", it))
+
+                Flux.error(
+                    IllegalStateException(
+                        error.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error on convert all orders!" else it
+                        }
+                    )
+                )
             }
     }
 }

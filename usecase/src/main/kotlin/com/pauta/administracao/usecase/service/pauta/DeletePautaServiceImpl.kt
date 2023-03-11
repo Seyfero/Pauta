@@ -31,7 +31,7 @@ class DeletePautaServiceImpl(
                         }
                 } else {
                     logger.error("Order exists!")
-                    Mono.error(NoSuchElementException("Order not found!"))
+                    Mono.error(NoSuchElementException("server.error.Order not found!"))
                 }
             }
     }
