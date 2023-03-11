@@ -78,10 +78,10 @@ class ScheduledTasks(
         return pautaDomain.let {
             pautaService.update(it.toOutputDto().copy(pautaProcessada = true))
                 .doOnSuccess {
-                    logger.info("Order deleted with success!")
+                    logger.info("Order updated with success!")
                 }
                 .doOnError {
-                    logger.error("Error to remove order in kafka process!")
+                    logger.error("Error to updated order in kafka process!")
                 }
                 .thenReturn(true)
         }

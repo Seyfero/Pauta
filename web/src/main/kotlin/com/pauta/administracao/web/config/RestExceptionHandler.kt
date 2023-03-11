@@ -27,7 +27,7 @@ class RestExceptionHandler {
         return ApiError(
             code = "E${HttpStatus.NOT_FOUND.value()}",
             message = "This request returned no results!",
-            description = ex.message,
+            description = ex.message?.replace("server.error.", ""),
             timesTemp = LocalDateTime.now()
         )
     }
@@ -45,7 +45,7 @@ class RestExceptionHandler {
         return ApiError(
             code = "E${HttpStatus.BAD_REQUEST.value()}",
             message = "This request was no accepted!",
-            description = ex.message,
+            description = ex.message?.replace("server.error.", ""),
             timesTemp = LocalDateTime.now()
         )
     }
@@ -60,7 +60,7 @@ class RestExceptionHandler {
         return ApiError(
             code = "E${HttpStatus.BAD_REQUEST.value()}",
             message = "This pauta was no accepted!",
-            description = ex.message,
+            description = ex.message?.replace("server.error.", ""),
             timesTemp = LocalDateTime.now()
         )
     }

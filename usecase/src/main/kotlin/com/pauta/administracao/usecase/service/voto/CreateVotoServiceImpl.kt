@@ -57,7 +57,7 @@ class CreateVotoServiceImpl(
     private fun validUserCpf(cpf: String): Mono<Boolean> {
         return validateExternalCallUserCpfService.validateExternalCallUserCpf(cpf)
             .flatMap {
-                if (it.equals("ABLE_TO_VOTE")) {
+                if (it.contains("\"ABLE_TO_VOTE\"")) {
                     return@flatMap Mono.just(true)
                 }
                 Mono.error(IllegalArgumentException("User not valid"))
