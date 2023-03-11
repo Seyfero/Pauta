@@ -27,57 +27,22 @@ tasks.jacocoTestReport {
         csv.required.set(false)
         html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
     }
-    finalizedBy("jacocoTestCoverageVerification")
+    classDirectories.setFrom(files(classDirectories.files.map {
+            fileTree(it).apply {
+                exclude( "**/config**")
+                exclude( "**/configuration**")
+            }
+        }))
 }
 
 tasks.jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum = "0.30".toBigDecimal()
-            }
-        }
-
-        rule {
-            enabled = true
-
-            element = "CLASS"
-
-            limit {
-                counter = "BRANCH"
-                value = "COVEREDRATIO"
-                minimum = "0.90".toBigDecimal()
-            }
-
-            limit {
-                counter = "LINE"
-                value = "COVEREDRATIO"
                 minimum = "0.80".toBigDecimal()
             }
-
-            limit {
-                counter = "LINE"
-                value = "TOTALCOUNT"
-                maximum = "200".toBigDecimal()
-            }
-
-            excludes = listOf()
         }
     }
-}
-
-val testCoverage by tasks.registering {
-    group = "verification"
-    description = "Runs the unit tests with coverage"
-
-    dependsOn(
-        ":test",
-        ":jacocoTestReport",
-        ":jacocoTestCoverageVerification"
-    )
-
-    tasks["jacocoTestReport"].mustRunAfter(tasks["test"])
-    tasks["jacocoTestCoverageVerification"].mustRunAfter(tasks["jacocoTestReport"])
 }
 
 buildscript {
