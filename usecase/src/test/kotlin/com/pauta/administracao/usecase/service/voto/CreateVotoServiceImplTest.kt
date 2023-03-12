@@ -32,7 +32,7 @@ class CreateVotoServiceImplTest {
         val vote = populateVote()
         val inputPautaDto = populateInputVotoExternalDto()
 
-        `when`(validateExternalCallUserCpfService.validateExternalCallUserCpf(anyString())).thenReturn(Mono.just("ABLE_TO_VOTE"))
+        `when`(validateExternalCallUserCpfService.validateExternalCallUserCpf(anyString())).thenReturn(Mono.just("\"ABLE_TO_VOTE\""))
 
         `when`(pautaService.findByName(anyString())).thenReturn(Mono.just(order.toDomain()))
 
@@ -64,7 +64,7 @@ class CreateVotoServiceImplTest {
     fun `should return error if not find order`() {
         val inputPautaDto = populateInputVotoExternalDto()
 
-        `when`(validateExternalCallUserCpfService.validateExternalCallUserCpf(anyString())).thenReturn(Mono.just("ABLE_TO_VOTE"))
+        `when`(validateExternalCallUserCpfService.validateExternalCallUserCpf(anyString())).thenReturn(Mono.just("\"ABLE_TO_VOTE\""))
 
         `when`(pautaService.findByName(anyString())).thenReturn(Mono.empty())
 
@@ -82,7 +82,7 @@ class CreateVotoServiceImplTest {
         val vote = populateVote()
         val inputPautaDto = populateInputVotoExternalDto()
 
-        `when`(validateExternalCallUserCpfService.validateExternalCallUserCpf(anyString())).thenReturn(Mono.just("ABLE_TO_VOTE"))
+        `when`(validateExternalCallUserCpfService.validateExternalCallUserCpf(anyString())).thenReturn(Mono.just("\"ABLE_TO_VOTE\""))
 
         `when`(pautaService.findByName(anyString())).thenReturn(Mono.just(order.toDomain()))
 
@@ -102,7 +102,7 @@ class CreateVotoServiceImplTest {
         val vote = populateVote()
         val inputPautaDto = populateInputVotoExternalDto()
 
-        `when`(validateExternalCallUserCpfService.validateExternalCallUserCpf(anyString())).thenReturn(Mono.just("ABLE_TO_VOTE"))
+        `when`(validateExternalCallUserCpfService.validateExternalCallUserCpf(anyString())).thenReturn(Mono.just("\"ABLE_TO_VOTE\""))
 
         `when`(pautaService.findByName(anyString())).thenReturn(Mono.just(order.toDomain()))
 
@@ -122,7 +122,7 @@ class CreateVotoServiceImplTest {
         val vote = populateVote()
         val inputPautaDto = populateInputVotoExternalDto().copy(votoEscolha = "outro")
 
-        `when`(validateExternalCallUserCpfService.validateExternalCallUserCpf(anyString())).thenReturn(Mono.just("ABLE_TO_VOTE"))
+        `when`(validateExternalCallUserCpfService.validateExternalCallUserCpf(anyString())).thenReturn(Mono.just("\"ABLE_TO_VOTE\""))
 
         `when`(pautaService.findByName(anyString())).thenReturn(Mono.just(order.toDomain()))
 
@@ -137,12 +137,12 @@ class CreateVotoServiceImplTest {
     }
 
     @Test
-    fun `should return error create return error`() {
+    fun `should return error with create`() {
         val order = populateOrder().copy(id = 1)
         val vote = populateVote().copy(id = 1)
         val inputPautaDto = populateInputVotoExternalDto()
 
-        `when`(validateExternalCallUserCpfService.validateExternalCallUserCpf(anyString())).thenReturn(Mono.just("ABLE_TO_VOTE"))
+        `when`(validateExternalCallUserCpfService.validateExternalCallUserCpf(anyString())).thenReturn(Mono.just("\"ABLE_TO_VOTE\""))
 
         `when`(pautaService.findByName(anyString())).thenReturn(Mono.just(order.toDomain()))
 
