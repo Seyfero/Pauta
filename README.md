@@ -99,5 +99,12 @@ Tópico do kafka criado: order
 
 <br/>
 
+> ### 🚨 Informações Complementares - Teste de performace
+
+Foi executado um teste de performace, ferramenta utilizada Jmeter. Os resultados e teste
+estão no diretório performace-test/
+
+<br/>
+
 > ### 💻 Contribuintes
 - Saulo Cassiano de Carvalho
