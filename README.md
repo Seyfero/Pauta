@@ -106,5 +106,12 @@ estão no diretório performace-test/
 
 <br/>
 
+> ### 🚨 Informações Complementares - Validação Cpf
+
+A validação de CPF foi implementada nesse projeto, mas a chamada foi feita via 
+Webclient, simulando acesso a uma api externa.
+
+<br/>
+
 > ### 💻 Contribuintes
 - Saulo Cassiano de Carvalho
