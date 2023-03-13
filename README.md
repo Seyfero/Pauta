@@ -74,7 +74,7 @@ Para a execução da aplicação, usar o comando:
 <br/>
 
 > ### Swagger
-- A página html swagger gerada está disponível no seguinte endereço: http://localhost:8080/swagger-ui/index.html
+- A página html swagger gerada está disponível no seguinte endereço: http://localhost:8080/webjars/swagger-ui/index.html
 
 <br/>
 
