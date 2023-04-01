@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "pautaNome": "String",
+    "pautaUrl": "String",
+    "pautaDataCriacao": "2023-03-31T21:00:000z",
+    "pautaDataExpiracao": "2023-03-31T21:00:000z",
+    "pautaDuracao": 60,
+    "pautaProcessada": true
+  },
+  {
+    "id": 2,
+    "pautaNome": "String2",
+    "pautaUrl": "String2",
+    "pautaDataCriacao": "2023-03-31T21:00:000z",
+    "pautaDataExpiracao": "2023-03-31T21:00:000z",
+    "pautaDuracao": 60,
+    "pautaProcessada": true
+  }
+]

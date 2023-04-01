@@ -1,0 +1,13 @@
+{
+  "request": {
+    "urlPathPattern": "/v1/pauta/all",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "response-pauta.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8"
+    }
+  }
+}

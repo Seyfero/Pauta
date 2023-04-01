@@ -49,6 +49,16 @@ services:
     volumes:
       - /redis-data:/data
 
+  wiremock:
+    image: rodolpheche/wiremock
+    volumes:
+      - type: bind
+        source: ./wiremock
+        target: /home/wiremock
+    command: --port=8888 --global-response-templating
+    ports:
+      - "8888:8888"
+
 
 volumes:
   db:

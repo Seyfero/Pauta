@@ -268,6 +268,5 @@ class PautaServiceImpl(
                     )
                 )
             }
-            .switchIfEmpty { Flux.empty<PautaDomain>() }
     }
 }
