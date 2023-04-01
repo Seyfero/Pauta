@@ -182,7 +182,6 @@ class PautaServiceImpl(
                     .flatMap { pautaDomain ->
                         Flux.just(pautaDomain.toDomain())
                     }
-                    .switchIfEmpty { Flux.empty<PautaDomain>() }
                     .onErrorResume { error ->
                         logger.error("pautaRepository.findByPautaProcessada, status=error message:${error.message}")
                         Flux.error(
@@ -213,9 +212,16 @@ class PautaServiceImpl(
                     getAllByDatabase()
                 }
             }
-            .onErrorResume {
-                return@onErrorResume getAllByDatabase()
-                    .switchIfEmpty { Flux.empty<PautaDomain>() }
+            .onErrorResume { error ->
+                logger.error("pautaRepository.findAll, status=error message:${error.message}")
+                Flux.error(
+                    UnsupportedOperationException(
+                        error.message?.let {
+                            if (!it.contains("server.error"))
+                                "server.error.Error to find all orders on data base!" else it
+                        }
+                    )
+                )
             }
             .flatMap {
                 return@flatMap Flux.just(it)

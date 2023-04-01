@@ -54,12 +54,12 @@ class RedisPautaServiceImpl(
                 deserialize(it)
             }
             .onErrorResume {
-                logger.error("Not success to take data in redis!")
+//                logger.error("Not success to take data in redis!")
                 Flux.empty()
             }
-            .switchIfEmpty {
-                Flux.empty<PautaDomain>()
-            }
+            .switchIfEmpty (
+                    Flux.empty<PautaDomain>()
+            )
     }
 
     override fun removeAllDataOnRedis(): Flux<Boolean> {
