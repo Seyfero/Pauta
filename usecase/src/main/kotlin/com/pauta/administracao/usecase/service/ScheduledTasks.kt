@@ -26,7 +26,7 @@ class ScheduledTasks(
 
     @PostConstruct
     fun init() {
-        Flux.interval(Duration.ofSeconds(1))
+        Flux.interval(Duration.ofSeconds(60000))
             .delaySubscription(Duration.ofSeconds(15))
             .subscribe { scheduleTasks().subscribe() }
     }

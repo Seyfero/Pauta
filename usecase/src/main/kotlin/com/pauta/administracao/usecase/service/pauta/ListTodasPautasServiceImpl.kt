@@ -28,7 +28,7 @@ class ListTodasPautasServiceImpl(
 
                 Flux.error(
                     IllegalStateException(
-                            error.message?.let {
+                        error.message?.let {
                             if (!it.contains("server.error"))
                                 "server.error.Error on convert all orders!" else it
                         }

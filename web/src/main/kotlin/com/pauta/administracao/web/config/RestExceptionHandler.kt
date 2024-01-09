@@ -3,7 +3,6 @@ package com.pauta.administracao.web.config
 import com.pauta.administracao.domain.exception.ExpiredPautaException
 import com.pauta.administracao.domain.exception.IllegalPautaException
 import com.pauta.administracao.domain.exception.IllegalUsuarioException
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -13,8 +12,6 @@ import java.time.LocalDateTime
 
 @RestControllerAdvice
 class RestExceptionHandler {
-
-    private val logger = LoggerFactory.getLogger(this::class.java)
 
     @ExceptionHandler(
         value = [
